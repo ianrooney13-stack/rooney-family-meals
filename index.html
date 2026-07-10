@@ -722,6 +722,58 @@ function buildShoppingList(weekIdx){
 }
 
 /* ============================================================
+   ESTIMATED SHOP COST (rough Tesco Ireland pricing)
+   ============================================================ */
+const PRICE_RULES = [
+  // fish & seafood
+  [['salmon'], 7.50], [['prawn'], 4.50], [['white fish','cod','haddock'], 6.00],
+  // meat
+  [['chicken thigh'], 4.00], [['chicken breast'], 6.00], [['stewing beef','diced beef'], 6.50],
+  [['beef mince'], 5.00], [['turkey slices'], 2.50], [['ham'], 2.20],
+  // pulses & tins
+  [['chickpea'], 0.90], [['kidney bean'], 0.90], [['black bean'], 1.00], [['lentil'], 1.20],
+  [['coconut milk'], 1.50], [['chopped tomatoes'], 0.70], [['tomato purée','tomato puree'], 0.80],
+  [['tuna'], 1.50],
+  // veg
+  [['sweet potato'], 1.00], [['butternut squash'], 1.50], [['courgette'], 0.70],
+  [['red pepper','pepper'], 0.80], [['broccoli'], 1.00], [['green bean'], 1.50],
+  [['spinach'], 1.20], [['leek'], 0.80], [['carrot'], 0.50], [['cherry tomato'], 1.50],
+  [['cucumber'], 0.65], [['onion'], 0.40], [['garlic'], 0.30], [['avocado'], 1.00],
+  [['lemon'], 0.40], [['lime'], 0.40],
+  // dairy & eggs
+  [['feta'], 2.50], [['halloumi'], 3.00], [['mozzarella'], 2.00], [['cottage cheese'], 1.80],
+  [['cheddar','cheese'], 2.50], [['greek yoghurt','yogurt','yoghurt'], 2.00], [['egg'], 3.00],
+  [['milk'], 1.60], [['butter'], 2.00],
+  // carbs
+  [['rice'], 1.50], [['couscous'], 1.50], [['pasta'], 1.30], [['wrap'], 1.50],
+  [['pitta'], 1.20], [['naan'], 1.80], [['toast','bread'], 1.80], [['rice cake'], 1.50],
+  // pantry & spice
+  [['stock'], 1.00], [['breadcrumb'], 1.00], [['mayo'], 1.80], [['hummus'], 1.50],
+  [['oregano','paprika','cumin','curry powder','turmeric','ras el hanout','cinnamon'], 1.20],
+  [['olive oil'], 4.00], [['soy sauce'], 1.50],
+  // snacks & fruit
+  [['almond','cashew','trail mix'], 3.00], [['raisin'], 1.50], [['dark chocolate'], 1.80],
+  [['oats'], 1.50], [['banana'], 1.20], [['date'], 2.50], [['honey'], 2.50],
+  [['peanut butter'], 2.80], [['berries'], 2.50], [['mango'], 1.50], [['apple'], 2.00],
+  [['grapes'], 2.50], [['strawberr'], 2.50], [['melon'], 1.80], [['chia'], 2.50],
+  [['desiccated coconut'], 1.50], [['dill'], 1.00], [['parsley'], 1.00], [['cranberry sauce'], 2.00],
+];
+const FALLBACK_PRICE = 1.20;
+
+function estimateItemCost(item){
+  const lower = item.toLowerCase();
+  for(const [keywords, price] of PRICE_RULES){
+    if(keywords.some(k => lower.includes(k))) return price;
+  }
+  return FALLBACK_PRICE;
+}
+function estimateWeekCost(weekIdx){
+  const list = buildShoppingList(weekIdx);
+  const all = [...list.dinners, ...list.lunches, ...list.snacks];
+  return all.reduce((sum, item) => sum + estimateItemCost(item), 0);
+}
+
+/* ============================================================
    RENDER: OVERVIEW
    ============================================================ */
 function renderOverview(){
@@ -1223,7 +1275,7 @@ function renderRecipeList(){
 
   // dinners (view + rate history; editing which day cooks it happens on Plan tab)
   list.innerHTML = addRecipeBtnHtml('dinners') +
-    `<div class="plan-note" style="margin:10px 0 12px;">Browse all options. To choose which one cooks on a given night, use the <span class="plan-summary-link" onclick="switchView('plan')">Plan tab</span>. Calories are rough estimates per serving, not exact counts.</div>` +
+    `<div class="plan-note" style="margin:10px 0 12px;">Browse all options, or use "Add to Plan" on any dish to slot it straight into a week — no need to go to the Plan tab. Calories are rough estimates per serving, not exact counts.</div>` +
     allDinners().filter(r=>!r.backup).map(r=>{
       const avg = avgRating(r.dish);
       const custom = r.id.startsWith('C');
@@ -1236,6 +1288,15 @@ function renderRecipeList(){
           </div>
           <div class="rating-badge">${avg ? starsStr(avg) : '—'}</div>
         </div>
+
+        <div class="include-row" style="margin-top:10px;" onclick="event.stopPropagation()">
+          <select class="slot-select" style="flex:1;" id="assign-${r.id}" onchange="assignToSlot('${r.id}', this.value, '${r.dish.replace(/'/g,"\\'")}')">
+            <option value="">Add to Plan…</option>
+            ${slotOptionsForDish(r)}
+          </select>
+        </div>
+        <div class="plan-note" id="assign-confirm-${r.id}" style="display:none; color:var(--herb-2); font-weight:600; margin-top:6px;"></div>
+
         <div class="recipe-detail">
           ${r.ingredients.length ? `<div class="block-label">Ingredients (serves 3)</div><div class="ingredients">${r.ingredients.join(' · ')}</div>` : ''}
           ${r.steps.length ? `<div class="block-label">Method</div><div class="ingredients">${r.steps.map((s,i)=>`${i+1}. ${s}`).join('<br>')}</div>` : ''}
@@ -1246,6 +1307,37 @@ function renderRecipeList(){
         </div>
       </div>
     `;}).join('');
+}
+function slotOptionsForDish(r){
+  const opts = [];
+  for(let w=0; w<3; w++){
+    if(r.fish){
+      opts.push(`<option value="${w}:sun">${WEEK_LABELS[w]} · Sunday</option>`);
+    } else {
+      opts.push(`<option value="${w}:mon">${WEEK_LABELS[w]} · Monday</option>`);
+      opts.push(`<option value="${w}:tue">${WEEK_LABELS[w]} · Tuesday</option>`);
+    }
+  }
+  return opts.join('');
+}
+async function assignToSlot(dishId, encoded, dishName){
+  if(!encoded) return;
+  const [wkStr, slot] = encoded.split(':');
+  const wk = Number(wkStr);
+  dinnerSelections[wk][slot] = dishId;
+  await saveDinnerSelections();
+  renderPlan();
+  renderShop();
+  renderTonight();
+  const dayLabel = slot === 'sun' ? 'Sunday' : (slot === 'mon' ? 'Monday' : 'Tuesday');
+  const confirmEl = document.getElementById('assign-confirm-' + dishId);
+  const selectEl = document.getElementById('assign-' + dishId);
+  if(confirmEl){
+    confirmEl.textContent = `✓ Added — ${dishName} is now ${WEEK_LABELS[wk]} ${dayLabel}`;
+    confirmEl.style.display = 'block';
+    setTimeout(()=>{ confirmEl.style.display = 'none'; }, 3500);
+  }
+  if(selectEl) selectEl.value = '';
 }
 function toggleCard(card){ card.classList.toggle('open'); }
 async function toggleLunch(id){
@@ -1279,6 +1371,13 @@ function renderShop(){
     <div class="filter-row">
       ${[0,1,2].map(i=>`<div class="filter-chip ${currentShopWeekTab===i?'active':''}" onclick="setShopWeek(${i})">${WEEK_LABELS[i]} · ${formatWeekRange(i)}${i===weekIdx ? ' (this week)':''}</div>`).join('')}
     </div>
+
+    <div class="slot-card" style="background:var(--paper-2); border:1px solid var(--mustard-dim); margin-bottom:16px;">
+      <div class="slot-label">💶 Estimated shop cost — ${WEEK_LABELS[currentShopWeekTab]}</div>
+      <div style="font-family:'Fraunces',serif; font-weight:600; font-size:22px; color:var(--ink);">~€${estimateWeekCost(currentShopWeekTab).toFixed(2)}</div>
+      <div class="plan-note" style="margin-top:6px;">Rough estimate based on typical Tesco Ireland prices — actual cost varies by brand, offers, and what you already have in.</div>
+    </div>
+
     <div id="shop-items"></div>
     <div class="reset-link" onclick="resetShop()">Reset ticks for ${WEEK_LABELS[currentShopWeekTab]} (${formatWeekRange(currentShopWeekTab)})</div>
   `;
@@ -1298,7 +1397,8 @@ function renderShopItems(){
       return `
         <div class="shop-item ${isChecked?'checked':''}" onclick="toggleShopItem('${key.replace(/'/g,"\\'")}')">
           <div class="checkbox ${isChecked?'checked':''}">${isChecked?'✓':''}</div>
-          <span>${item}</span>
+          <span style="flex:1;">${item}</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); flex-shrink:0;">~€${estimateItemCost(item).toFixed(2)}</span>
         </div>`;
     }).join('');
   }
