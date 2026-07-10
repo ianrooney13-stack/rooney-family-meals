@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Rooney Family Greystones — Healthy & Nutritious Meals</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+
+:root{
+  --ink:#1B2A4A;
+  --ink-2:#243a63;
+  --paper:#FBF7EE;
+  --paper-2:#F3EDDE;
+  --herb:#3F6B4A;
+  --herb-2:#2E5138;
+  --mustard:#D9A441;
+  --mustard-dim:#e9d3a2;
+  --clay:#B65C3D;
+  --charcoal:#262321;
+  --muted:#6b6459;
+  --line:#e3dbc8;
+  --card:#ffffff;
+  --radius:16px;
+  --shadow: 0 1px 2px rgba(38,35,33,0.06), 0 6px 20px rgba(38,35,33,0.08);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--charcoal);
+  font-family:'Inter',system-ui,sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+#app{
+  max-width:480px;
+  margin:0 auto;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  padding-bottom:78px;
+}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 20px 10px;
+}
+.brand{ display:flex; flex-direction:column; line-height:1.05; }
+.brand .eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.11em;
+  text-transform:uppercase;
+  color:var(--herb-2);
+  margin-bottom:3px;
+}
+.brand h1{
+  font-family:'Fraunces',serif;
+  font-weight:700;
+  font-size:19px;
+  margin:0;
+  color:var(--ink);
+  line-height:1.15;
+}
+.info-btn{
+  width:34px;height:34px;border-radius:50%;
+  border:1.5px solid var(--line);
+  background:var(--card);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer; color:var(--ink); flex-shrink:0;
+}
+.info-btn:hover{ background:var(--paper-2); }
+
+main{flex:1;padding:6px 20px 20px;}
+
+.section-head{
+  display:flex; align-items:baseline; justify-content:space-between;
+  margin:20px 0 12px;
+}
+.section-head h2{
+  font-family:'Fraunces',serif; font-size:15px; font-weight:600;
+  color:var(--ink); margin:0;
+}
+.section-head .tag{ font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); text-align:right;}
+
+/* ---------- Hero card ---------- */
+.hero-wrap{ margin-top:8px; }
+.hero-card{
+  background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:22px 22px 20px; position:relative; transform:rotate(-0.4deg);
+  border:1px solid var(--line);
+}
+.hero-card::before{
+  content:''; position:absolute; top:14px; left:14px;
+  width:9px;height:9px; border-radius:50%; background:var(--clay);
+  box-shadow:0 1px 2px rgba(0,0,0,0.25);
+}
+.hero-day{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--herb-2); margin-left:22px; }
+.hero-dish{ font-family:'Fraunces',serif; font-weight:600; font-size:25px; line-height:1.15; color:var(--ink); margin:8px 0 10px; margin-left:22px; }
+.hero-meta{ display:flex; gap:8px; margin-left:22px; flex-wrap:wrap; margin-bottom:14px; }
+.pill{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; padding:4px 10px; border-radius:100px; background:var(--paper-2); color:var(--ink-2); border:1px solid var(--line); }
+.pill.method{ background:var(--herb); color:white; border:none; }
+.hero-divider{ border:none; border-top:1px dashed var(--line); margin:14px 0; }
+.block-label{ font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.ingredients{ font-size:14px; line-height:1.6; color:var(--charcoal); }
+.steps{ font-size:14px; line-height:1.65; color:var(--charcoal); }
+.prep-note{ background:var(--paper-2); border-left:3px solid var(--mustard); padding:10px 12px; border-radius:6px; font-size:13px; line-height:1.55; color:var(--ink-2); margin-top:4px; }
+
+.unplanned .hero-dish{ font-size:21px; }
+.fav-list{ display:flex; flex-direction:column; gap:8px; margin-left:22px; }
+.fav-item{ display:flex; justify-content:space-between; align-items:center; background:var(--paper-2); border-radius:10px; padding:10px 12px; font-size:13.5px; }
+.fav-item .stars{ color:var(--mustard); font-size:12px; font-family:'IBM Plex Mono',monospace; }
+
+.rate-box{ margin-top:16px; }
+.stars-row{ display:flex; gap:6px; margin:8px 0 10px; }
+.star-btn{ background:none;border:none;cursor:pointer; font-size:26px; line-height:1; padding:0; color:var(--line); transition:transform .1s ease; }
+.star-btn.filled{ color:var(--mustard); }
+.star-btn:active{ transform:scale(1.15); }
+.status-row{ display:flex; gap:8px; margin-bottom:10px;}
+.status-chip{ font-family:'IBM Plex Mono',monospace; font-size:11px; padding:6px 12px; border-radius:100px; border:1.5px solid var(--line); background:var(--card); cursor:pointer; color:var(--muted); }
+.status-chip.active{ background:var(--ink); border-color:var(--ink); color:white; }
+.note-input{ width:100%; border:1.5px solid var(--line); border-radius:10px; padding:9px 12px; font-family:'Inter',sans-serif; font-size:13.5px; resize:none; margin-bottom:10px; background:var(--paper); }
+.log-btn{ background:var(--ink); color:white; border:none; border-radius:10px; padding:11px 18px; font-family:'Inter',sans-serif; font-weight:600; font-size:14px; cursor:pointer; width:100%; }
+.log-btn:hover{ background:var(--ink-2); }
+.log-btn:disabled{ background:var(--line); color:var(--muted); cursor:default; }
+.logged-msg{ font-size:13px; color:var(--herb-2); font-weight:600; margin-top:10px; display:none; }
+
+/* Week strip */
+.week-strip{ display:flex; gap:10px; overflow-x:auto; padding-bottom:6px; margin-bottom:4px; }
+.week-strip::-webkit-scrollbar{ display:none; }
+.day-card{ min-width:118px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; flex-shrink:0; }
+.day-card.today{ border-color:var(--herb); box-shadow:0 0 0 1.5px var(--herb) inset;}
+.day-card .d{ font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
+.day-card .dish{ font-family:'Fraunces',serif; font-weight:600; font-size:13px; color:var(--ink); margin-top:4px; line-height:1.25; }
+
+/* Filters / toggles */
+.filter-row{ display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+.filter-chip{ font-family:'IBM Plex Mono',monospace; font-size:11px; padding:6px 12px; border-radius:100px; border:1.5px solid var(--line); background:var(--card); cursor:pointer; color:var(--muted); }
+.filter-chip.active{ background:var(--herb); border-color:var(--herb); color:white; }
+.toggle-row{ display:flex; background:var(--paper-2); border-radius:100px; padding:4px; margin-bottom:16px; }
+.toggle-btn{ flex:1; text-align:center; padding:8px 0; border-radius:100px; font-family:'Inter',sans-serif; font-weight:600; font-size:12.5px; cursor:pointer; color:var(--muted); }
+.toggle-btn.active{ background:var(--ink); color:white; }
+
+/* Recipe / lunch / snack cards */
+.recipe-card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:12px; }
+.recipe-card .top-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; cursor:pointer; }
+.recipe-card h3{ font-family:'Fraunces',serif; font-size:16px; font-weight:600; color:var(--ink); margin:0 0 4px; }
+.recipe-card .sub{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted); }
+.rating-badge{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--mustard); white-space:nowrap; padding-top:2px; }
+.recipe-detail{ margin-top:12px; padding-top:12px; border-top:1px dashed var(--line); display:none; font-size:13.5px; line-height:1.6; }
+.recipe-card.open .recipe-detail{ display:block; }
+.recipe-detail .block-label{ margin-top:10px; }
+.recipe-detail .block-label:first-child{ margin-top:0; }
+
+.include-row{ display:flex; align-items:center; gap:10px; }
+.toggle-switch{
+  width:38px; height:22px; border-radius:100px; background:var(--line); position:relative; cursor:pointer; flex-shrink:0; transition:background .15s;
+}
+.toggle-switch.on{ background:var(--herb); }
+.toggle-switch .knob{ position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:white; transition:left .15s; box-shadow:0 1px 2px rgba(0,0,0,0.25);}
+.toggle-switch.on .knob{ left:18px; }
+
+/* Plan tab */
+.slot-card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:10px; }
+.slot-card .slot-label{ font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.slot-select{
+  width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid var(--line);
+  font-family:'Inter',sans-serif; font-size:14px; background:var(--paper); color:var(--charcoal);
+  font-weight:600; appearance:none; -webkit-appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%236b6459' stroke-width='2'><path d='M2 5l5 5 5-5'/></svg>");
+  background-repeat:no-repeat; background-position:right 12px center;
+}
+.plan-note{ font-size:12.5px; color:var(--muted); margin-top:6px; }
+.plan-summary-link{
+  font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--herb-2); text-decoration:underline; cursor:pointer;
+}
+
+/* Shopping */
+.shop-section-title{ font-family:'Fraunces',serif; font-weight:600; font-size:14px; color:var(--ink); margin:18px 0 6px; }
+.shop-section-title:first-child{ margin-top:4px; }
+.shop-item{ display:flex; align-items:center; gap:12px; padding:11px 4px; border-bottom:1px solid var(--line); font-size:14px; cursor:pointer; }
+.shop-item:last-child{ border-bottom:none; }
+.checkbox{ width:20px;height:20px; border-radius:6px; border:1.5px solid var(--line); flex-shrink:0; display:flex;align-items:center;justify-content:center; background:var(--card); }
+.checkbox.checked{ background:var(--herb); border-color:var(--herb); color:white; font-size:13px; }
+.shop-item.checked span{ text-decoration:line-through; color:var(--muted); }
+.reset-link{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); text-decoration:underline; cursor:pointer; display:inline-block; margin-top:14px; }
+
+/* Log */
+.log-entry{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px 16px; margin-bottom:10px; }
+.log-entry .row1{ display:flex; justify-content:space-between; align-items:baseline; }
+.log-entry .dish{ font-family:'Fraunces',serif; font-weight:600; font-size:14.5px; color:var(--ink); }
+.log-entry .date{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted); }
+.log-entry .stars-static{ color:var(--mustard); font-size:13px; margin:4px 0; font-family:'IBM Plex Mono',monospace;}
+.log-entry .notes{ font-size:13px; color:var(--charcoal); margin-top:2px;}
+.log-entry .status-tag{ font-family:'IBM Plex Mono',monospace; font-size:10px; padding:2px 8px; border-radius:100px; background:var(--paper-2); color:var(--ink-2); display:inline-block; margin-top:6px; }
+.empty-state{ text-align:center; padding:40px 20px; color:var(--muted); font-size:14px; }
+.empty-state .big{ font-family:'Fraunces',serif; font-size:17px; color:var(--ink); margin-bottom:6px; }
+
+/* Overview page */
+.ov-hero{
+  background:var(--ink); color:white; border-radius:var(--radius); padding:30px 24px 26px; margin-top:8px; position:relative; overflow:hidden;
+}
+.ov-hero::after{
+  content:''; position:absolute; right:-40px; bottom:-40px; width:150px; height:150px; border-radius:50%;
+  background:var(--herb); opacity:0.35;
+}
+.ov-hero::before{
+  content:''; position:absolute; left:-20px; top:-30px; width:90px; height:90px; border-radius:50%;
+  background:var(--mustard); opacity:0.18;
+}
+.ov-hero .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--mustard-dim); position:relative; }
+.ov-hero h2{ font-family:'Fraunces',serif; font-size:27px; font-weight:600; margin:10px 0 12px; position:relative; line-height:1.16; font-style:italic; }
+.ov-hero h2 em{ font-style:normal; color:var(--mustard-dim); }
+.ov-hero p{ font-size:14px; line-height:1.6; color:#dfe4ee; margin:0; position:relative; }
+
+.pillar-row{ display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+.pillar-card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 16px 15px;
+  display:flex; gap:14px; align-items:flex-start;
+}
+.pillar-icon{ width:42px; height:42px; flex-shrink:0; border-radius:11px; display:flex; align-items:center; justify-content:center; }
+.pillar-card h4{ font-family:'Fraunces',serif; font-size:14.5px; font-weight:600; color:var(--ink); margin:0 0 3px; }
+.pillar-card p{ font-size:12.5px; line-height:1.5; color:var(--muted); margin:0; }
+
+.jack-spotlight{
+  background: linear-gradient(135deg, #FBF3E1, var(--paper-2));
+  border:1.5px solid var(--mustard-dim);
+  border-radius:14px; padding:16px 18px; margin-top:8px;
+  position:relative;
+}
+.jack-spotlight .who-badge{ margin-bottom:8px; display:inline-block; }
+.jack-spotlight p{ font-size:13px; line-height:1.55; color:var(--charcoal); margin:6px 0 0; }
+
+@keyframes fadeSlideUp{
+  from{ opacity:0; transform:translateY(14px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+.ov-anim{ animation:fadeSlideUp 0.55s ease both; }
+.ov-anim:nth-of-type(1){ animation-delay:0.02s; }
+.ov-anim:nth-of-type(2){ animation-delay:0.10s; }
+.ov-anim:nth-of-type(3){ animation-delay:0.18s; }
+.ov-anim:nth-of-type(4){ animation-delay:0.26s; }
+.ov-anim:nth-of-type(5){ animation-delay:0.34s; }
+.ov-anim:nth-of-type(6){ animation-delay:0.42s; }
+.ov-anim:nth-of-type(7){ animation-delay:0.50s; }
+@media (prefers-reduced-motion: reduce){
+  .ov-anim{ animation:none; }
+}
+
+.ov-block{ margin-top:22px; }
+.ov-block h3{ font-family:'Fraunces',serif; font-size:15px; color:var(--ink); margin:0 0 10px; }
+.ov-step{ display:flex; gap:12px; margin-bottom:12px; }
+.ov-step .num{
+  font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; color:white; background:var(--herb);
+  width:24px;height:24px; border-radius:50%; display:flex; align-items:center;justify-content:center; flex-shrink:0;
+}
+.ov-step .txt{ font-size:13.5px; line-height:1.55; padding-top:2px; }
+.ov-step .txt b{ color:var(--ink); }
+.owner-grid{ display:flex; flex-direction:column; gap:8px; }
+.owner-row{ display:flex; justify-content:space-between; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:11px 14px; font-size:13px; }
+.owner-row .who{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; background:var(--paper-2); padding:3px 9px; border-radius:100px; color:var(--ink-2); }
+.who-badge{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; background:var(--mustard-dim); padding:2px 8px; border-radius:100px; color:var(--ink-2); white-space:nowrap; }
+.recipe-thumb{ display:block; width:100%; max-width:220px; border-radius:10px; margin-top:8px; border:1px solid var(--line); }
+.supply-list{ display:flex; flex-direction:column; gap:8px; }
+.supply-item{ display:flex; gap:10px; align-items:flex-start; font-size:13px; line-height:1.5; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:11px 14px; }
+.supply-item .tick{ color:var(--herb); font-weight:700; flex-shrink:0; }
+.cta-btn{
+  margin-top:22px; width:100%; background:var(--herb); color:white; border:none; border-radius:12px;
+  padding:14px; font-family:'Inter',sans-serif; font-weight:700; font-size:14.5px; cursor:pointer;
+}
+
+/* Bottom nav */
+.bottom-nav{
+  position:fixed; bottom:0; left:0; right:0; max-width:480px; margin:0 auto;
+  background:var(--card); border-top:1px solid var(--line); display:flex;
+  padding:7px 2px calc(7px + env(safe-area-inset-bottom));
+  box-shadow:0 -4px 16px rgba(38,35,33,0.06);
+}
+.nav-btn{ flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; background:none; border:none; cursor:pointer; padding:5px 0px; color:var(--muted); }
+.nav-btn.active{ color:var(--ink); }
+.nav-btn span{ font-family:'Inter',sans-serif; font-size:8.8px; font-weight:600; }
+.nav-btn svg{ width:18px; height:18px; stroke:var(--muted); stroke-width:1.8; fill:none; }
+.nav-btn.active svg{ stroke:var(--herb); }
+
+.view{ display:none; }
+.view.active{ display:block; }
+
+.modal-overlay{ position:fixed; inset:0; background:rgba(27,42,74,0.45); display:none; align-items:flex-end; justify-content:center; z-index:50; }
+.modal-overlay.open{ display:flex; }
+.modal{ background:var(--paper); max-width:480px; width:100%; border-radius:20px 20px 0 0; padding:24px 22px 32px; max-height:82vh; overflow-y:auto; }
+.modal h2{ font-family:'Fraunces',serif; color:var(--ink); margin-top:0; }
+.modal .rule{ display:flex; gap:10px; margin-bottom:14px; align-items:flex-start; font-size:13.5px; line-height:1.55;}
+.modal .rule .dot{ width:6px;height:6px;border-radius:50%;background:var(--herb); margin-top:7px; flex-shrink:0;}
+.modal .who{ font-weight:700; color:var(--ink-2); }
+.close-modal{ width:100%; background:var(--ink); color:white; border:none; border-radius:10px; padding:12px; font-weight:600; margin-top:8px; cursor:pointer; }
+
+@media (max-width:360px){ .hero-dish{ font-size:21px; } }
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="eyebrow">The Rooney Family Greystones</div>
+      <h1>Healthy &amp; Nutritious Meals</h1>
+    </div>
+    <button class="info-btn" onclick="openModal()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
+    </button>
+  </div>
+
+  <main>
+    <div class="view active" id="view-overview"></div>
+    <div class="view" id="view-tonight"></div>
+    <div class="view" id="view-plan"></div>
+    <div class="view" id="view-recipes"></div>
+    <div class="view" id="view-shop"></div>
+    <div class="view" id="view-log"></div>
+    <div class="view" id="view-tips"></div>
+  </main>
+
+  <div class="bottom-nav">
+    <button class="nav-btn active" data-view="overview" onclick="switchView('overview')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>
+      <span>Overview</span>
+    </button>
+    <button class="nav-btn" data-view="tonight" onclick="switchView('tonight')">
+      <svg viewBox="0 0 24 24"><path d="M4 21V9l8-6 8 6v12"/><path d="M9 21v-7h6v7"/></svg>
+      <span>Tonight</span>
+    </button>
+    <button class="nav-btn" data-view="plan" onclick="switchView('plan')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4M16 3v4"/></svg>
+      <span>Plan</span>
+    </button>
+    <button class="nav-btn" data-view="recipes" onclick="switchView('recipes')">
+      <svg viewBox="0 0 24 24"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4z"/><path d="M8 8h6M8 12h6"/></svg>
+      <span>Recipes</span>
+    </button>
+    <button class="nav-btn" data-view="shop" onclick="switchView('shop')">
+      <svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6L5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg>
+      <span>Shop</span>
+    </button>
+    <button class="nav-btn" data-view="log" onclick="switchView('log')">
+      <svg viewBox="0 0 24 24"><path d="M12 2l2.5 6.5L21 9l-5 4.5 1.5 7L12 17l-5.5 3.5L8 13.5 3 9l6.5-0.5z"/></svg>
+      <span>Ratings</span>
+    </button>
+    <button class="nav-btn" data-view="tips" onclick="switchView('tips')">
+      <svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.5.5 1 1.3 1 2.5h6c0-1.2.5-2 1-2.5A6 6 0 0 0 12 2z"/></svg>
+      <span>Tips</span>
+    </button>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2>Quick reminder</h2>
+    <div class="rule"><div class="dot"></div><div><span class="who">Dinners (Sun–Wed):</span> Ian owns these. Cook all 4 on Sunday.</div></div>
+    <div class="rule"><div class="dot"></div><div><span class="who">Breakfast &amp; snacks:</span> Helen &amp; Jack's domain — snack ideas live under Recipes if useful.</div></div>
+    <div class="rule"><div class="dot"></div><div><span class="who">Lunches:</span> shared go-to list.</div></div>
+    <div class="rule"><div class="dot"></div><div>Change any night's dish or which lunches/snacks are "in" from the <span class="who">Plan</span> tab — the <span class="who">Shop</span> list updates automatically.</div></div>
+    <div class="rule"><div class="dot"></div><div>See the <span class="who">Overview</span> tab for the full picture anytime.</div></div>
+    <button class="close-modal" onclick="closeModal()">Got it</button>
+  </div>
+</div>
+
+<div id="firebase-warning" style="display:none; position:fixed; top:0; left:0; right:0; background:#B65C3D; color:white; text-align:center; padding:10px 16px; font-family:'Inter',sans-serif; font-size:12.5px; z-index:100;">
+  ⚠️ Firebase isn't configured yet — ratings and shopping ticks won't save. See the FIREBASE_CONFIG comment near the top of the script.
+</div>
+
+<script>
+/* ============================================================
+   FIREBASE SETUP — paste your config below (see setup instructions)
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAvJXNGxIiYZIx7o2txxAGNHWotSU97tTw",
+  authDomain: "rooney-family-meals.firebaseapp.com",
+  databaseURL: "https://rooney-family-meals-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "rooney-family-meals",
+};
+const DB_NAMESPACE = 'rooney-family-meals'; // all keys are stored under this path
+
+let db = null;
+let firebaseReady = false;
+try{
+  if(FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY"){
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.database();
+    firebaseReady = true;
+  } else {
+    document.getElementById('firebase-warning').style.display = 'block';
+  }
+}catch(e){
+  console.error('Firebase init failed', e);
+  document.getElementById('firebase-warning').style.display = 'block';
+}
+
+/* ============================================================
+   DATA
+   ============================================================ */
+const RECIPES = [
+  {id:'D1', proteins:['fish'], calories:450, prepMins:10, cookMins:20, fish:true, dish:"Airfryer Salmon with Roasted Veg", tag:"Fish Day", method:"Airfryer + Oven",
+   ingredients:["3 salmon fillets","1 lemon","1 tbsp olive oil","1 courgette","1 red pepper","1 broccoli head","1 tsp garlic powder","Salt & pepper"],
+   steps:["Toss chopped veg in oil, salt, pepper and garlic powder, roast in oven 20 min at 200°C.","Airfry salmon skin-side down 8-10 min at 180°C with a squeeze of lemon.","Serve together."],
+   prep:"Chop veg Sunday morning while shopping is being put away. Salmon needs no marinating — straight from fridge to airfryer."},
+  {id:'D2', proteins:['chicken','chickpea'], calories:550, prepMins:15, cookMins:40, fish:false, dish:"Chicken & Chickpea Tray Bake", tag:"", method:"Oven",
+   ingredients:["4 chicken thighs (bone-in, skin-on)","1 tin chickpeas, drained","1 red onion","2 peppers","1 courgette","1 tbsp smoked paprika","1 tbsp olive oil","1 lemon"],
+   steps:["Toss chickpeas and chopped veg with oil, paprika and salt in a large tray.","Nestle chicken thighs on top, skin up.","Roast 35-40 min at 200°C until chicken is golden and cooked through."],
+   prep:"Chop and assemble the whole tray Sunday, cover, keep in the fridge — just bake Monday evening."},
+  {id:'D3', proteins:['chicken'], calories:600, prepMins:15, cookMins:5, fish:false, dish:"Slow Cooker Chicken Curry", tag:"", method:"Slow Cooker",
+   ingredients:["4 chicken breasts","1 tin coconut milk","2 tbsp curry powder or paste","1 tin chopped tomatoes","1 onion","2 cloves garlic","Handful spinach","Rice to serve"],
+   steps:["Add chicken, onion, garlic, coconut milk, tomatoes and curry powder to the slow cooker.","Cook on low 6-7 hrs or high 3-4 hrs.","Stir through spinach for the last 10 min. Shred chicken slightly, serve over rice."],
+   prep:"Assemble Sunday and refrigerate the insert overnight, then switch on Tuesday morning."},
+  {id:'D4', proteins:['chicken','chickpea'], calories:450, prepMins:5, cookMins:10, fish:false, backup:true, dish:"Chicken & Chickpea Stir-fry", tag:"Backup / Leftovers", method:"Hob (backup only)",
+   ingredients:["2 chicken breasts, sliced","1 tin chickpeas","1 bag stir-fry veg","1 tbsp soy sauce","1 tsp ginger","1 clove garlic"],
+   steps:["Default is leftovers from Mon/Tue.","Backup if not enough: fry chicken until cooked, add veg and chickpeas, stir-fry 5 min, add soy, garlic and ginger, cook 2 more min."],
+   prep:"Keep backup ingredients as pantry/freezer staples, not a planned weekly buy."},
+
+  {id:'D5', proteins:['fish'], calories:400, prepMins:10, cookMins:12, fish:true, dish:"Airfryer Garlic Butter Fish", tag:"Fish Day", method:"Airfryer",
+   ingredients:["3 white fish fillets (cod/haddock)","1 tbsp butter","2 cloves garlic, crushed","1 tsp parsley","300g green beans or broccoli","1 tbsp olive oil"],
+   steps:["Melt butter with garlic, brush over fish.","Airfry fish 10 min at 180°C.","Toss beans in oil, airfry alongside (or steam) 6-8 min. Sprinkle parsley to serve."],
+   prep:"Fish can be brushed with garlic butter and kept covered in the fridge from the Sunday shop to Sunday evening cook."},
+  {id:'D6', proteins:['chickpea'], calories:450, prepMins:10, cookMins:5, fish:false, dish:"Slow Cooker Chickpea & Spinach Dahl", tag:"", method:"Slow Cooker",
+   ingredients:["2 tins chickpeas, drained","1 tin chopped tomatoes","1 onion","2 cloves garlic","1 tbsp curry powder","1 tsp cumin","400ml veg stock","Large handful spinach","Rice or naan"],
+   steps:["Add chickpeas, tomatoes, onion, garlic, spices and stock to the slow cooker.","Cook on low 6 hrs or high 3 hrs.","Stir through spinach for last 10 min, mash a few chickpeas for a thicker texture."],
+   prep:"Fully veg — assemble Sunday evening and cook Monday, or start Monday morning."},
+  {id:'D7', proteins:['chicken'], calories:500, prepMins:15, cookMins:25, fish:false, dish:"Oven Chicken Fajita Tray Bake", tag:"", method:"Oven",
+   ingredients:["4 chicken breasts, sliced","2 peppers","1 red onion","1 tbsp fajita seasoning","1 tbsp olive oil","Wraps or rice","Lime"],
+   steps:["Toss sliced chicken, peppers and onion with oil and fajita seasoning on a tray.","Roast 20-25 min at 200°C, turning halfway.","Serve in wraps or over rice with a squeeze of lime."],
+   prep:"Slice chicken and veg Sunday, toss with seasoning, keep covered in the fridge — straight onto a tray Tuesday evening."},
+  {id:'D8', proteins:['chicken'], calories:420, prepMins:5, cookMins:10, fish:false, backup:true, dish:"Chicken & Veg Stir-fry", tag:"Backup / Leftovers", method:"Hob (backup only)",
+   ingredients:["2 chicken breasts, sliced","1 bag stir-fry veg","1 tbsp soy sauce","1 tsp honey","1 clove garlic"],
+   steps:["Default is leftovers from Mon/Tue.","Backup if not enough: fry chicken until cooked, add veg, stir-fry 5 min, add soy, honey and garlic, cook 2 more min."],
+   prep:""},
+
+  {id:'D9', proteins:['fish'], calories:500, prepMins:25, cookMins:20, fish:true, dish:"Fish Pie with Sweet Potato Mash", tag:"Fish Day", method:"Oven",
+   ingredients:["3 white fish fillets + a handful of prawns (optional)","2 large sweet potatoes","1 leek","200ml milk","1 tbsp flour","1 tbsp butter","Handful peas","30g cheese (optional)"],
+   steps:["Boil and mash sweet potatoes.","Poach fish and leek gently in milk, flake fish, stir in a butter-flour roux to thicken, add peas.","Pour into a dish, top with mash, scatter cheese, bake 20 min at 190°C until golden."],
+   prep:"This is the dish that uses up sweet potato — buy exactly 2, no more 'just in case'. Mash and fish mixture can both be made Sunday morning, assembled and baked Sunday evening."},
+  {id:'D10', proteins:['chickpea'], calories:450, prepMins:15, cookMins:5, fish:false, dish:"Slow Cooker Moroccan Chickpea & Veg Stew", tag:"", method:"Slow Cooker",
+   ingredients:["2 tins chickpeas","1 tin chopped tomatoes","1 courgette","1 carrot","1 onion","2 cloves garlic","1 tbsp ras el hanout (or cumin+cinnamon)","300ml veg stock","Couscous"],
+   steps:["Add all ingredients except couscous to the slow cooker.","Cook on low 6 hrs or high 3 hrs.","Serve over couscous."],
+   prep:"Fully veg and forgiving — chop everything Sunday, cook overnight in the fridge, start Monday morning."},
+  {id:'D11', proteins:['chicken'], calories:500, prepMins:15, cookMins:20, fish:false, dish:"Airfryer Chicken Thighs with Mediterranean Veg", tag:"", method:"Airfryer + Oven",
+   ingredients:["4 chicken thighs","1 courgette","1 red pepper","1 red onion","Handful cherry tomatoes","1 tsp oregano","1 tbsp olive oil","Feta to crumble (optional)"],
+   steps:["Airfry chicken thighs 18-20 min at 190°C, turning halfway.","Roast the chopped veg in the oven with oil and oregano for 20 min.","Crumble feta over veg to serve."],
+   prep:"Chop veg Sunday, keep in a container in the fridge; chicken needs no marinating."},
+  {id:'D12', proteins:['chicken','chickpea'], calories:480, prepMins:5, cookMins:15, fish:false, backup:true, dish:"15-min Chicken & Chickpea Curry", tag:"Backup / Leftovers", method:"Hob (backup only)",
+   ingredients:["2 chicken breasts, diced","1 tin chickpeas","1 jar curry sauce (or 2 tbsp curry powder + tin tomatoes)","Rice"],
+   steps:["Default is leftovers from Mon/Tue.","Backup if not enough: fry chicken until cooked, add chickpeas and curry sauce, simmer 8-10 min, serve over rice."],
+   prep:""},
+
+  {id:'D13', proteins:['fish'], calories:350, prepMins:10, cookMins:8, fish:true, dish:"Airfryer Prawn & Courgette Skewers", tag:"Fish Day", method:"Airfryer",
+   ingredients:["300g raw prawns","1 courgette","1 lemon","1 tbsp olive oil","1 tsp paprika","Garlic","Couscous or rice to serve"],
+   steps:["Thread prawns and sliced courgette onto skewers (or just toss loose in the basket).","Toss in oil, paprika, garlic and lemon zest.","Airfry 7-8 min at 190°C, shaking halfway, until prawns are pink and cooked through."],
+   prep:"Prawns can be tossed in the marinade Sunday morning and kept covered in the fridge — quickest fish night in the rotation."},
+  {id:'D14', proteins:['chickpea'], calories:500, prepMins:15, cookMins:5, fish:false, dish:"Slow Cooker Chickpea & Butternut Squash Curry", tag:"", method:"Slow Cooker",
+   ingredients:["2 tins chickpeas","1 small butternut squash, cubed","1 tin coconut milk","1 onion","2 cloves garlic","1 tbsp curry powder","1 tsp turmeric","Rice to serve"],
+   steps:["Add all ingredients to the slow cooker.","Cook on low 6 hrs or high 3-4 hrs, until squash is soft.","Mash a little of the squash into the sauce to thicken, serve over rice."],
+   prep:"Chop squash and onion Sunday, keep in the fridge — good one for using up squash before it goes soft."},
+  {id:'D15', proteins:['chicken'], calories:480, prepMins:15, cookMins:16, fish:false, dish:"Airfryer Chicken & Veg Skewers with Tzatziki", tag:"", method:"Airfryer",
+   ingredients:["4 chicken thighs, cubed","1 courgette","1 red pepper","1 red onion","1 tsp oregano","1 tbsp olive oil","Greek yoghurt, cucumber, garlic and dill for tzatziki","Pitta or rice"],
+   steps:["Thread chicken and veg onto skewers, toss with oil and oregano.","Airfry 14-16 min at 190°C, turning halfway.","Stir together yoghurt, grated cucumber, garlic and dill for the tzatziki. Serve alongside."],
+   prep:"Chicken and veg can be cubed, skewered and kept covered in the fridge from Sunday; tzatziki keeps 2-3 days."},
+
+  {id:'D16', proteins:['beef'], calories:520, prepMins:15, cookMins:5, fish:false, dish:"Slow Cooker Beef & Veg Stew", tag:"", method:"Slow Cooker",
+   ingredients:["500g diced stewing beef","2 carrots","1 onion","2 potatoes or parsnips","1 tbsp flour","500ml beef stock","1 tbsp tomato purée","Bay leaf"],
+   steps:["Toss beef in flour, add to the slow cooker with all chopped veg, stock, tomato purée and bay leaf.","Cook on low 7-8 hrs or high 4-5 hrs, until beef is fork-tender.","Remove bay leaf, serve as is — it's a complete meal in the bowl."],
+   prep:"Chop all veg Sunday and toss beef in flour, keep covered in the fridge — a good one to start before the school run on a chosen day."},
+  {id:'D17', proteins:['beef'], calories:580, prepMins:15, cookMins:5, fish:false, dish:"Slow Cooker Chilli Con Carne", tag:"", method:"Slow Cooker",
+   ingredients:["500g lean beef mince","1 onion","2 cloves garlic","1 tin kidney beans","1 tin chopped tomatoes","1 tbsp tomato purée","1 tsp cumin","1 tsp smoked paprika","Square of dark chocolate (optional)","Rice to serve"],
+   steps:["Brown the mince first if you have 5 minutes (optional but improves flavour), then add everything to the slow cooker.","Cook on low 6 hrs or high 3-4 hrs.","Stir in the chocolate at the end for depth, serve over rice."],
+   prep:"Kidney beans, not chickpeas, so this pairs well with a chickpea-based dinner earlier in the week without repeating the same pulse twice."},
+  {id:'D18', proteins:['beef'], calories:550, prepMins:15, cookMins:12, fish:false, dish:"Airfryer Beef Meatballs with Veg", tag:"", method:"Airfryer",
+   ingredients:["500g lean beef mince","1 egg","2 tbsp breadcrumbs","1 tsp dried oregano","1 courgette","1 red pepper","Jar of tomato sauce or passata","Pasta or rice to serve"],
+   steps:["Mix mince, egg, breadcrumbs and oregano, roll into meatballs.","Airfry meatballs 10-12 min at 190°C, shaking halfway.","Warm through with chopped veg and tomato sauce, serve over pasta or rice."],
+   prep:"Meatballs can be rolled and kept covered in the fridge from Sunday — quick 12-minute cook on the night."},
+
+  {id:'D19', proteins:['chickpea'], calories:520, prepMins:12, cookMins:20, fish:false, dish:"Airfryer Halloumi & Mediterranean Veg Traybake", tag:"", method:"Airfryer + Oven",
+   ingredients:["225g halloumi, sliced","1 courgette","1 red pepper","1 red onion","Handful cherry tomatoes","1 tsp oregano","1 tbsp olive oil","Couscous or flatbread"],
+   steps:["Toss chopped veg with oil and oregano, roast in the oven 20 min at 200°C.","Airfry halloumi slices 6-8 min at 190°C, turning halfway, until golden.","Serve halloumi over the roasted veg with couscous or flatbread."],
+   prep:"Veg can be chopped Sunday and kept in the fridge; halloumi is best sliced fresh on the night so it doesn't dry out."},
+  {id:'D20', proteins:['chickpea'], calories:430, prepMins:12, cookMins:5, fish:false, dish:"Slow Cooker Lentil & Vegetable Dahl", tag:"", method:"Slow Cooker",
+   ingredients:["200g red lentils","1 tin chopped tomatoes","1 carrot","1 onion","2 cloves garlic","1 tbsp curry powder","1 tsp turmeric","500ml veg stock","Handful spinach","Rice or naan"],
+   steps:["Add lentils, tomatoes, chopped veg, garlic, spices and stock to the slow cooker.","Cook on low 5-6 hrs or high 3 hrs, until lentils are soft.","Stir through spinach for the last 10 min, serve over rice or with naan."],
+   prep:"Lentils rather than chickpeas, so this pairs well earlier in a week that already has a chickpea dish elsewhere — different pulse, same easy method."},
+  {id:'D21', proteins:['chickpea'], calories:420, prepMins:20, cookMins:28, fish:false, dish:"Baked Stuffed Peppers with Rice, Beans & Feta", tag:"", method:"Oven",
+   ingredients:["3-4 large peppers, halved","1 tin black beans or kidney beans","150g cooked rice","1 tin chopped tomatoes","1 tsp cumin","Feta to crumble","Handful cherry tomatoes"],
+   steps:["Mix cooked rice, beans, chopped tomatoes and cumin, spoon into the halved peppers.","Top with crumbled feta and a few cherry tomatoes.","Bake 25-30 min at 190°C until peppers are soft and tops are golden."],
+   prep:"Rice can be cooked and the filling mixed Sunday, then just spoon into peppers and bake fresh on the night."},
+];
+
+const LUNCHES = [
+  {id:'L1', dish:"Turkey & Cranberry Wrap", calories:380, mins:3, ingredients:["Wrap","Turkey slices","Cottage cheese","Cranberry sauce","Spinach"], note:"2 min assembly, no cooking."},
+  {id:'L2', dish:"Tuna Melt Wrap", calories:450, mins:5, ingredients:["Wrap","Tuna","Mayo","Sundried tomatoes","Spinach","Cheddar"], note:"Under the grill 2 min if you want it warm."},
+  {id:'L3', dish:"Egg Salad & Toast", calories:400, mins:6, ingredients:["Eggs, boiled","Mayo","Tomato","Lettuce","Toast"], note:"Boil eggs in a batch Sunday for the week."},
+  {id:'L4', dish:"Omelette", calories:350, mins:6, ingredients:["Eggs","Grated cheese","Ham","Chives"], note:"5 min — great with leftover roasted veg thrown in."},
+  {id:'L5', dish:"Leftover Dinner Portion", ingredients:["Whatever's left from Mon/Tue dinner"], note:"The default option — always check this first."},
+  {id:'L6', dish:"Chicken & Avocado Wrap", calories:420, mins:5, ingredients:["Wrap","Cooked chicken slices","Avocado","Lettuce","Squeeze of lime","Natural yoghurt"], note:"Good use for any leftover roast chicken from a dinner."},
+  {id:'L7', dish:"Greek-Style Salad Pot", calories:350, mins:8, ingredients:["Cucumber","Cherry tomatoes","Feta","Olives (optional)","Red onion","Olive oil","Wrap or pitta on the side"], note:"Assemble in a jar/pot Sunday — keeps well for 2-3 days."},
+  {id:'L8', dish:"Veg & Bean Soup + Toast", calories:320, mins:5, ingredients:["Mixed veg (carrot, celery, onion)","Tin of beans or lentils","Veg stock","Toast or crusty bread"], note:"Batch a big pot Sunday, portion into the week — freezes well too."},
+  {id:'L9', dish:"Loaded Baked Sweet Potato", calories:400, mins:6, ingredients:["Sweet potato","Tin of beans or cooked chicken","Cottage cheese or grated cheese","Spring onion"], note:"Another good use for sweet potato beyond the Sunday fish pie — microwave to reheat at lunch."},
+  {id:'L10', dish:"Wholewheat Pasta Salad Pot", calories:450, mins:5, ingredients:["Wholewheat pasta","Cherry tomatoes","Mozzarella balls","Pesto","Cucumber"], note:"Cook a big batch of pasta Sunday, dress just before eating so it doesn't go claggy."},
+  {id:'L11', dish:"Chickpea & Feta Salad Pot", calories:380, mins:6, ingredients:["Tin of chickpeas","Feta","Cucumber","Cherry tomatoes","Red onion","Olive oil","Lemon juice"], note:"No cooking at all — just assemble in a pot Sunday, keeps 3-4 days."},
+  {id:'L12', dish:"Chicken & Sweet Potato Soup", calories:350, mins:5, ingredients:["Cooked chicken (leftover works well)","Sweet potato","Onion","Carrot","Chicken stock"], note:"Batch on Sunday — another good outlet for sweet potato, and freezes in portions if you want backup lunches."},
+];
+
+const SNACKS = [
+  {id:'S1', dish:"Greek Yoghurt & Berries", calories:150, mins:2, ingredients:["Greek yoghurt","Mixed berries","Drizzle of honey"], note:"High protein, low sugar swap for a dessert-style snack.", kid:false},
+  {id:'S2', dish:"Hummus & Veg Sticks", calories:180, mins:5, ingredients:["Hummus","Carrot","Cucumber","Pepper"], note:"Good one for Jack — dip format makes veg more appealing.", kid:true},
+  {id:'S3', dish:"Apple & Peanut Butter", calories:200, mins:2, ingredients:["Apples","Peanut butter"], note:"Fibre + protein, keeps hunger down better than fruit alone.", kid:false},
+  {id:'S4', dish:"Homemade Trail Mix", calories:220, mins:3, ingredients:["Almonds","Cashews","Raisins","Dark chocolate chips (small handful)"], note:"Portion into small pots so it doesn't become a whole-bag habit. Jack can help scoop and mix.", kid:true},
+  {id:'S5', dish:"Rice Cakes & Cottage Cheese", calories:150, mins:3, ingredients:["Rice cakes","Cottage cheese","Cherry tomatoes"], note:"Lower fat than crackers and cheese, similar satisfaction.", kid:false},
+  {id:'S6', dish:"No-Bake Banana Oat Bites", calories:180, mins:15, ingredients:["Oats","Banana","Peanut butter","Honey"], note:"Mash and roll into balls, chill — no oven needed. Jack can do the rolling.", kid:true},
+  {id:'S7', dish:"Berry Banana Smoothie", calories:220, mins:5, ingredients:["Frozen mixed berries","Banana","Milk or yoghurt","Oats (optional, for staying power)"], note:"Your existing go-to — Jack can add ingredients to the blender and press the button (with hands well clear).", kid:true},
+  {id:'S8', dish:"Hidden-Veg Green Smoothie", calories:180, mins:5, ingredients:["Spinach (frozen or fresh)","Mango or pineapple chunks","Banana","Milk or coconut water"], note:"Tastes like fruit, sneaks in a veg portion — good one to introduce slowly.", kid:true},
+  {id:'S9', dish:"Chocolate Peanut Butter Banana Smoothie", calories:280, mins:5, ingredients:["Banana","Peanut butter","Cocoa powder","Milk","Handful of oats"], note:"Feels like a treat, actually protein + fibre forward. Great low-sugar dessert stand-in.", kid:true},
+  {id:'S10', dish:"Frozen Yoghurt Bark", calories:150, mins:10, ingredients:["Greek yoghurt","Mixed berries or banana slices","Drizzle of honey"], note:"Spread yoghurt on a tray, let Jack scatter fruit on top, freeze 2 hrs, snap into pieces. Feels like a craft, eats like a treat.", kid:true},
+  {id:'S11', dish:"Fruit Kebabs", calories:100, mins:10, ingredients:["Grapes","Strawberries","Melon or banana chunks","Blunt/kid-safe skewers"], note:"Jack can thread the fruit himself — good fine-motor activity that ends in a snack.", kid:true},
+  {id:'S12', dish:"Date & Oat Energy Balls", calories:200, mins:20, ingredients:["Dates","Oats","Peanut or almond butter","Cinnamon","Desiccated coconut (for rolling)"], note:"Blitz dates+oats+nut butter, roll into balls, coat in coconut — Jack can do all the rolling.", kid:true},
+  {id:'S13', dish:"Overnight Oats", calories:300, mins:5, ingredients:["Oats","Milk or yoghurt","Chia seeds (optional)","Berries or banana","Drizzle of honey"], note:"Layer in a jar the night before — Jack can add the fruit on top in the morning. Ready to grab, no cooking.", kid:true},
+  {id:'S14', dish:"Roasted Chickpeas", calories:180, mins:20, ingredients:["Tin of chickpeas","Olive oil","Paprika or cinnamon","Salt"], note:"Toss and airfry/roast 15 min until crunchy — Jack can help toss them in the bowl before they go in.", kid:true},
+];
+
+const WEEK_LABELS = ['Week A','Week B','Week C'];
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday'];
+const SLOT_KEYS = ['sun','mon','tue','wed'];
+
+const DEFAULT_DINNER_SELECTIONS = {
+  0:{sun:'D1',mon:'D7',tue:'D16',wed:'D4'},   // Week A: fish, chicken, beef, backup
+  1:{sun:'D5',mon:'D17',tue:'D10',wed:'D8'},  // Week B: fish, beef, chickpea, backup
+  2:{sun:'D9',mon:'D15',tue:'D18',wed:'D12'}, // Week C: fish, chicken, beef, backup
+};
+const DEFAULT_LUNCHES = ['L1','L2','L3','L4','L5'];
+const DEFAULT_SNACKS = ['S1','S2','S3'];
+
+/* ============================================================
+   STATE / STORAGE
+   ============================================================ */
+let anchorDate = null;
+let ratingsLog = [];
+let shopChecked = {0:{},1:{},2:{}};
+let dinnerSelections = JSON.parse(JSON.stringify(DEFAULT_DINNER_SELECTIONS));
+let selectedLunches = [...DEFAULT_LUNCHES];
+let selectedSnacks = [...DEFAULT_SNACKS];
+let customRecipes = {dinners:[], lunches:[], snacks:[]};
+
+let currentRating = 0;
+let currentStatus = '';
+let currentShopWeekTab = null;
+let currentPlanWeekTab = null;
+let recipeTab = 'dinners';
+let addFormOpen = null; // 'dinners' | 'lunches' | 'snacks' | null
+let pendingImageData = null;
+
+async function safeGet(key){
+  if(!firebaseReady) return null;
+  try{
+    const snap = await db.ref(DB_NAMESPACE + '/' + key).once('value');
+    const val = snap.val();
+    return (val === null || val === undefined) ? null : val;
+  }catch(e){ console.error('Firebase get failed', e); return null; }
+}
+async function safeSet(key, val){
+  if(!firebaseReady) return;
+  try{ await db.ref(DB_NAMESPACE + '/' + key).set(val); }
+  catch(e){ console.error('Firebase set failed', e); }
+}
+
+const ANCHOR_DATE_STR = '2026-07-12'; // Sunday — Week A start, fixed so the loop is consistent for everyone
+
+async function initStorage(){
+  const a = await safeGet('anchor-date');
+  if(a){ anchorDate = a; }
+  else{
+    anchorDate = ANCHOR_DATE_STR + 'T00:00:00';
+    await safeSet('anchor-date', anchorDate);
+  }
+
+  const r = await safeGet('ratings-log');
+  ratingsLog = r ? JSON.parse(r) : [];
+
+  const s = await safeGet('shop-checked');
+  shopChecked = s ? JSON.parse(s) : {0:{},1:{},2:{}};
+
+  const ds = await safeGet('dinner-selections');
+  dinnerSelections = ds ? JSON.parse(ds) : JSON.parse(JSON.stringify(DEFAULT_DINNER_SELECTIONS));
+
+  const sl = await safeGet('selected-lunches');
+  selectedLunches = sl ? JSON.parse(sl) : [...DEFAULT_LUNCHES];
+
+  const sn = await safeGet('selected-snacks');
+  selectedSnacks = sn ? JSON.parse(sn) : [...DEFAULT_SNACKS];
+
+  const cr = await safeGet('custom-recipes');
+  customRecipes = cr ? JSON.parse(cr) : {dinners:[], lunches:[], snacks:[]};
+}
+
+async function saveRatingsLog(){ await safeSet('ratings-log', JSON.stringify(ratingsLog)); }
+async function saveShopChecked(){ await safeSet('shop-checked', JSON.stringify(shopChecked)); }
+async function saveDinnerSelections(){ await safeSet('dinner-selections', JSON.stringify(dinnerSelections)); }
+async function saveSelectedLunches(){ await safeSet('selected-lunches', JSON.stringify(selectedLunches)); }
+async function saveSelectedSnacks(){ await safeSet('selected-snacks', JSON.stringify(selectedSnacks)); }
+async function saveCustomRecipes(){ await safeSet('custom-recipes', JSON.stringify(customRecipes)); }
+
+/* ============================================================
+   DATE / ROTATION LOGIC
+   ============================================================ */
+function getContext(){
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const anchor = new Date(anchorDate);
+  anchor.setHours(0,0,0,0);
+  const diffDays = Math.round((today - anchor) / 86400000);
+  const weekNum = Math.max(0, Math.floor(diffDays / 7));
+  const weekIdx = ((weekNum % 3) + 3) % 3;
+  const dayIdx = today.getDay();
+  return {weekIdx, dayIdx, today, weekNum};
+}
+
+// Returns the Sunday (as a Date) of the nearest upcoming/current occurrence of a given weekIdx (0=A,1=B,2=C)
+function getWeekStartDate(weekIdx){
+  const {weekIdx: curWeekIdx, weekNum} = getContext();
+  const anchor = new Date(anchorDate);
+  anchor.setHours(0,0,0,0);
+  const offsetDiff = ((weekIdx - curWeekIdx) + 3) % 3;
+  const targetWeekNum = weekNum + offsetDiff;
+  const sunday = new Date(anchor);
+  sunday.setDate(anchor.getDate() + targetWeekNum * 7);
+  return sunday;
+}
+function formatSlotDate(weekIdx, dayIdx){
+  const sunday = getWeekStartDate(weekIdx);
+  const d = new Date(sunday);
+  d.setDate(sunday.getDate() + dayIdx);
+  return d.toLocaleDateString('en-IE', {day:'numeric', month:'short'});
+}
+function formatWeekRange(weekIdx){
+  const sunday = getWeekStartDate(weekIdx);
+  const wed = new Date(sunday); wed.setDate(sunday.getDate() + 3);
+  const startMonth = sunday.toLocaleDateString('en-IE', {month:'short'});
+  const endMonth = wed.toLocaleDateString('en-IE', {month:'short'});
+  return startMonth === endMonth
+    ? `${sunday.getDate()}–${wed.getDate()} ${endMonth}`
+    : `${sunday.getDate()} ${startMonth} – ${wed.getDate()} ${endMonth}`;
+}
+function allDinners(){ return RECIPES.concat(customRecipes.dinners); }
+function allLunches(){ return LUNCHES.concat(customRecipes.lunches); }
+function allSnacks(){ return SNACKS.concat(customRecipes.snacks); }
+function recipeById(id){ return allDinners().find(r=>r.id===id); }
+function lunchById(id){ return allLunches().find(l=>l.id===id); }
+function snackById(id){ return allSnacks().find(s=>s.id===id); }
+
+function avgRating(dishName){
+  const entries = ratingsLog.filter(e => e.dish === dishName);
+  if(entries.length === 0) return null;
+  const sum = entries.reduce((a,e)=>a+e.rating,0);
+  return Math.round((sum/entries.length)*10)/10;
+}
+function starsStr(n){
+  const full = Math.round(n);
+  return '★'.repeat(full) + '☆'.repeat(5-full);
+}
+function formatMins(m){
+  if(!m && m !== 0) return '';
+  const h = Math.floor(m/60), mm = m%60;
+  if(h===0) return `${mm} min`;
+  return mm > 0 ? `${h}h ${mm}m` : `${h}h`;
+}
+const SHOP_MINS = 45; // rough estimate for a Tesco/SuperValu/Delgany Market run
+function sundaySession(weekIdx){
+  const sel = dinnerSelections[weekIdx];
+  let prepTotal = 0;
+  SLOT_KEYS.forEach(slot=>{
+    const r = recipeById(sel[slot]);
+    if(r) prepTotal += (r.prepMins || 0);
+  });
+  const sunDish = recipeById(sel.sun);
+  const cookToday = sunDish ? (sunDish.cookMins || 0) : 0;
+  return {shop: SHOP_MINS, prep: prepTotal, cook: cookToday, total: SHOP_MINS + prepTotal + cookToday};
+}
+
+/* ============================================================
+   SHOPPING LIST BUILDER
+   ============================================================ */
+function buildShoppingList(weekIdx){
+  const sel = dinnerSelections[weekIdx];
+  const dinnersOut = [];
+  SLOT_KEYS.forEach(slot=>{
+    const r = recipeById(sel[slot]);
+    if(!r) return;
+    r.ingredients.forEach(ing=>{
+      if(!dinnersOut.includes(ing)) dinnersOut.push(ing);
+    });
+  });
+  const lunchesOut = [];
+  selectedLunches.forEach(id=>{
+    const l = lunchById(id);
+    if(!l) return;
+    l.ingredients.forEach(ing=>{
+      if(/whatever/i.test(ing)) return;
+      if(!lunchesOut.includes(ing)) lunchesOut.push(ing);
+    });
+  });
+  const snacksOut = [];
+  selectedSnacks.forEach(id=>{
+    const s = snackById(id);
+    if(!s) return;
+    s.ingredients.forEach(ing=>{
+      if(!snacksOut.includes(ing)) snacksOut.push(ing);
+    });
+  });
+  return {dinners:dinnersOut, lunches:lunchesOut, snacks:snacksOut};
+}
+
+/* ============================================================
+   RENDER: OVERVIEW
+   ============================================================ */
+function renderOverview(){
+  const el = document.getElementById('view-overview');
+  el.innerHTML = `
+    <div class="ov-hero ov-anim">
+      <div class="eyebrow">The Rooney Family Greystones</div>
+      <h2>Real, healthy food.<br><em>As a family.</em></h2>
+      <p>More veg and protein, less sugar and snack drift — and Jack in the kitchen with us, not just at the table.</p>
+    </div>
+
+    <div class="ov-block ov-anim">
+      <h3>How the week works</h3>
+      <div class="ov-step"><div class="num">1</div><div class="txt"><b>Sunday morning:</b> shop using the Shop tab — built automatically from your Plan. Buy only what's on it.</div></div>
+      <div class="ov-step"><div class="num">2</div><div class="txt"><b>Sunday:</b> cook all 4 dinners using the Recipes tab.</div></div>
+      <div class="ov-step"><div class="num">3</div><div class="txt"><b>Sun–Tue</b> eaten fresh. <b>Wednesday</b> defaults to leftovers, with a backup recipe if there isn't enough.</div></div>
+      <div class="ov-step"><div class="num">4</div><div class="txt">Rate each dinner on <b>Tonight</b> — 10 seconds, builds a "known good" list over time.</div></div>
+      <div class="ov-step"><div class="num">5</div><div class="txt"><b>Thu–Sat</b> is unplanned on purpose — leftovers, freezer, or eating out.</div></div>
+    </div>
+
+    <div class="ov-block ov-anim">
+      <h3>Who owns what</h3>
+      <div class="owner-grid">
+        <div class="owner-row"><span>Dinners, Sun–Wed</span><span class="who">Ian</span></div>
+        <div class="owner-row"><span>Breakfast &amp; snacks</span><span class="who">Helen &amp; Jack</span></div>
+        <div class="owner-row"><span>Lunches</span><span class="who">Shared</span></div>
+      </div>
+    </div>
+
+    <button class="cta-btn ov-anim" onclick="switchView('plan')">See the week's plan →</button>
+  `;
+}
+
+/* ============================================================
+   RENDER: TONIGHT
+   ============================================================ */
+function renderTonight(){
+  const el = document.getElementById('view-tonight');
+  const {weekIdx, dayIdx, today} = getContext();
+  const dateStr = today.toLocaleDateString('en-IE', {weekday:'long', day:'numeric', month:'long'});
+
+  if(dayIdx >= 0 && dayIdx <= 3){
+    const slot = SLOT_KEYS[dayIdx];
+    const r = recipeById(dinnerSelections[weekIdx][slot]);
+    const avg = avgRating(r.dish);
+    const isBackup = !!r.backup;
+    const isSundayDish = (dayIdx === 0);
+    const tonightMins = isSundayDish ? (r.prepMins||0) + (r.cookMins||0) : (r.cookMins||0);
+    const timeLabel = isSundayDish
+      ? `~${formatMins(tonightMins)} start to finish`
+      : `~${formatMins(tonightMins)} tonight (prepped Sunday)`;
+
+    el.innerHTML = `
+      <div class="section-head">
+        <h2>Tonight</h2>
+        <span class="tag">${dateStr}<br>${WEEK_LABELS[weekIdx]}</span>
+      </div>
+      <div class="hero-wrap">
+        <div class="hero-card">
+          <div class="hero-day">${DAY_NAMES[dayIdx]} Dinner</div>
+          <div class="hero-dish">${r.dish}</div>
+          <div class="hero-meta">
+            <span class="pill method">${r.method}</span>
+            ${r.tag ? `<span class="pill">${r.tag}</span>` : ''}
+            ${!isBackup ? `<span class="pill">⏱ ${timeLabel}</span>` : ''}
+            ${r.calories ? `<span class="pill">~${r.calories} kcal</span>` : ''}
+            ${avg ? `<span class="pill">${starsStr(avg)} avg</span>` : ''}
+          </div>
+
+          ${!isBackup ? `
+          ${r.ingredients.length ? `<div class="block-label">Ingredients (serves 3)</div><div class="ingredients">${r.ingredients.join(' · ')}</div><hr class="hero-divider">` : ''}
+          ${r.steps.length ? `<div class="block-label">Method</div><div class="steps">${r.steps.map((s,i)=>`${i+1}. ${s}`).join('<br>')}</div>` : ''}
+          ${r.prep ? `<div class="block-label" style="margin-top:12px;">Prep-ahead (Sunday)</div><div class="prep-note">${r.prep}</div>` : ''}
+          ${linkHtml(r.link)}
+          ${imageHtml(r.image)}
+          ` : `
+          <div class="block-label">Default plan</div>
+          <div class="steps">Eat leftovers from Monday or Tuesday's dinner. Not enough? Here's this week's backup:</div>
+          <hr class="hero-divider">
+          <div class="block-label">Backup: ${r.dish}</div>
+          <div class="ingredients">${r.ingredients.join(' · ')}</div>
+          <div class="steps" style="margin-top:8px;">${r.steps.join(' ')}</div>
+          `}
+
+          <hr class="hero-divider">
+          <div class="block-label">Rate tonight's dinner</div>
+          <div class="rate-box">
+            <div class="stars-row" id="star-row"></div>
+            <div class="status-row" id="status-row">
+              ${['Keep','Tweak','Drop'].map(s=>`<div class="status-chip" data-status="${s}" onclick="setStatus('${s}')">${s}</div>`).join('')}
+            </div>
+            <textarea class="note-input" id="rate-note" rows="2" placeholder="Optional note — e.g. Jack ate all his veg, needed 5 more min"></textarea>
+            <button class="log-btn" id="log-btn" onclick="submitRating('${r.dish.replace(/'/g,"\\'")}')" disabled>Log this rating</button>
+            <div class="logged-msg" id="logged-msg">✓ Logged — thanks! Check the Ratings tab anytime.</div>
+          </div>
+        </div>
+      </div>
+    `;
+    renderStars();
+  } else {
+    const topRated = allDinners().filter(r=>!r.backup)
+      .map(r=>({...r, avg: avgRating(r.dish)}))
+      .filter(r=>r.avg !== null)
+      .sort((a,b)=>b.avg-a.avg)
+      .slice(0,3);
+
+    el.innerHTML = `
+      <div class="section-head">
+        <h2>Tonight</h2>
+        <span class="tag">${dateStr}</span>
+      </div>
+      <div class="hero-wrap">
+        <div class="hero-card unplanned">
+          <div class="hero-day">${today.toLocaleDateString('en-IE',{weekday:'long'})}</div>
+          <div class="hero-dish">Unplanned night — by design</div>
+          <div class="hero-meta"><span class="pill">Leftovers, freezer backup, or eating out</span></div>
+          <hr class="hero-divider">
+          <div class="block-label">Your top-rated dinners so far</div>
+          <div class="fav-list">
+            ${topRated.length ? topRated.map(r=>`<div class="fav-item"><span>${r.dish}</span><span class="stars">${starsStr(r.avg)}</span></div>`).join('')
+              : `<div class="fav-item"><span>Log a few ratings this week and your favourites will show up here.</span></div>`}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function renderStars(){
+  const row = document.getElementById('star-row');
+  if(!row) return;
+  row.innerHTML = '';
+  for(let i=1;i<=5;i++){
+    const btn = document.createElement('button');
+    btn.className = 'star-btn' + (i<=currentRating ? ' filled':'');
+    btn.textContent = '★';
+    btn.onclick = ()=>{ currentRating = i; updateLogBtn(); renderStars(); };
+    row.appendChild(btn);
+  }
+}
+function setStatus(s){
+  currentStatus = s;
+  document.querySelectorAll('.status-chip').forEach(c=>{
+    c.classList.toggle('active', c.dataset.status === s);
+  });
+  updateLogBtn();
+}
+function updateLogBtn(){
+  const btn = document.getElementById('log-btn');
+  if(!btn) return;
+  btn.disabled = !(currentRating > 0);
+}
+async function submitRating(dish){
+  const {today} = getContext();
+  const note = document.getElementById('rate-note').value.trim();
+  ratingsLog.unshift({
+    id: Date.now(), date: today.toISOString(), dish,
+    rating: currentRating, status: currentStatus || '—', notes: note
+  });
+  await saveRatingsLog();
+  currentRating = 0; currentStatus = '';
+  document.getElementById('logged-msg').style.display = 'block';
+  document.getElementById('log-btn').disabled = true;
+  document.getElementById('log-btn').textContent = 'Logged ✓';
+  setTimeout(()=>{ renderTonight(); renderLog(); }, 900);
+}
+
+/* ============================================================
+   RENDER: PLAN (edit dinner slots + lunch/snack selection)
+   ============================================================ */
+function weekProteinSet(wk){
+  const monR = recipeById(dinnerSelections[wk].mon);
+  const tueR = recipeById(dinnerSelections[wk].tue);
+  const set = new Set([...(monR && monR.proteins ? monR.proteins : []), ...(tueR && tueR.proteins ? tueR.proteins : [])]);
+  return set;
+}
+const PROTEIN_LABELS = {chicken:'Chicken', beef:'Beef', chickpea:'Chickpea/veg', fish:'Fish'};
+
+function sundaySessionHtml(wk){
+  const s = sundaySession(wk);
+  return `
+    <div class="slot-card" style="background:var(--paper-2); border:1px solid var(--mustard-dim); margin-bottom:16px;">
+      <div class="slot-label">⏱ Sunday session for ${WEEK_LABELS[wk]}</div>
+      <div style="font-family:'Fraunces',serif; font-weight:600; font-size:19px; color:var(--ink); margin-bottom:6px;">~${formatMins(s.total)} total</div>
+      <div class="ingredients" style="font-size:13px; color:var(--muted);">Shopping ~${formatMins(s.shop)} · Prepping all 4 dinners ~${formatMins(s.prep)} · Cooking tonight's fish ~${formatMins(s.cook)}</div>
+      <div class="plan-note" style="margin-top:8px;">Mon/Tue/Wed only need their fresh cook time on the night itself — that's already prepped and out of the way.</div>
+    </div>`;
+}
+
+function proteinMixNote(wk){
+  const set = weekProteinSet(wk);
+  const names = [...set].map(p=>PROTEIN_LABELS[p]||p);
+  const clash = set.has('chicken') && set.has('chickpea');
+  if(clash){
+    return `<div class="plan-note" style="background:#FCEFE9; border-left:3px solid var(--clay); padding:10px 12px; border-radius:6px; margin-bottom:14px;">This week pairs <b>chicken and chickpea</b> — swap Monday or Tuesday for a beef option, or hit "Mix it up" below.</div>`;
+  }
+  return `<div class="plan-note" style="margin-bottom:14px;">This week's proteins: <b>${names.join(', ') || '—'}</b></div>`;
+}
+
+function renderPlan(){
+  const el = document.getElementById('view-plan');
+  const {weekIdx} = getContext();
+  if(currentPlanWeekTab === null) currentPlanWeekTab = weekIdx;
+  const wk = currentPlanWeekTab;
+  const sel = dinnerSelections[wk];
+
+  const fishOptions = allDinners().filter(r=>r.fish);
+  const mainOptions = allDinners().filter(r=>!r.fish && !r.backup);
+  const backupOptions = allDinners().filter(r=>r.backup);
+
+  function optionsHtml(list, selectedId){
+    return list.map(r=>`<option value="${r.id}" ${r.id===selectedId?'selected':''}>${r.dish}</option>`).join('');
+  }
+
+  el.innerHTML = `
+    <div class="section-head"><h2>Plan this week</h2><span class="tag">choose &amp; the Shop list updates</span></div>
+    <div class="filter-row">
+      ${[0,1,2].map(i=>`<div class="filter-chip ${wk===i?'active':''}" onclick="setPlanWeek(${i})">${WEEK_LABELS[i]} · ${formatWeekRange(i)}${i===weekIdx?' (current)':''}</div>`).join('')}
+    </div>
+
+    ${sundaySessionHtml(wk)}
+
+    ${proteinMixNote(wk)}
+    <div class="filter-chip" style="display:inline-block; margin-bottom:16px;" onclick="mixItUp(${wk})">🔀 Mix it up</div>
+
+    <div class="slot-card">
+      <div class="slot-label">Sunday ${formatSlotDate(wk,0)} · Fish Day</div>
+      <select class="slot-select" onchange="setSlot(${wk},'sun',this.value)">${optionsHtml(fishOptions, sel.sun)}</select>
+      <div class="plan-note">Cooked and eaten today — ~${formatMins((recipeById(sel.sun)||{}).prepMins)} prep + ~${formatMins((recipeById(sel.sun)||{}).cookMins)} cook.</div>
+    </div>
+    <div class="slot-card">
+      <div class="slot-label">Monday ${formatSlotDate(wk,1)}</div>
+      <select class="slot-select" onchange="setSlot(${wk},'mon',this.value)">${optionsHtml(mainOptions, sel.mon)}</select>
+      <div class="plan-note">Prepped Sunday — just ~${formatMins((recipeById(sel.mon)||{}).cookMins)} to cook fresh Monday night.</div>
+    </div>
+    <div class="slot-card">
+      <div class="slot-label">Tuesday ${formatSlotDate(wk,2)}</div>
+      <select class="slot-select" onchange="setSlot(${wk},'tue',this.value)">${optionsHtml(mainOptions, sel.tue)}</select>
+      <div class="plan-note">Prepped Sunday — just ~${formatMins((recipeById(sel.tue)||{}).cookMins)} to cook fresh Tuesday night.</div>
+    </div>
+    <div class="slot-card">
+      <div class="slot-label">Wednesday ${formatSlotDate(wk,3)} · Leftovers, backup below</div>
+      <select class="slot-select" onchange="setSlot(${wk},'wed',this.value)">${optionsHtml(backupOptions, sel.wed)}</select>
+      <div class="plan-note">Default is always leftovers from Mon/Tue — this is just which backup recipe to shop for, in case there isn't enough.</div>
+    </div>
+
+    <div class="section-head"><h2>Lunches &amp; snacks in rotation</h2></div>
+    <div class="plan-note" style="margin-bottom:10px;">Toggle these on the <span class="plan-summary-link" onclick="switchView('recipes')">Recipes tab</span> — whatever's switched on there feeds into every week's shopping list automatically.</div>
+  `;
+}
+async function mixItUp(weekIdx){
+  const mains = allDinners().filter(r=>!r.fish && !r.backup);
+  const byProtein = {chicken:[], beef:[], chickpea:[]};
+  mains.forEach(r=>{
+    const p = r.proteins || [];
+    if(p.length === 1 && byProtein[p[0]]) byProtein[p[0]].push(r);
+  });
+  const validPairs = [['chicken','beef'], ['beef','chickpea'], ['beef','chicken']];
+  const pair = validPairs[Math.floor(Math.random() * validPairs.length)];
+  function pickFrom(cat, excludeId){
+    const opts = byProtein[cat].filter(r => r.id !== excludeId);
+    const pool = opts.length ? opts : byProtein[cat];
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+  const monDish = pickFrom(pair[0]);
+  const tueDish = pickFrom(pair[1], monDish ? monDish.id : null);
+  if(monDish) dinnerSelections[weekIdx].mon = monDish.id;
+  if(tueDish) dinnerSelections[weekIdx].tue = tueDish.id;
+  await saveDinnerSelections();
+  renderPlan();
+  renderShop();
+  renderTonight();
+}
+async function setPlanWeek(i){ currentPlanWeekTab = i; renderPlan(); }
+async function setSlot(weekIdx, slot, dishId){
+  dinnerSelections[weekIdx][slot] = dishId;
+  await saveDinnerSelections();
+  renderShop();
+  renderPlan();
+  renderTonight();
+}
+
+/* ============================================================
+   RENDER: RECIPES
+   ============================================================ */
+function renderRecipes(){
+  const el = document.getElementById('view-recipes');
+  el.innerHTML = `
+    <div class="section-head"><h2>Recipes</h2></div>
+    <div class="toggle-row">
+      <div class="toggle-btn ${recipeTab==='dinners'?'active':''}" onclick="setRecipeTab('dinners')">Dinners</div>
+      <div class="toggle-btn ${recipeTab==='lunches'?'active':''}" onclick="setRecipeTab('lunches')">Lunches</div>
+      <div class="toggle-btn ${recipeTab==='snacks'?'active':''}" onclick="setRecipeTab('snacks')">Snacks</div>
+    </div>
+    <div id="recipe-list"></div>
+  `;
+  renderRecipeList();
+}
+function setRecipeTab(t){ recipeTab = t; addFormOpen = null; renderRecipes(); }
+
+function linkHtml(link){
+  if(!link) return '';
+  const safe = link.startsWith('http') ? link : ('https://' + link);
+  return `<a href="${safe}" target="_blank" rel="noopener" class="plan-summary-link" onclick="event.stopPropagation()" style="display:inline-block; margin-top:8px;">Open recipe link ↗</a>`;
+}
+function imageHtml(image){
+  if(!image) return '';
+  return `<a href="${image}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><img src="${image}" class="recipe-thumb" alt="Recipe screenshot"></a>`;
+}
+
+function addRecipeBtnHtml(category){
+  const open = addFormOpen === category;
+  return `<div class="filter-chip ${open?'active':''}" style="margin-bottom:14px; display:inline-block;" onclick="toggleAddForm('${category}')">${open ? '– Cancel' : '+ Add your own'}</div>${open ? addFormHtml(category) : ''}`;
+}
+
+function addFormHtml(category){
+  const isDinner = category === 'dinners';
+  const label = isDinner ? 'Dish' : (category === 'lunches' ? 'Lunch' : 'Snack');
+  return `
+    <div class="slot-card" style="margin-bottom:16px;">
+      <div class="slot-label">${label} name</div>
+      <input type="text" id="new-item-name" class="slot-select" placeholder="e.g. Baked Cod with Ratatouille" style="margin-bottom:12px;">
+
+      <div class="toggle-row" style="margin-bottom:12px;">
+        <div class="toggle-btn mode-chip active" data-mode="link" onclick="setAddFormMode('link')">Paste a link</div>
+        <div class="toggle-btn mode-chip" data-mode="photo" onclick="setAddFormMode('photo')">Upload a screenshot</div>
+      </div>
+
+      <div id="form-link-section">
+        <input type="text" id="new-item-link" class="slot-select" placeholder="Paste the recipe URL" style="margin-bottom:12px;">
+      </div>
+      <div id="form-photo-section" style="display:none;">
+        <input type="file" accept="image/*" id="new-item-photo" onchange="handleImageSelect(event)" style="margin-bottom:10px; font-size:13px;">
+        <div id="image-preview"></div>
+      </div>
+
+      ${isDinner ? `
+      <div class="include-row" style="margin:4px 0 12px;">
+        <div class="toggle-switch" id="new-dish-fish-toggle" onclick="this.classList.toggle('on')"><div class="knob"></div></div>
+        <span style="font-size:13px; color:var(--muted);">This is a Fish Day option (shows up for the Sunday slot)</span>
+      </div>` : ''}
+      ${category==='snacks' ? `
+      <div class="include-row" style="margin:4px 0 12px;">
+        <div class="toggle-switch" id="new-item-kid-toggle" onclick="this.classList.toggle('on')"><div class="knob"></div></div>
+        <span style="font-size:13px; color:var(--muted);">★ Good one for Jack to help make</span>
+      </div>` : ''}
+
+      <button class="log-btn" onclick="submitCustomRecipe('${category}')">Save ${label.toLowerCase()}</button>
+    </div>`;
+}
+function toggleAddForm(category){
+  addFormOpen = addFormOpen === category ? null : category;
+  pendingImageData = null;
+  renderRecipeList();
+}
+function setAddFormMode(mode){
+  document.getElementById('form-link-section').style.display = mode==='link' ? 'block' : 'none';
+  document.getElementById('form-photo-section').style.display = mode==='photo' ? 'block' : 'none';
+  document.querySelectorAll('.mode-chip').forEach(c=>c.classList.toggle('active', c.dataset.mode===mode));
+}
+
+function handleImageSelect(evt){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const maxDim = 900;
+      let w = img.width, h = img.height;
+      if(w > maxDim || h > maxDim){
+        if(w > h){ h = Math.round(h * maxDim / w); w = maxDim; }
+        else { w = Math.round(w * maxDim / h); h = maxDim; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      pendingImageData = canvas.toDataURL('image/jpeg', 0.72);
+      const preview = document.getElementById('image-preview');
+      if(preview) preview.innerHTML = `<img src="${pendingImageData}" class="recipe-thumb" style="margin-top:4px;">`;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function submitCustomRecipe(category){
+  const name = document.getElementById('new-item-name').value.trim();
+  if(!name){ alert('Give it a name first.'); return; }
+  const link = document.getElementById('new-item-link').value.trim();
+  const image = pendingImageData;
+  if(!link && !image){ alert("Add a link or a screenshot so there's something to cook from."); return; }
+  const id = 'C' + Date.now();
+
+  if(category === 'dinners'){
+    const isFish = document.getElementById('new-dish-fish-toggle').classList.contains('on');
+    customRecipes.dinners.push({
+      id, fish:isFish, backup:false, dish:name, tag:'Added by you', method:'Custom',
+      ingredients: [], steps: [], prep:'', link, image
+    });
+  } else {
+    const item = {id, dish:name, ingredients:[], note:'Added by you.', link, image};
+    if(category === 'snacks'){
+      item.kid = document.getElementById('new-item-kid-toggle').classList.contains('on');
+      customRecipes.snacks.push(item);
+    } else {
+      customRecipes.lunches.push(item);
+    }
+  }
+  await saveCustomRecipes();
+  addFormOpen = null;
+  pendingImageData = null;
+  renderRecipeList();
+  renderPlan();
+}
+async function removeCustom(category, id){
+  customRecipes[category] = customRecipes[category].filter(r=>r.id!==id);
+  // also unselect if it was toggled on
+  if(category==='lunches') selectedLunches = selectedLunches.filter(x=>x!==id);
+  if(category==='snacks') selectedSnacks = selectedSnacks.filter(x=>x!==id);
+  if(category==='dinners'){
+    // if this dish was assigned to any slot, fall back to that slot's default
+    Object.keys(dinnerSelections).forEach(wk=>{
+      SLOT_KEYS.forEach(slot=>{
+        if(dinnerSelections[wk][slot] === id){
+          dinnerSelections[wk][slot] = DEFAULT_DINNER_SELECTIONS[wk][slot];
+        }
+      });
+    });
+    await saveDinnerSelections();
+  }
+  await saveCustomRecipes();
+  if(category==='lunches') await saveSelectedLunches();
+  if(category==='snacks') await saveSelectedSnacks();
+  renderRecipeList();
+  renderShop();
+  renderPlan();
+  renderTonight();
+}
+
+function renderRecipeList(){
+  const list = document.getElementById('recipe-list');
+
+  if(recipeTab === 'lunches'){
+    list.innerHTML = addRecipeBtnHtml('lunches') +
+      `<div class="plan-note" style="margin:10px 0 12px;">Switch on the ones you actually want in rotation — only "on" items feed the shopping list.</div>` +
+      allLunches().map(l=>{
+        const on = selectedLunches.includes(l.id);
+        const custom = l.id.startsWith('C');
+        return `
+        <div class="recipe-card">
+          <div class="top-row" onclick="toggleCard(this.closest('.recipe-card'))">
+            <div><h3>${l.dish}</h3><div class="sub">${custom ? 'Added by you' : 'Shared go-to'}${l.calories ? ` · ~${l.calories} kcal` : ''}${l.mins ? ` · ${formatMins(l.mins)}` : ''}</div></div>
+          </div>
+          <div class="include-row" style="margin-top:8px;">
+            <div class="toggle-switch ${on?'on':''}" onclick="toggleLunch('${l.id}')"><div class="knob"></div></div>
+            <span style="font-size:13px; color:var(--muted);">${on ? "In this week's shopping list" : 'Not included'}</span>
+          </div>
+          <div class="recipe-detail" onclick="event.stopPropagation()">
+            ${l.ingredients.length ? `<div class="block-label">Ingredients</div><div class="ingredients">${l.ingredients.join(' · ')}</div>` : ''}
+            <div class="block-label">Note</div>
+            <div class="ingredients">${l.note}</div>
+            ${linkHtml(l.link)}
+            ${imageHtml(l.image)}
+            ${custom ? `<div class="reset-link" style="color:var(--clay);" onclick="removeCustom('lunches','${l.id}')">Remove this lunch</div>` : ''}
+          </div>
+        </div>
+      `;}).join('');
+    return;
+  }
+
+  if(recipeTab === 'snacks'){
+    list.innerHTML = addRecipeBtnHtml('snacks') +
+      `<div class="plan-note" style="margin:10px 0 12px;">These live with Helen &amp; Jack's breakfast/snack domain — switch on whichever you want shopped for. <span class="who-badge">★ Made with Jack</span> ones are good hands-on activities for the two of them.</div>` +
+      allSnacks().map(s=>{
+        const on = selectedSnacks.includes(s.id);
+        const custom = s.id.startsWith('C');
+        return `
+        <div class="recipe-card">
+          <div class="top-row" onclick="toggleCard(this.closest('.recipe-card'))">
+            <div><h3>${s.dish}</h3><div class="sub">${custom ? 'Added by you' : 'Snack'}${s.calories ? ` · ~${s.calories} kcal` : ''}${s.mins ? ` · ${formatMins(s.mins)}` : ''}${s.kid ? ' · ★ Made with Jack' : ''}</div></div>
+          </div>
+          <div class="include-row" style="margin-top:8px;">
+            <div class="toggle-switch ${on?'on':''}" onclick="toggleSnack('${s.id}')"><div class="knob"></div></div>
+            <span style="font-size:13px; color:var(--muted);">${on ? "In this week's shopping list" : 'Not included'}</span>
+          </div>
+          <div class="recipe-detail" onclick="event.stopPropagation()">
+            ${s.ingredients.length ? `<div class="block-label">Ingredients</div><div class="ingredients">${s.ingredients.join(' · ')}</div>` : ''}
+            <div class="block-label">Note</div>
+            <div class="ingredients">${s.note}</div>
+            ${linkHtml(s.link)}
+            ${imageHtml(s.image)}
+            ${custom ? `<div class="reset-link" style="color:var(--clay);" onclick="removeCustom('snacks','${s.id}')">Remove this snack</div>` : ''}
+          </div>
+        </div>
+      `;}).join('');
+    return;
+  }
+
+  // dinners (view + rate history; editing which day cooks it happens on Plan tab)
+  list.innerHTML = addRecipeBtnHtml('dinners') +
+    `<div class="plan-note" style="margin:10px 0 12px;">Browse all options. To choose which one cooks on a given night, use the <span class="plan-summary-link" onclick="switchView('plan')">Plan tab</span>. Calories are rough estimates per serving, not exact counts.</div>` +
+    allDinners().filter(r=>!r.backup).map(r=>{
+      const avg = avgRating(r.dish);
+      const custom = r.id.startsWith('C');
+      return `
+      <div class="recipe-card">
+        <div class="top-row" onclick="toggleCard(this.closest('.recipe-card'))">
+          <div>
+            <h3>${r.dish}</h3>
+            <div class="sub">${r.fish ? 'Fish Day option' : 'Weeknight option'} · ${r.method}${r.calories ? ` · ~${r.calories} kcal` : ''}${(r.prepMins||r.cookMins) ? ` · Prep ${formatMins(r.prepMins)} + Cook ${formatMins(r.cookMins)}` : ''}${custom ? ' · Added by you' : ''}</div>
+          </div>
+          <div class="rating-badge">${avg ? starsStr(avg) : '—'}</div>
+        </div>
+        <div class="recipe-detail">
+          ${r.ingredients.length ? `<div class="block-label">Ingredients (serves 3)</div><div class="ingredients">${r.ingredients.join(' · ')}</div>` : ''}
+          ${r.steps.length ? `<div class="block-label">Method</div><div class="ingredients">${r.steps.map((s,i)=>`${i+1}. ${s}`).join('<br>')}</div>` : ''}
+          ${r.prep ? `<div class="block-label">Prep-ahead</div><div class="ingredients">${r.prep}</div>` : ''}
+          ${linkHtml(r.link)}
+          ${imageHtml(r.image)}
+          ${custom ? `<div class="reset-link" style="color:var(--clay);" onclick="removeCustom('dinners','${r.id}')">Remove this dinner</div>` : ''}
+        </div>
+      </div>
+    `;}).join('');
+}
+function toggleCard(card){ card.classList.toggle('open'); }
+async function toggleLunch(id){
+  const i = selectedLunches.indexOf(id);
+  if(i>-1) selectedLunches.splice(i,1); else selectedLunches.push(id);
+  await saveSelectedLunches();
+  renderRecipeList();
+  renderShop();
+}
+async function toggleSnack(id){
+  const i = selectedSnacks.indexOf(id);
+  if(i>-1) selectedSnacks.splice(i,1); else selectedSnacks.push(id);
+  await saveSelectedSnacks();
+  renderRecipeList();
+  renderShop();
+}
+
+/* ============================================================
+   RENDER: SHOP
+   ============================================================ */
+function renderShop(){
+  const el = document.getElementById('view-shop');
+  const {weekIdx} = getContext();
+  if(currentShopWeekTab === null) currentShopWeekTab = weekIdx;
+
+  el.innerHTML = `
+    <div class="section-head">
+      <h2>Shopping List</h2>
+      <span class="tag">auto-built from your Plan</span>
+    </div>
+    <div class="filter-row">
+      ${[0,1,2].map(i=>`<div class="filter-chip ${currentShopWeekTab===i?'active':''}" onclick="setShopWeek(${i})">${WEEK_LABELS[i]} · ${formatWeekRange(i)}${i===weekIdx ? ' (this week)':''}</div>`).join('')}
+    </div>
+    <div id="shop-items"></div>
+    <div class="reset-link" onclick="resetShop()">Reset ticks for ${WEEK_LABELS[currentShopWeekTab]} (${formatWeekRange(currentShopWeekTab)})</div>
+  `;
+  renderShopItems();
+}
+function setShopWeek(i){ currentShopWeekTab = i; renderShop(); }
+function renderShopItems(){
+  const el = document.getElementById('shop-items');
+  const list = buildShoppingList(currentShopWeekTab);
+  const checked = shopChecked[currentShopWeekTab] || {};
+
+  function section(title, items){
+    if(items.length === 0) return `<div class="shop-section-title">${title}</div><div class="plan-note" style="margin-bottom:6px;">Nothing selected — add some on the Recipes tab.</div>`;
+    return `<div class="shop-section-title">${title}</div>` + items.map(item=>{
+      const key = title+':'+item;
+      const isChecked = !!checked[key];
+      return `
+        <div class="shop-item ${isChecked?'checked':''}" onclick="toggleShopItem('${key.replace(/'/g,"\\'")}')">
+          <div class="checkbox ${isChecked?'checked':''}">${isChecked?'✓':''}</div>
+          <span>${item}</span>
+        </div>`;
+    }).join('');
+  }
+
+  el.innerHTML = section('Dinners', list.dinners) + section('Lunches', list.lunches) + section('Snacks', list.snacks);
+}
+async function toggleShopItem(key){
+  if(!shopChecked[currentShopWeekTab]) shopChecked[currentShopWeekTab] = {};
+  shopChecked[currentShopWeekTab][key] = !shopChecked[currentShopWeekTab][key];
+  await saveShopChecked();
+  renderShopItems();
+}
+async function resetShop(){
+  shopChecked[currentShopWeekTab] = {};
+  await saveShopChecked();
+  renderShopItems();
+}
+
+/* ============================================================
+   RENDER: LOG
+   ============================================================ */
+function renderLog(){
+  const el = document.getElementById('view-log');
+  el.innerHTML = `
+    <div class="section-head"><h2>Ratings Log</h2><span class="tag">${ratingsLog.length} logged</span></div>
+    <div id="log-list"></div>
+  `;
+  const list = document.getElementById('log-list');
+  if(ratingsLog.length === 0){
+    list.innerHTML = `<div class="empty-state"><div class="big">Nothing logged yet</div>Rate tonight's dinner from the Tonight tab and it'll show up here.</div>`;
+    return;
+  }
+  list.innerHTML = ratingsLog.map(e=>`
+    <div class="log-entry">
+      <div class="row1">
+        <span class="dish">${e.dish}</span>
+        <span class="date">${new Date(e.date).toLocaleDateString('en-IE',{day:'numeric',month:'short'})}</span>
+      </div>
+      <div class="stars-static">${starsStr(e.rating)}</div>
+      ${e.notes ? `<div class="notes">${e.notes}</div>` : ''}
+      <div class="status-tag">${e.status}</div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   RENDER: TOP TIPS
+   ============================================================ */
+function renderTips(){
+  const el = document.getElementById('view-tips');
+  el.innerHTML = `
+    <div class="section-head"><h2>Top Tips to Eat Healthy</h2><span class="tag">the rules behind the app</span></div>
+
+    <div class="ov-block">
+      <h3>What you need</h3>
+      <div class="supply-list">
+        <div class="supply-item"><span class="tick">✓</span><span><b>4–6 matching rectangular glass or BPA-free plastic containers</b> (roughly 800ml–1L), for the actual portioned dinners going into the fridge Sunday.</span></div>
+        <div class="supply-item"><span class="tick">✓</span><span><b>A handful of smaller pots (300–400ml)</b> for lunch portions and snack pre-portioning — trail mix, hummus + veg, etc.</span></div>
+        <div class="supply-item"><span class="tick">✓</span><span><b>Freezer-safe labels or masking tape + marker</b> — since forgetting what's in there (not lack of space) was the actual problem, label with dish + date every time.</span></div>
+        <div class="supply-item"><span class="tick">✓</span><span><b>2–3 stackable fridge bins or a lazy-susan turntable</b> — keeps the 4 days' containers visible instead of buried, so they actually get eaten.</span></div>
+        <div class="supply-item"><span class="tick">✓</span><span>Optional: <b>a countertop "eat me first" bin or shelf</b> — a physical spot for anything approaching its use-by date.</span></div>
+      </div>
+    </div>
+
+    <div class="ov-block">
+      <h3>Ground rules</h3>
+      <div class="ov-step"><div class="num">1</div><div class="txt"><b>Clear out the kitchen.</b> One Sunday, go through the cupboards and fridge and clear out the ultra-processed snacks — crisps, biscuits, sugary cereal. If the healthy option is the easiest thing to reach for, that's most of the battle won.</div></div>
+      <div class="ov-step"><div class="num">2</div><div class="txt"><b>Only buy what's on the list.</b> The Shop tab is built from your Plan for a reason — no "just in case" extras. That exact habit is what left veg and sweet potatoes going soft in the drawer before.</div></div>
+      <div class="ov-step"><div class="num">3</div><div class="txt"><b>Don't bring unhealthy food into the house.</b> Treats happen outside the home — a café, an occasional takeaway — rather than sitting in a cupboard waiting to be eaten out of habit rather than actual want.</div></div>
+      <div class="ov-step"><div class="num">4</div><div class="txt"><b>One snack a day for Jack.</b> Same time each day (after nursery/school works well) so it's a routine, not a negotiation. Pick from the Recipes → Snacks tab so it's still something he helped make.</div></div>
+    </div>
+
+    <div class="ov-block">
+      <h3>Given what's tripped you up before</h3>
+      <div class="ov-step"><div class="num">→</div><div class="txt"><b>Fix a weekly "defrost day."</b> Every Tuesday, whoever's around moves next week's backup meal from freezer to fridge. Forgetting was the actual problem, not space — so make it a fixed habit, not a "remember to."</div></div>
+      <div class="ov-step"><div class="num">→</div><div class="txt"><b>Use the "eat me first" shelf properly.</b> Anything nearing its date goes there, at eye level. It solves veg waste better than any plan does, because it's visual, not something you have to remember.</div></div>
+      <div class="ov-step"><div class="num">→</div><div class="txt"><b>Eat the same meal, together, at the table.</b> No separate "kid version" — Jack eating what you're eating is what actually builds the table habit, not asking him to.</div></div>
+      <div class="ov-step"><div class="num">→</div><div class="txt"><b>Be honest on the Ratings tab.</b> If something's a "Drop," drop it. Cooking a meal nobody actually likes out of guilt is how the last plan died in a week.</div></div>
+      <div class="ov-step"><div class="num">→</div><div class="txt"><b>Keep portions tight.</b> Cook for 3, not "just in case" extra — it's what keeps this sustainable and supports the portion-control goal, rather than a fridge full of guilt-inducing leftovers.</div></div>
+      <div class="ov-step"><div class="num">→</div><div class="txt"><b>Check in once a month.</b> Ten minutes, just the two of you — tweak what isn't working rather than letting the whole thing quietly lapse the way the last one did.</div></div>
+    </div>
+  `;
+}
+function switchView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
+  window.scrollTo(0,0);
+}
+function openModal(){ document.getElementById('modal-overlay').classList.add('open'); }
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+
+/* ============================================================
+   INIT
+   ============================================================ */
+(async function init(){
+  await initStorage();
+  renderOverview();
+  renderTonight();
+  renderPlan();
+  renderRecipes();
+  renderShop();
+  renderLog();
+  renderTips();
+})();
+</script>
+</body>
+</html>
