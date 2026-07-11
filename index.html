@@ -138,6 +138,16 @@ main{flex:1;padding:6px 20px 20px;}
 .day-card .d{ font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
 .day-card .dish{ font-family:'Fraunces',serif; font-weight:600; font-size:13px; color:var(--ink); margin-top:4px; line-height:1.25; }
 
+.day-outline{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:8px; display:flex; gap:14px; }
+.day-outline.today{ border-color:var(--herb); box-shadow:0 0 0 1.5px var(--herb) inset; }
+.day-outline .day-col{ flex-shrink:0; width:74px; }
+.day-outline .day-col .dname{ font-family:'Fraunces',serif; font-weight:600; font-size:13.5px; color:var(--ink); line-height:1.2; }
+.day-outline .day-col .ddate{ font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); margin-top:1px; }
+.day-outline .meals-col{ flex:1; display:flex; flex-direction:column; gap:3px; min-width:0; }
+.day-outline .meal-line{ font-size:12.5px; line-height:1.4; color:var(--charcoal); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.day-outline .meal-line b{ color:var(--muted); font-weight:600; margin-right:4px; }
+.day-outline .meal-line.unplanned{ color:var(--muted); font-style:italic; }
+
 /* Filters / toggles */
 .filter-row{ display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
 .filter-chip{ font-family:'IBM Plex Mono',monospace; font-size:11px; padding:6px 12px; border-radius:100px; border:1.5px solid var(--line); background:var(--card); cursor:pointer; color:var(--muted); }
@@ -532,6 +542,7 @@ const SNACKS = [
 
 const WEEK_LABELS = ['Week A','Week B','Week C'];
 const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday'];
+const FULL_DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const SLOT_KEYS = ['sun','mon','tue','wed'];
 
 const DEFAULT_DINNER_SELECTIONS = {
@@ -782,6 +793,18 @@ function estimateWeekCost(weekIdx){
 /* ============================================================
    RENDER: OVERVIEW
    ============================================================ */
+function distributeAcrossWeek(names, days){
+  // Spreads a pool of names across `days` slots. Fewer names than days -> repeats to fill every day.
+  // More names than days -> extras double up on early days rather than being left out.
+  const result = Array.from({length: days}, () => []);
+  if(names.length === 0) return result;
+  for(let d=0; d<days; d++) result[d].push(names[d % names.length]);
+  if(names.length > days){
+    for(let idx=days, d=0; idx<names.length; idx++, d++) result[d % days].push(names[idx]);
+  }
+  return result;
+}
+
 function getDisplayWeekIdx(){
   // getContext().weekIdx already only changes over when a new Sunday genuinely arrives
   // (it's driven by elapsed 7-day blocks from the fixed anchor), so there's no need for
@@ -841,13 +864,28 @@ function renderOverview(){
   const displayWk = getDisplayWeekIdx();
   const {dayIdx} = getContext();
   const sel = dinnerSelections[displayWk];
-  const dinnerCards = SLOT_KEYS.map((slot, i) => {
-    const r = recipeById(sel[slot]);
-    return `<div class="day-card ${dayIdx===i ? 'today':''}"><div class="d">${DAY_NAMES[i]} ${formatSlotDate(displayWk,i)}</div><div class="dish">${r ? r.dish : '—'}</div></div>`;
-  }).join('');
 
   const lunchNames = weekLunchIds(displayWk).map(id=>lunchById(id)).filter(Boolean).map(l=>l.dish);
   const snackNames = weekSnackIds(displayWk).map(id=>snackById(id)).filter(Boolean).map(s=>`${s.dish}${s.kid ? ' ★' : ''}`);
+  const lunchDist = distributeAcrossWeek(lunchNames, 7);
+  const snackDist = distributeAcrossWeek(snackNames, 7);
+
+  const dayRows = FULL_DAY_NAMES.map((name, d) => {
+    let dinnerLine;
+    if(d <= 3){
+      const r = recipeById(sel[SLOT_KEYS[d]]);
+      dinnerLine = `<div class="meal-line"><b>Dinner</b>${r ? r.dish : '—'}</div>`;
+    } else {
+      dinnerLine = `<div class="meal-line unplanned"><b>Dinner</b>Unplanned — leftovers, freezer, or eating out</div>`;
+    }
+    const lunchLine = lunchDist[d].length ? `<div class="meal-line"><b>Lunch</b>${lunchDist[d].join(' + ')}</div>` : '';
+    const snackLine = snackDist[d].length ? `<div class="meal-line"><b>Snack</b>${snackDist[d].join(' + ')}</div>` : '';
+    return `
+      <div class="day-outline ${dayIdx===d ? 'today':''}">
+        <div class="day-col"><div class="dname">${name}</div><div class="ddate">${formatSlotDate(displayWk,d)}</div></div>
+        <div class="meals-col">${dinnerLine}${lunchLine}${snackLine}</div>
+      </div>`;
+  }).join('');
 
   el.innerHTML = `
     <div class="ov-hero ov-anim">
@@ -858,12 +896,7 @@ function renderOverview(){
 
     <div class="ov-block ov-anim">
       <h3>The week coming up — ${WEEK_LABELS[displayWk]} · ${formatWeekRange(displayWk)}</h3>
-      <div class="week-strip">${dinnerCards}</div>
-
-      <div class="block-label" style="margin-top:16px;">Lunches lined up</div>
-      <div class="ingredients" style="margin-bottom:10px;">${lunchNames.length ? lunchNames.join(' · ') : 'None switched on — check the Recipes tab.'}</div>
-      <div class="block-label">Snacks lined up</div>
-      <div class="ingredients">${snackNames.length ? snackNames.join(' · ') : 'None switched on — check the Recipes tab.'}</div>
+      ${dayRows}
     </div>
 
     ${weekInsightsHtml(displayWk)}
