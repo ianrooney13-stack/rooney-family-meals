@@ -138,13 +138,14 @@ main{flex:1;padding:6px 20px 20px;}
 .day-card .d{ font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
 .day-card .dish{ font-family:'Fraunces',serif; font-weight:600; font-size:13px; color:var(--ink); margin-top:4px; line-height:1.25; }
 
-.day-outline{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:8px; display:flex; gap:14px; }
+.day-outline{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:8px; display:flex; gap:14px; cursor:pointer; }
 .day-outline.today{ border-color:var(--herb); box-shadow:0 0 0 1.5px var(--herb) inset; }
 .day-outline .day-col{ flex-shrink:0; width:74px; }
 .day-outline .day-col .dname{ font-family:'Fraunces',serif; font-weight:600; font-size:13.5px; color:var(--ink); line-height:1.2; }
 .day-outline .day-col .ddate{ font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); margin-top:1px; }
 .day-outline .meals-col{ flex:1; display:flex; flex-direction:column; gap:3px; min-width:0; }
 .day-outline .meal-line{ font-size:12.5px; line-height:1.4; color:var(--charcoal); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.day-outline.expanded .meal-line{ white-space:normal; overflow:visible; text-overflow:clip; }
 .day-outline .meal-line b{ color:var(--muted); font-weight:600; margin-right:4px; }
 .day-outline .meal-line.unplanned{ color:var(--muted); font-style:italic; }
 
@@ -881,7 +882,7 @@ function renderOverview(){
     const lunchLine = lunchDist[d].length ? `<div class="meal-line"><b>Lunch</b>${lunchDist[d].join(' + ')}</div>` : '';
     const snackLine = snackDist[d].length ? `<div class="meal-line"><b>Snack</b>${snackDist[d].join(' + ')}</div>` : '';
     return `
-      <div class="day-outline ${dayIdx===d ? 'today':''}">
+      <div class="day-outline ${dayIdx===d ? 'today':''}" onclick="this.classList.toggle('expanded')">
         <div class="day-col"><div class="dname">${name}</div><div class="ddate">${formatSlotDate(displayWk,d)}</div></div>
         <div class="meals-col">${dinnerLine}${lunchLine}${snackLine}</div>
       </div>`;
