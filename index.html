@@ -863,15 +863,20 @@ function weekInsightsHtml(wk){
 function renderOverview(){
   const el = document.getElementById('view-overview');
   const displayWk = getDisplayWeekIdx();
-  const {dayIdx} = getContext();
+  const {today} = getContext();
   const sel = dinnerSelections[displayWk];
 
   const lunchNames = weekLunchIds(displayWk).map(id=>lunchById(id)).filter(Boolean).map(l=>l.dish);
   const snackNames = weekSnackIds(displayWk).map(id=>snackById(id)).filter(Boolean).map(s=>`${s.dish}${s.kid ? ' ★' : ''}`);
   const lunchDist = distributeAcrossWeek(lunchNames, 7);
   const snackDist = distributeAcrossWeek(snackNames, 7);
+  const weekStart = getWeekStartDate(displayWk);
 
   const dayRows = FULL_DAY_NAMES.map((name, d) => {
+    const rowDate = new Date(weekStart);
+    rowDate.setDate(weekStart.getDate() + d);
+    const isToday = rowDate.getFullYear()===today.getFullYear() && rowDate.getMonth()===today.getMonth() && rowDate.getDate()===today.getDate();
+
     let dinnerLine;
     if(d <= 3){
       const r = recipeById(sel[SLOT_KEYS[d]]);
@@ -882,7 +887,7 @@ function renderOverview(){
     const lunchLine = lunchDist[d].length ? `<div class="meal-line"><b>Lunch</b>${lunchDist[d].join(' + ')}</div>` : '';
     const snackLine = snackDist[d].length ? `<div class="meal-line"><b>Snack</b>${snackDist[d].join(' + ')}</div>` : '';
     return `
-      <div class="day-outline ${dayIdx===d ? 'today':''}" onclick="this.classList.toggle('expanded')">
+      <div class="day-outline ${isToday ? 'today':''}" onclick="this.classList.toggle('expanded')">
         <div class="day-col"><div class="dname">${name}</div><div class="ddate">${formatSlotDate(displayWk,d)}</div></div>
         <div class="meals-col">${dinnerLine}${lunchLine}${snackLine}</div>
       </div>`;
@@ -931,6 +936,40 @@ function renderTonight(){
   const el = document.getElementById('view-tonight');
   const {weekIdx, dayIdx, today} = getContext();
   const dateStr = today.toLocaleDateString('en-IE', {weekday:'long', day:'numeric', month:'long'});
+  const realDow = today.getDay(); // 0-6 Sun-Sat, independent of the anchor/rotation clamp
+
+  const anchor = new Date(anchorDate);
+  anchor.setHours(0,0,0,0);
+  const daysUntilStart = Math.round((anchor - today) / 86400000);
+  if(daysUntilStart > 0){
+    const anchorLabel = anchor.toLocaleDateString('en-IE', {weekday:'long', day:'numeric', month:'long'});
+    const whenLabel = daysUntilStart === 1 ? 'tomorrow' : `on ${anchorLabel}`;
+    el.innerHTML = `
+      <div class="section-head">
+        <h2>Tonight</h2>
+        <span class="tag">${dateStr}</span>
+      </div>
+      <div class="hero-wrap">
+        <div class="hero-card unplanned">
+          <div class="hero-day">Not started yet</div>
+          <div class="hero-dish">Kicks off ${whenLabel} — ${anchorLabel}</div>
+          <div class="hero-meta"><span class="pill">Week A begins then</span></div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const lunchNamesAll = weekLunchIds(weekIdx).map(id=>lunchById(id)).filter(Boolean).map(l=>l.dish);
+  const snackNamesAll = weekSnackIds(weekIdx).map(id=>snackById(id)).filter(Boolean).map(s=>`${s.dish}${s.kid ? ' ★' : ''}`);
+  const todaysLunch = distributeAcrossWeek(lunchNamesAll, 7)[realDow];
+  const todaysSnacks = distributeAcrossWeek(snackNamesAll, 7)[realDow];
+  const todayGlanceHtml = `
+    <div class="slot-card" style="margin-bottom:16px;">
+      <div class="slot-label">Today, in full</div>
+      <div class="ingredients" style="margin-bottom:6px;"><b>Lunch</b> — ${todaysLunch.length ? todaysLunch.join(' + ') : '—'} <span class="who-badge" style="margin-left:6px;">Shared</span></div>
+      <div class="ingredients"><b>Snack</b> — ${todaysSnacks.length ? todaysSnacks.join(' + ') : '—'} <span class="who-badge" style="margin-left:6px;">Helen &amp; Jack</span></div>
+    </div>`;
 
   if(dayIdx >= 0 && dayIdx <= 3){
     const slot = SLOT_KEYS[dayIdx];
@@ -948,9 +987,10 @@ function renderTonight(){
         <h2>Tonight</h2>
         <span class="tag">${dateStr}<br>${WEEK_LABELS[weekIdx]}</span>
       </div>
+      ${todayGlanceHtml}
       <div class="hero-wrap">
         <div class="hero-card">
-          <div class="hero-day">${DAY_NAMES[dayIdx]} Dinner</div>
+          <div class="hero-day">${DAY_NAMES[dayIdx]} Dinner <span class="who-badge" style="margin-left:4px; vertical-align:middle;">Ian</span></div>
           <div class="hero-dish">${r.dish}</div>
           <div class="hero-meta">
             <span class="pill method">${r.method}</span>
@@ -1002,10 +1042,11 @@ function renderTonight(){
         <h2>Tonight</h2>
         <span class="tag">${dateStr}</span>
       </div>
+      ${todayGlanceHtml}
       <div class="hero-wrap">
         <div class="hero-card unplanned">
-          <div class="hero-day">${today.toLocaleDateString('en-IE',{weekday:'long'})}</div>
-          <div class="hero-dish">Unplanned night — by design</div>
+          <div class="hero-day">${today.toLocaleDateString('en-IE',{weekday:'long'})} Dinner <span class="who-badge" style="margin-left:4px; vertical-align:middle;">Ian</span></div>
+          <div class="hero-dish">Unplanned — by design</div>
           <div class="hero-meta"><span class="pill">Leftovers, freezer backup, or eating out</span></div>
           <hr class="hero-divider">
           <div class="block-label">Your top-rated dinners so far</div>
