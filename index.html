@@ -776,14 +776,86 @@ function estimateWeekCost(weekIdx){
 /* ============================================================
    RENDER: OVERVIEW
    ============================================================ */
+function getDisplayWeekIdx(){
+  const {weekIdx, dayIdx} = getContext();
+  // From Friday onward, show next week's outline instead of the one that's already mostly happened
+  if(dayIdx === 5 || dayIdx === 6) return (weekIdx + 1) % 3;
+  return weekIdx;
+}
+
+function nutritionSnapshotHtml(wk){
+  const sel = dinnerSelections[wk];
+  const dinners = SLOT_KEYS.map(slot => recipeById(sel[slot])).filter(Boolean);
+  const dinnerCals = dinners.map(d => d.calories).filter(Boolean);
+  const avgDinner = dinnerCals.length ? Math.round(dinnerCals.reduce((a,b)=>a+b,0)/dinnerCals.length) : null;
+  const minDinner = dinnerCals.length ? Math.min(...dinnerCals) : null;
+  const maxDinner = dinnerCals.length ? Math.max(...dinnerCals) : null;
+
+  const lunchItems = selectedLunches.map(id=>lunchById(id)).filter(l=>l && l.calories);
+  const avgLunch = lunchItems.length ? Math.round(lunchItems.reduce((a,l)=>a+l.calories,0)/lunchItems.length) : null;
+
+  const snackItems = selectedSnacks.map(id=>snackById(id)).filter(Boolean);
+  const avgSnack = snackItems.length && snackItems.some(s=>s.calories) ? Math.round(snackItems.filter(s=>s.calories).reduce((a,s)=>a+s.calories,0)/snackItems.filter(s=>s.calories).length) : null;
+
+  const veggieCount = dinners.filter(d => d.proteins && d.proteins.includes('chickpea')).length;
+
+  const insights = [];
+  if(avgDinner !== null){
+    if(avgDinner > 650) insights.push(`This week's dinners average ~${avgDinner} kcal per adult serving — on the higher side. Not necessarily a problem, but worth a look if that's more than feels right for either of you.`);
+    else if(avgDinner < 400) insights.push(`This week's dinners average ~${avgDinner} kcal per adult serving — on the lighter side. Worth checking nobody's left hungry, especially after an active day.`);
+    else insights.push(`This week's dinners average ~${avgDinner} kcal per adult serving (range ${minDinner}–${maxDinner}) — sits in a fairly typical range for an adult dinner portion.`);
+  }
+  if(veggieCount === 0) insights.push(`No fully veggie/pulse-based dinner this week — not an issue on its own, but the Recipes tab has a few good ones if you want to rotate one in.`);
+  if(selectedSnacks.length > 6) insights.push(`You've got ${selectedSnacks.length} snacks switched on — plenty of variety, just worth remembering the ground rule is one a day for Jack, not one of each.`);
+
+  return `
+    <div class="ov-block ov-anim">
+      <h3>Nutrition snapshot</h3>
+      <div class="slot-card" style="background:var(--paper-2); border:1px solid var(--mustard-dim);">
+        <div style="display:flex; gap:18px; flex-wrap:wrap; margin-bottom:10px;">
+          ${avgDinner !== null ? `<div><div class="block-label">Avg dinner</div><div style="font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:var(--ink);">~${avgDinner} kcal</div></div>` : ''}
+          ${avgLunch !== null ? `<div><div class="block-label">Typical lunch</div><div style="font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:var(--ink);">~${avgLunch} kcal</div></div>` : ''}
+          ${avgSnack !== null ? `<div><div class="block-label">Typical snack</div><div style="font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:var(--ink);">~${avgSnack} kcal</div></div>` : ''}
+        </div>
+        ${insights.map(i => `<div class="ingredients" style="margin-bottom:8px;">• ${i}</div>`).join('')}
+        <div class="plan-note" style="margin-top:8px;">Rough planning guide only — based on estimated calories for dinners/lunches/snacks, not a full daily picture (breakfast isn't tracked here) and not personalised to either of you. Treat it as a nudge to glance at, not a target to hit — check with a GP or dietitian for anything more specific.</div>
+      </div>
+    </div>`;
+}
+
 function renderOverview(){
   const el = document.getElementById('view-overview');
+  const displayWk = getDisplayWeekIdx();
+  const {weekIdx: curWeekIdx, dayIdx} = getContext();
+  const isNextWeek = displayWk !== curWeekIdx;
+  const sel = dinnerSelections[displayWk];
+  const dinnerCards = SLOT_KEYS.map((slot, i) => {
+    const r = recipeById(sel[slot]);
+    return `<div class="day-card ${!isNextWeek && dayIdx===i ? 'today':''}"><div class="d">${DAY_NAMES[i]} ${formatSlotDate(displayWk,i)}</div><div class="dish">${r ? r.dish : '—'}</div></div>`;
+  }).join('');
+
+  const lunchNames = selectedLunches.map(id=>lunchById(id)).filter(Boolean).map(l=>l.dish);
+  const snackNames = selectedSnacks.map(id=>snackById(id)).filter(Boolean).map(s=>`${s.dish}${s.kid ? ' ★' : ''}`);
+
   el.innerHTML = `
     <div class="ov-hero ov-anim">
       <div class="eyebrow">The Rooney Family Greystones</div>
       <h2>Real, healthy food.<br><em>As a family.</em></h2>
       <p>More veg and protein, less sugar and snack drift — and Jack in the kitchen with us, not just at the table.</p>
     </div>
+
+    <div class="ov-block ov-anim">
+      <h3>${isNextWeek ? "Coming up next" : "This week"} — ${WEEK_LABELS[displayWk]} · ${formatWeekRange(displayWk)}</h3>
+      ${isNextWeek ? `<div class="plan-note" style="margin-bottom:10px;">It's Fri/Sat, so this is showing next week's plan instead of the one that's mostly done.</div>` : ''}
+      <div class="week-strip">${dinnerCards}</div>
+
+      <div class="block-label" style="margin-top:16px;">Lunches in rotation</div>
+      <div class="ingredients" style="margin-bottom:10px;">${lunchNames.length ? lunchNames.join(' · ') : 'None switched on — check the Recipes tab.'}</div>
+      <div class="block-label">Snacks in rotation</div>
+      <div class="ingredients">${snackNames.length ? snackNames.join(' · ') : 'None switched on — check the Recipes tab.'}</div>
+    </div>
+
+    ${nutritionSnapshotHtml(displayWk)}
 
     <div class="ov-block ov-anim">
       <h3>How the week works</h3>
@@ -1046,6 +1118,7 @@ async function mixItUp(weekIdx){
   renderPlan();
   renderShop();
   renderTonight();
+  renderOverview();
 }
 async function setPlanWeek(i){ currentPlanWeekTab = i; renderPlan(); }
 async function setSlot(weekIdx, slot, dishId){
@@ -1054,6 +1127,7 @@ async function setSlot(weekIdx, slot, dishId){
   renderShop();
   renderPlan();
   renderTonight();
+  renderOverview();
 }
 
 /* ============================================================
@@ -1212,6 +1286,7 @@ async function removeCustom(category, id){
   renderShop();
   renderPlan();
   renderTonight();
+  renderOverview();
 }
 
 function renderRecipeList(){
@@ -1329,6 +1404,7 @@ async function assignToSlot(dishId, encoded, dishName){
   renderPlan();
   renderShop();
   renderTonight();
+  renderOverview();
   const dayLabel = slot === 'sun' ? 'Sunday' : (slot === 'mon' ? 'Monday' : 'Tuesday');
   const confirmEl = document.getElementById('assign-confirm-' + dishId);
   const selectEl = document.getElementById('assign-' + dishId);
@@ -1346,6 +1422,7 @@ async function toggleLunch(id){
   await saveSelectedLunches();
   renderRecipeList();
   renderShop();
+  renderOverview();
 }
 async function toggleSnack(id){
   const i = selectedSnacks.indexOf(id);
@@ -1353,6 +1430,7 @@ async function toggleSnack(id){
   await saveSelectedSnacks();
   renderRecipeList();
   renderShop();
+  renderOverview();
 }
 
 /* ============================================================
