@@ -691,18 +691,11 @@ function sundaySession(weekIdx){
 /* ============================================================
    SHOPPING LIST BUILDER
    ============================================================ */
-const SNACKS_PER_WEEK = 7;  // one a day, including weekends — not trying to overly limit variety at the start
-const LUNCHES_PER_WEEK = 5; // roughly one per weekday
+const SNACKS_PER_WEEK = 7;  // flag threshold, not a hard cap — one a day including weekends
+const LUNCHES_PER_WEEK = 5; // flag threshold, not a hard cap — roughly one per weekday
 
-function rotatedSubset(fullIds, weekIdx, perWeek){
-  if(fullIds.length <= perWeek) return fullIds; // small pool — no need to ration, use all of it
-  const start = (weekIdx * perWeek) % fullIds.length;
-  const out = [];
-  for(let i=0; i<perWeek; i++) out.push(fullIds[(start + i) % fullIds.length]);
-  return out;
-}
-function weekLunchIds(weekIdx){ return rotatedSubset(selectedLunches, weekIdx, LUNCHES_PER_WEEK); }
-function weekSnackIds(weekIdx){ return rotatedSubset(selectedSnacks, weekIdx, SNACKS_PER_WEEK); }
+function weekLunchIds(weekIdx){ return selectedLunches; } // every switched-on lunch feeds every week's list
+function weekSnackIds(weekIdx){ return selectedSnacks; }  // every switched-on snack feeds every week's list
 
 function buildShoppingList(weekIdx){
   const sel = dinnerSelections[weekIdx];
@@ -797,7 +790,7 @@ function getDisplayWeekIdx(){
   return getContext().weekIdx;
 }
 
-function nutritionSnapshotHtml(wk){
+function weekInsightsHtml(wk){
   const sel = dinnerSelections[wk];
   const dinners = SLOT_KEYS.map(slot => recipeById(sel[slot])).filter(Boolean);
   const dinnerCals = dinners.map(d => d.calories).filter(Boolean);
@@ -812,28 +805,34 @@ function nutritionSnapshotHtml(wk){
   const avgSnack = snackItems.length && snackItems.some(s=>s.calories) ? Math.round(snackItems.filter(s=>s.calories).reduce((a,s)=>a+s.calories,0)/snackItems.filter(s=>s.calories).length) : null;
 
   const veggieCount = dinners.filter(d => d.proteins && d.proteins.includes('chickpea')).length;
+  const proteinSet = weekProteinSet(wk);
+  const proteinClash = proteinSet.has('chicken') && proteinSet.has('chickpea');
 
-  const insights = [];
-  if(avgDinner !== null){
-    if(avgDinner > 650) insights.push(`This week's dinners average ~${avgDinner} kcal per adult serving — on the higher side. Not necessarily a problem, but worth a look if that's more than feels right for either of you.`);
-    else if(avgDinner < 400) insights.push(`This week's dinners average ~${avgDinner} kcal per adult serving — on the lighter side. Worth checking nobody's left hungry, especially after an active day.`);
-    else insights.push(`This week's dinners average ~${avgDinner} kcal per adult serving (range ${minDinner}–${maxDinner}) — sits in a fairly typical range for an adult dinner portion.`);
-  }
-  if(veggieCount === 0) insights.push(`No fully veggie/pulse-based dinner this week — not an issue on its own, but the Recipes tab has a few good ones if you want to rotate one in.`);
-  if(selectedSnacks.length > SNACKS_PER_WEEK) insights.push(`You've got ${selectedSnacks.length} snacks switched on — only ${SNACKS_PER_WEEK} feed any given week's shopping list (they rotate), so this is variety over time, not extra snacks bought at once.`);
+  const flags = [];
+  if(proteinClash) flags.push(`This week pairs <b>chicken and chickpea</b> — swap Monday or Tuesday for a beef option on the Plan tab.`);
+  if(avgDinner !== null && avgDinner > 650) flags.push(`Dinners average ~${avgDinner} kcal this week — on the higher side. Worth a look if that's more than feels right.`);
+  if(avgDinner !== null && avgDinner < 400) flags.push(`Dinners average ~${avgDinner} kcal this week — on the lighter side. Worth checking nobody's left hungry.`);
+  if(veggieCount === 0) flags.push(`No veggie/pulse-based dinner this week — plenty of good ones on the Recipes tab if you want to rotate one in.`);
+  if(selectedLunches.length > LUNCHES_PER_WEEK) flags.push(`${selectedLunches.length} lunches switched on — everything "on" gets bought every week, so that's a fair few ingredients. Fine if that's the plan, worth a trim if the shop's feeling long.`);
+  if(selectedSnacks.length > SNACKS_PER_WEEK) flags.push(`${selectedSnacks.length} snacks switched on — same as above, everything "on" is bought weekly.`);
 
   return `
     <div class="ov-block ov-anim">
-      <h3>Nutrition snapshot</h3>
+      <h3>At a glance</h3>
       <div class="slot-card" style="background:var(--paper-2); border:1px solid var(--mustard-dim);">
-        <div style="display:flex; gap:18px; flex-wrap:wrap; margin-bottom:10px;">
+        <div style="display:flex; gap:18px; flex-wrap:wrap;">
           ${avgDinner !== null ? `<div><div class="block-label">Avg dinner</div><div style="font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:var(--ink);">~${avgDinner} kcal</div></div>` : ''}
           ${avgLunch !== null ? `<div><div class="block-label">Typical lunch</div><div style="font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:var(--ink);">~${avgLunch} kcal</div></div>` : ''}
           ${avgSnack !== null ? `<div><div class="block-label">Typical snack</div><div style="font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:var(--ink);">~${avgSnack} kcal</div></div>` : ''}
         </div>
-        ${insights.map(i => `<div class="ingredients" style="margin-bottom:8px;">• ${i}</div>`).join('')}
-        <div class="plan-note" style="margin-top:8px;">Rough planning guide only — based on estimated calories for dinners/lunches/snacks, not a full daily picture (breakfast isn't tracked here) and not personalised to either of you. Treat it as a nudge to glance at, not a target to hit — check with a GP or dietitian for anything more specific.</div>
       </div>
+    </div>
+
+    <div class="ov-block ov-anim">
+      <h3>Worth a look</h3>
+      ${flags.length
+        ? flags.map(f => `<div class="ov-step"><div class="num">!</div><div class="txt">${f}</div></div>`).join('')
+        : `<div class="ingredients">Nothing jumping out — looks like a solid week.</div>`}
     </div>`;
 }
 
@@ -849,7 +848,6 @@ function renderOverview(){
 
   const lunchNames = weekLunchIds(displayWk).map(id=>lunchById(id)).filter(Boolean).map(l=>l.dish);
   const snackNames = weekSnackIds(displayWk).map(id=>snackById(id)).filter(Boolean).map(s=>`${s.dish}${s.kid ? ' ★' : ''}`);
-  const morePool = (n, cap) => n > cap ? ` (+${n-cap} more rotating in on other weeks)` : '';
 
   el.innerHTML = `
     <div class="ov-hero ov-anim">
@@ -862,13 +860,13 @@ function renderOverview(){
       <h3>The week coming up — ${WEEK_LABELS[displayWk]} · ${formatWeekRange(displayWk)}</h3>
       <div class="week-strip">${dinnerCards}</div>
 
-      <div class="block-label" style="margin-top:16px;">Lunches this week</div>
-      <div class="ingredients" style="margin-bottom:10px;">${lunchNames.length ? lunchNames.join(' · ') + morePool(selectedLunches.length, LUNCHES_PER_WEEK) : 'None switched on — check the Recipes tab.'}</div>
-      <div class="block-label">Snacks this week</div>
-      <div class="ingredients">${snackNames.length ? snackNames.join(' · ') + morePool(selectedSnacks.length, SNACKS_PER_WEEK) : 'None switched on — check the Recipes tab.'}</div>
+      <div class="block-label" style="margin-top:16px;">Lunches lined up</div>
+      <div class="ingredients" style="margin-bottom:10px;">${lunchNames.length ? lunchNames.join(' · ') : 'None switched on — check the Recipes tab.'}</div>
+      <div class="block-label">Snacks lined up</div>
+      <div class="ingredients">${snackNames.length ? snackNames.join(' · ') : 'None switched on — check the Recipes tab.'}</div>
     </div>
 
-    ${nutritionSnapshotHtml(displayWk)}
+    ${weekInsightsHtml(displayWk)}
 
     <div class="ov-block ov-anim">
       <h3>How the week works</h3>
@@ -1307,7 +1305,7 @@ function renderRecipeList(){
 
   if(recipeTab === 'lunches'){
     list.innerHTML = addRecipeBtnHtml('lunches') +
-      `<div class="plan-note" style="margin:10px 0 12px;">Switch on whichever ones you want available. If you've got more than ${LUNCHES_PER_WEEK} switched on, they rotate — only ${LUNCHES_PER_WEEK} feed any single week's shopping list, so you're not buying for all of them every week.</div>` +
+      `<div class="plan-note" style="margin:10px 0 12px;">Switch on whichever ones you want — everything "on" feeds every week's shopping list. The home page will flag it if that list starts getting long.</div>` +
       allLunches().map(l=>{
         const on = selectedLunches.includes(l.id);
         const custom = l.id.startsWith('C');
@@ -1335,7 +1333,7 @@ function renderRecipeList(){
 
   if(recipeTab === 'snacks'){
     list.innerHTML = addRecipeBtnHtml('snacks') +
-      `<div class="plan-note" style="margin:10px 0 12px;">These live with Helen &amp; Jack's breakfast/snack domain — switch on whichever ones you want available. If more than ${SNACKS_PER_WEEK} are switched on, they rotate across weeks rather than all being bought every week — matches "one a day," not "one of each." <span class="who-badge">★ Made with Jack</span> ones are good hands-on activities for the two of them.</div>` +
+      `<div class="plan-note" style="margin:10px 0 12px;">These live with Helen &amp; Jack's breakfast/snack domain — switch on whichever ones you want. Everything "on" gets bought every week; the home page will flag it if that starts adding up. <span class="who-badge">★ Made with Jack</span> ones are good hands-on activities for the two of them.</div>` +
       allSnacks().map(s=>{
         const on = selectedSnacks.includes(s.id);
         const custom = s.id.startsWith('C');
