@@ -971,6 +971,70 @@ function renderTonight(){
       <div class="ingredients"><b>Snack</b> — ${todaysSnacks.length ? todaysSnacks.join(' + ') : '—'} <span class="who-badge" style="margin-left:6px;">Helen &amp; Jack</span></div>
     </div>`;
 
+function formatClock(mins){
+  let h = Math.floor(mins/60), m = mins%60;
+  const ampm = h>=12 ? 'pm':'am';
+  let h12 = h%12; if(h12===0) h12=12;
+  return `${h12}:${m.toString().padStart(2,'0')}${ampm}`;
+}
+function sundaySessionPlanHtml(weekIdx){
+  const sel = dinnerSelections[weekIdx];
+  const rSun = recipeById(sel.sun), rMon = recipeById(sel.mon), rTue = recipeById(sel.tue), rWed = recipeById(sel.wed);
+  const START_CLOCK = 14*60;  // 2:00pm
+  const TARGET_EAT = 17*60;   // 5:00pm
+
+  let clock = START_CLOCK;
+  const steps = [];
+  [ ['Monday', rMon], ['Tuesday', rTue] ].forEach(([label, r]) => {
+    if(!r) return;
+    steps.push({
+      time: clock,
+      title: `Prep ${r.dish} <span class="who-badge" style="margin-left:4px;">for ${label}</span>`,
+      detail: r.prep || `Chop and assemble: ${r.ingredients.join(', ')}`,
+      mins: r.prepMins || 0
+    });
+    clock += (r.prepMins || 0);
+  });
+  if(rWed){
+    steps.push({
+      time: clock,
+      title: `Sort Wednesday's backup staples`,
+      detail: rWed.prep || `Just keep these to hand in case leftovers run short: ${rWed.ingredients.join(', ')}`,
+      mins: rWed.prepMins || 0
+    });
+    clock += (rWed.prepMins || 0);
+  }
+  const sunTotal = (rSun.prepMins||0) + (rSun.cookMins||0);
+  const cookStart = clock;
+  steps.push({
+    time: cookStart,
+    title: `Cook tonight's dinner — ${rSun.dish}`,
+    detail: `${rSun.ingredients.join(' · ')}<br><br>${rSun.steps.map((s,i)=>`${i+1}. ${s}`).join('<br>')}`,
+    mins: sunTotal,
+    isDinner: true
+  });
+  const finishClock = cookStart + sunTotal;
+  const onTrack = finishClock <= TARGET_EAT;
+
+  return `
+    <div class="hero-card" style="margin-bottom:16px; transform:rotate(0.3deg);">
+      <div class="hero-day">Sunday Session Plan</div>
+      <div class="hero-dish" style="font-size:19px;">2:00pm start → 5:00pm target</div>
+      <hr class="hero-divider">
+      ${steps.map(s => `
+        <div class="block-label" style="margin-top:12px;">${formatClock(s.time)} — ${s.title} <span style="color:var(--muted); font-weight:400; text-transform:none; letter-spacing:0;">(~${formatMins(s.mins)})</span></div>
+        <div class="ingredients">${s.detail}</div>
+      `).join('')}
+      <hr class="hero-divider">
+      <div class="block-label">Target eat time</div>
+      <div class="ingredients" style="font-weight:600; color:${onTrack ? 'var(--herb-2)' : 'var(--clay)'};">
+        ${onTrack
+          ? `On track — ready around ${formatClock(finishClock)}, with ${formatMins(TARGET_EAT-finishClock)} to spare before 5pm.`
+          : `Running about ${formatMins(finishClock-TARGET_EAT)} past 5pm at this pace with a 2pm start — worth starting a little earlier, or getting Monday/Tuesday's chopping done the night before instead.`}
+      </div>
+    </div>`;
+}
+
   if(dayIdx >= 0 && dayIdx <= 3){
     const slot = SLOT_KEYS[dayIdx];
     const r = recipeById(dinnerSelections[weekIdx][slot]);
@@ -988,6 +1052,7 @@ function renderTonight(){
         <span class="tag">${dateStr}<br>${WEEK_LABELS[weekIdx]}</span>
       </div>
       ${todayGlanceHtml}
+      ${dayIdx===0 ? sundaySessionPlanHtml(weekIdx) : ''}
       <div class="hero-wrap">
         <div class="hero-card">
           <div class="hero-day">${DAY_NAMES[dayIdx]} Dinner <span class="who-badge" style="margin-left:4px; vertical-align:middle;">Ian</span></div>
