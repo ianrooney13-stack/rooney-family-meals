@@ -292,10 +292,10 @@ main{flex:1;padding:6px 20px 20px;}
   padding:7px 2px calc(7px + env(safe-area-inset-bottom));
   box-shadow:0 -4px 16px rgba(38,35,33,0.06);
 }
-.nav-btn{ flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; background:none; border:none; cursor:pointer; padding:5px 0px; color:var(--muted); }
+.nav-btn{ flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; background:none; border:none; cursor:pointer; padding:6px 1px; color:var(--muted); }
 .nav-btn.active{ color:var(--ink); }
-.nav-btn span{ font-family:'Inter',sans-serif; font-size:8.8px; font-weight:600; }
-.nav-btn svg{ width:18px; height:18px; stroke:var(--muted); stroke-width:1.8; fill:none; }
+.nav-btn span{ font-family:'Inter',sans-serif; font-size:9.5px; font-weight:600; }
+.nav-btn svg{ width:19px; height:19px; stroke:var(--muted); stroke-width:1.8; fill:none; }
 .nav-btn.active svg{ stroke:var(--herb); }
 
 .view{ display:none; }
@@ -335,7 +335,6 @@ main{flex:1;padding:6px 20px 20px;}
     <div class="view" id="view-recipes"></div>
     <div class="view" id="view-shop"></div>
     <div class="view" id="view-log"></div>
-    <div class="view" id="view-tips"></div>
   </main>
 
   <div class="bottom-nav">
@@ -349,7 +348,7 @@ main{flex:1;padding:6px 20px 20px;}
     </button>
     <button class="nav-btn" data-view="plan" onclick="switchView('plan')">
       <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4M16 3v4"/></svg>
-      <span>Plan</span>
+      <span>Next Plan</span>
     </button>
     <button class="nav-btn" data-view="recipes" onclick="switchView('recipes')">
       <svg viewBox="0 0 24 24"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4z"/><path d="M8 8h6M8 12h6"/></svg>
@@ -357,15 +356,11 @@ main{flex:1;padding:6px 20px 20px;}
     </button>
     <button class="nav-btn" data-view="shop" onclick="switchView('shop')">
       <svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6L5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg>
-      <span>Shop</span>
+      <span>Next Shop</span>
     </button>
     <button class="nav-btn" data-view="log" onclick="switchView('log')">
       <svg viewBox="0 0 24 24"><path d="M12 2l2.5 6.5L21 9l-5 4.5 1.5 7L12 17l-5.5 3.5L8 13.5 3 9l6.5-0.5z"/></svg>
       <span>Ratings</span>
-    </button>
-    <button class="nav-btn" data-view="tips" onclick="switchView('tips')">
-      <svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.5.5 1 1.3 1 2.5h6c0-1.2.5-2 1-2.5A6 6 0 0 0 12 2z"/></svg>
-      <span>Tips</span>
     </button>
   </div>
 
@@ -377,7 +372,7 @@ main{flex:1;padding:6px 20px 20px;}
     <div class="rule"><div class="dot"></div><div><span class="who">Dinners (Sun–Wed):</span> Ian owns these. Cook all 4 on Sunday.</div></div>
     <div class="rule"><div class="dot"></div><div><span class="who">Breakfast &amp; snacks:</span> Helen &amp; Jack's domain — snack ideas live under Recipes if useful.</div></div>
     <div class="rule"><div class="dot"></div><div><span class="who">Lunches:</span> shared go-to list.</div></div>
-    <div class="rule"><div class="dot"></div><div>Change any night's dish or which lunches/snacks are "in" from the <span class="who">Plan</span> tab — the <span class="who">Shop</span> list updates automatically.</div></div>
+    <div class="rule"><div class="dot"></div><div>Change any night's dish or which lunches/snacks are "in" from the <span class="who">Next Week's Plan</span> tab — the <span class="who">Next Shop</span> list updates automatically.</div></div>
     <div class="rule"><div class="dot"></div><div>See the <span class="who">Overview</span> tab for the full picture anytime.</div></div>
     <button class="close-modal" onclick="closeModal()">Got it</button>
   </div>
@@ -814,6 +809,13 @@ function getDisplayWeekIdx(){
   return getContext().weekIdx;
 }
 
+function getDefaultPlanningWeekIdx(){
+  // Sunday: this week's shop/plan is still the live, actionable one.
+  // Monday onward: this week is already shopped and cooking — default to planning next week instead.
+  const {weekIdx, dayIdx} = getContext();
+  return dayIdx === 0 ? weekIdx : (weekIdx + 1) % 3;
+}
+
 function weekInsightsHtml(wk){
   const sel = dinnerSelections[wk];
   const dinners = SLOT_KEYS.map(slot => recipeById(sel[slot])).filter(Boolean);
@@ -833,7 +835,7 @@ function weekInsightsHtml(wk){
   const proteinClash = proteinSet.has('chicken') && proteinSet.has('chickpea');
 
   const flags = [];
-  if(proteinClash) flags.push(`This week pairs <b>chicken and chickpea</b> — swap Monday or Tuesday for a beef option on the Plan tab.`);
+  if(proteinClash) flags.push(`This week pairs <b>chicken and chickpea</b> — swap Monday or Tuesday for a beef option on the Next Week's Plan tab.`);
   if(avgDinner !== null && avgDinner > 650) flags.push(`Dinners average ~${avgDinner} kcal this week — on the higher side. Worth a look if that's more than feels right.`);
   if(avgDinner !== null && avgDinner < 400) flags.push(`Dinners average ~${avgDinner} kcal this week — on the lighter side. Worth checking nobody's left hungry.`);
   if(veggieCount === 0) flags.push(`No veggie/pulse-based dinner this week — plenty of good ones on the Recipes tab if you want to rotate one in.`);
@@ -909,7 +911,7 @@ function renderOverview(){
 
     <div class="ov-block ov-anim">
       <h3>How the week works</h3>
-      <div class="ov-step"><div class="num">1</div><div class="txt"><b>Sunday morning:</b> shop using the Shop tab — built automatically from your Plan. Buy only what's on it.</div></div>
+      <div class="ov-step"><div class="num">1</div><div class="txt"><b>Sunday morning:</b> shop using the Next Shop tab — built automatically from your Plan. Buy only what's on it.</div></div>
       <div class="ov-step"><div class="num">2</div><div class="txt"><b>Sunday:</b> cook all 4 dinners using the Recipes tab.</div></div>
       <div class="ov-step"><div class="num">3</div><div class="txt"><b>Sun–Tue</b> eaten fresh. <b>Wednesday</b> defaults to leftovers, with a backup recipe if there isn't enough.</div></div>
       <div class="ov-step"><div class="num">4</div><div class="txt">Rate each dinner on <b>Tonight</b> — 10 seconds, builds a "known good" list over time.</div></div>
@@ -925,7 +927,7 @@ function renderOverview(){
       </div>
     </div>
 
-    <button class="cta-btn ov-anim" onclick="switchView('plan')">See the week's plan →</button>
+    <button class="cta-btn ov-anim" onclick="switchView('plan')">See next week's plan →</button>
   `;
 }
 
@@ -984,35 +986,22 @@ function sundaySessionPlanHtml(weekIdx){
   const TARGET_EAT = 17*60;   // 5:00pm
 
   let clock = START_CLOCK;
-  const steps = [];
+  const prepItems = [];
   [ ['Monday', rMon], ['Tuesday', rTue] ].forEach(([label, r]) => {
     if(!r) return;
-    steps.push({
-      time: clock,
-      title: `Prep ${r.dish} <span class="who-badge" style="margin-left:4px;">for ${label}</span>`,
-      detail: r.prep || `Chop and assemble: ${r.ingredients.join(', ')}`,
-      mins: r.prepMins || 0
-    });
+    prepItems.push(`Gather for ${label}'s dinner (<b>${r.dish}</b>): ${r.ingredients.join(', ')}.`);
+    if(r.prep) prepItems.push(r.prep);
     clock += (r.prepMins || 0);
   });
   if(rWed){
-    steps.push({
-      time: clock,
-      title: `Sort Wednesday's backup staples`,
-      detail: rWed.prep || `Just keep these to hand in case leftovers run short: ${rWed.ingredients.join(', ')}`,
-      mins: rWed.prepMins || 0
-    });
+    prepItems.push(`Check you've got Wednesday's backup staples to hand (only needed if leftovers run short): ${rWed.ingredients.join(', ')}.`);
     clock += (rWed.prepMins || 0);
   }
-  const sunTotal = (rSun.prepMins||0) + (rSun.cookMins||0);
+
   const cookStart = clock;
-  steps.push({
-    time: cookStart,
-    title: `Cook tonight's dinner — ${rSun.dish}`,
-    detail: `${rSun.ingredients.join(' · ')}<br><br>${rSun.steps.map((s,i)=>`${i+1}. ${s}`).join('<br>')}`,
-    mins: sunTotal,
-    isDinner: true
-  });
+  const cookItems = [`Gather: ${rSun.ingredients.join(', ')}.`, ...rSun.steps];
+
+  const sunTotal = (rSun.prepMins||0) + (rSun.cookMins||0);
   const finishClock = cookStart + sunTotal;
   const onTrack = finishClock <= TARGET_EAT;
 
@@ -1021,10 +1010,18 @@ function sundaySessionPlanHtml(weekIdx){
       <div class="hero-day">Sunday Session Plan</div>
       <div class="hero-dish" style="font-size:19px;">2:00pm start → 5:00pm target</div>
       <hr class="hero-divider">
-      ${steps.map(s => `
-        <div class="block-label" style="margin-top:12px;">${formatClock(s.time)} — ${s.title} <span style="color:var(--muted); font-weight:400; text-transform:none; letter-spacing:0;">(~${formatMins(s.mins)})</span></div>
-        <div class="ingredients">${s.detail}</div>
-      `).join('')}
+
+      <div class="block-label">${formatClock(START_CLOCK)} — Prep for the week</div>
+      <ol style="margin:6px 0 0; padding-left:20px;">
+        ${prepItems.map(t => `<li style="margin-bottom:8px; font-size:13.5px; line-height:1.55; color:var(--charcoal);">${t}</li>`).join('')}
+      </ol>
+
+      <hr class="hero-divider">
+      <div class="block-label">${formatClock(cookStart)} — Cook tonight's dinner: ${rSun.dish}</div>
+      <ol style="margin:6px 0 0; padding-left:20px;">
+        ${cookItems.map(t => `<li style="margin-bottom:8px; font-size:13.5px; line-height:1.55; color:var(--charcoal);">${t}</li>`).join('')}
+      </ol>
+
       <hr class="hero-divider">
       <div class="block-label">Target eat time</div>
       <div class="ingredients" style="font-weight:600; color:${onTrack ? 'var(--herb-2)' : 'var(--clay)'};">
@@ -1199,7 +1196,7 @@ function proteinMixNote(wk){
 function renderPlan(){
   const el = document.getElementById('view-plan');
   const {weekIdx} = getContext();
-  if(currentPlanWeekTab === null) currentPlanWeekTab = weekIdx;
+  if(currentPlanWeekTab === null) currentPlanWeekTab = getDefaultPlanningWeekIdx();
   const wk = currentPlanWeekTab;
   const sel = dinnerSelections[wk];
 
@@ -1212,7 +1209,7 @@ function renderPlan(){
   }
 
   el.innerHTML = `
-    <div class="section-head"><h2>Plan this week</h2><span class="tag">choose &amp; the Shop list updates</span></div>
+    <div class="section-head"><h2>Next Week's Plan</h2><span class="tag">choose &amp; the Shop list updates</span></div>
     <div class="filter-row">
       ${[0,1,2].map(i=>`<div class="filter-chip ${wk===i?'active':''}" onclick="setPlanWeek(${i})">${WEEK_LABELS[i]} · ${formatWeekRange(i)}${i===weekIdx?' (current)':''}</div>`).join('')}
     </div>
@@ -1499,9 +1496,9 @@ function renderRecipeList(){
     return;
   }
 
-  // dinners (view + rate history; editing which day cooks it happens on Plan tab)
+  // dinners (view + rate history; editing which day cooks it happens on the Next Week's Plan tab)
   list.innerHTML = addRecipeBtnHtml('dinners') +
-    `<div class="plan-note" style="margin:10px 0 12px;">Browse all options, or use "Add to Plan" on any dish to slot it straight into a week — no need to go to the Plan tab. Calories are rough estimates per serving, not exact counts.</div>` +
+    `<div class="plan-note" style="margin:10px 0 12px;">Browse all options, or use "Add to Plan" on any dish to slot it straight into a week — no need to go to the Next Week's Plan tab. Calories are rough estimates per serving, not exact counts.</div>` +
     allDinners().filter(r=>!r.backup).map(r=>{
       const avg = avgRating(r.dish);
       const custom = r.id.startsWith('C');
@@ -1590,11 +1587,11 @@ async function toggleSnack(id){
 function renderShop(){
   const el = document.getElementById('view-shop');
   const {weekIdx} = getContext();
-  if(currentShopWeekTab === null) currentShopWeekTab = weekIdx;
+  if(currentShopWeekTab === null) currentShopWeekTab = getDefaultPlanningWeekIdx();
 
   el.innerHTML = `
     <div class="section-head">
-      <h2>Shopping List</h2>
+      <h2>Next Shop</h2>
       <span class="tag">auto-built from your Plan</span>
     </div>
     <div class="filter-row">
@@ -1676,41 +1673,9 @@ function renderLog(){
 /* ============================================================
    RENDER: TOP TIPS
    ============================================================ */
-function renderTips(){
-  const el = document.getElementById('view-tips');
-  el.innerHTML = `
-    <div class="section-head"><h2>Top Tips to Eat Healthy</h2><span class="tag">the rules behind the app</span></div>
-
-    <div class="ov-block">
-      <h3>What you need</h3>
-      <div class="supply-list">
-        <div class="supply-item"><span class="tick">✓</span><span><b>4–6 matching rectangular glass or BPA-free plastic containers</b> (roughly 800ml–1L), for the actual portioned dinners going into the fridge Sunday.</span></div>
-        <div class="supply-item"><span class="tick">✓</span><span><b>A handful of smaller pots (300–400ml)</b> for lunch portions and snack pre-portioning — trail mix, hummus + veg, etc.</span></div>
-        <div class="supply-item"><span class="tick">✓</span><span><b>Freezer-safe labels or masking tape + marker</b> — since forgetting what's in there (not lack of space) was the actual problem, label with dish + date every time.</span></div>
-        <div class="supply-item"><span class="tick">✓</span><span><b>2–3 stackable fridge bins or a lazy-susan turntable</b> — keeps the 4 days' containers visible instead of buried, so they actually get eaten.</span></div>
-        <div class="supply-item"><span class="tick">✓</span><span>Optional: <b>a countertop "eat me first" bin or shelf</b> — a physical spot for anything approaching its use-by date.</span></div>
-      </div>
-    </div>
-
-    <div class="ov-block">
-      <h3>Ground rules</h3>
-      <div class="ov-step"><div class="num">1</div><div class="txt"><b>Clear out the kitchen.</b> One Sunday, go through the cupboards and fridge and clear out the ultra-processed snacks — crisps, biscuits, sugary cereal. If the healthy option is the easiest thing to reach for, that's most of the battle won.</div></div>
-      <div class="ov-step"><div class="num">2</div><div class="txt"><b>Only buy what's on the list.</b> The Shop tab is built from your Plan for a reason — no "just in case" extras. That exact habit is what left veg and sweet potatoes going soft in the drawer before.</div></div>
-      <div class="ov-step"><div class="num">3</div><div class="txt"><b>Don't bring unhealthy food into the house.</b> Treats happen outside the home — a café, an occasional takeaway — rather than sitting in a cupboard waiting to be eaten out of habit rather than actual want.</div></div>
-      <div class="ov-step"><div class="num">4</div><div class="txt"><b>One snack a day for Jack.</b> Same time each day (after nursery/school works well) so it's a routine, not a negotiation. Pick from the Recipes → Snacks tab so it's still something he helped make.</div></div>
-    </div>
-
-    <div class="ov-block">
-      <h3>Given what's tripped you up before</h3>
-      <div class="ov-step"><div class="num">→</div><div class="txt"><b>Fix a weekly "defrost day."</b> Every Tuesday, whoever's around moves next week's backup meal from freezer to fridge. Forgetting was the actual problem, not space — so make it a fixed habit, not a "remember to."</div></div>
-      <div class="ov-step"><div class="num">→</div><div class="txt"><b>Use the "eat me first" shelf properly.</b> Anything nearing its date goes there, at eye level. It solves veg waste better than any plan does, because it's visual, not something you have to remember.</div></div>
-      <div class="ov-step"><div class="num">→</div><div class="txt"><b>Eat the same meal, together, at the table.</b> No separate "kid version" — Jack eating what you're eating is what actually builds the table habit, not asking him to.</div></div>
-      <div class="ov-step"><div class="num">→</div><div class="txt"><b>Be honest on the Ratings tab.</b> If something's a "Drop," drop it. Cooking a meal nobody actually likes out of guilt is how the last plan died in a week.</div></div>
-      <div class="ov-step"><div class="num">→</div><div class="txt"><b>Keep portions tight.</b> Cook for 3, not "just in case" extra — it's what keeps this sustainable and supports the portion-control goal, rather than a fridge full of guilt-inducing leftovers.</div></div>
-      <div class="ov-step"><div class="num">→</div><div class="txt"><b>Check in once a month.</b> Ten minutes, just the two of you — tweak what isn't working rather than letting the whole thing quietly lapse the way the last one did.</div></div>
-    </div>
-  `;
-}
+/* ============================================================
+   NAV / MODAL
+   ============================================================ */
 function switchView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
@@ -1731,7 +1696,6 @@ function closeModal(){ document.getElementById('modal-overlay').classList.remove
   renderRecipes();
   renderShop();
   renderLog();
-  renderTips();
 })();
 </script>
 </body>
