@@ -932,32 +932,34 @@ function getDayMealItems(weekNum, d, type){
   const addedKey = type === 'lunches' ? 'addedLunches' : 'addedSnacks';
   const removed = dayAdj[removedKey] || [];
   const added = dayAdj[addedKey] || [];
-  const result = base.filter(item => !removed.includes(item.id));
+  const combined = [...base];
   added.forEach(id=>{
     const obj = type === 'lunches' ? lunchById(id) : snackById(id);
-    if(obj && !result.find(r=>r.id===obj.id)) result.push(obj);
+    if(obj && !combined.find(r=>r.id===obj.id)) combined.push(obj);
   });
-  return result;
+  // Filtering the combined (base + pushed-in) list by "removed" — not just base — means an item
+  // that arrived here via an earlier push can itself be pushed again to a later day.
+  return combined.filter(item => !removed.includes(item.id));
 }
 function dayHasAdjustments(weekNum, d){
   const dayAdj = dayAdjustments[weekNum] && dayAdjustments[weekNum][d];
   if(!dayAdj) return false;
   return ['removedLunches','addedLunches','removedSnacks','addedSnacks'].some(k => dayAdj[k] && dayAdj[k].length);
 }
-async function pushMealToTomorrow(weekNum, d, type, id){
+async function pushMealToDay(weekNum, fromDay, toDay, type, id){
+  toDay = Number(toDay);
+  if(!toDay || toDay <= fromDay || toDay > 6) return; // can only move forward within the same week
   if(!dayAdjustments[weekNum]) dayAdjustments[weekNum] = {};
-  if(!dayAdjustments[weekNum][d]) dayAdjustments[weekNum][d] = {};
+  if(!dayAdjustments[weekNum][fromDay]) dayAdjustments[weekNum][fromDay] = {};
   const removedKey = type === 'lunches' ? 'removedLunches' : 'removedSnacks';
-  if(!dayAdjustments[weekNum][d][removedKey]) dayAdjustments[weekNum][d][removedKey] = [];
-  if(!dayAdjustments[weekNum][d][removedKey].includes(id)) dayAdjustments[weekNum][d][removedKey].push(id);
+  if(!dayAdjustments[weekNum][fromDay][removedKey]) dayAdjustments[weekNum][fromDay][removedKey] = [];
+  if(!dayAdjustments[weekNum][fromDay][removedKey].includes(id)) dayAdjustments[weekNum][fromDay][removedKey].push(id);
 
-  const nextDay = d + 1;
-  if(nextDay <= 6){
-    if(!dayAdjustments[weekNum][nextDay]) dayAdjustments[weekNum][nextDay] = {};
-    const addedKey = type === 'lunches' ? 'addedLunches' : 'addedSnacks';
-    if(!dayAdjustments[weekNum][nextDay][addedKey]) dayAdjustments[weekNum][nextDay][addedKey] = [];
-    if(!dayAdjustments[weekNum][nextDay][addedKey].includes(id)) dayAdjustments[weekNum][nextDay][addedKey].push(id);
-  }
+  if(!dayAdjustments[weekNum][toDay]) dayAdjustments[weekNum][toDay] = {};
+  const addedKey = type === 'lunches' ? 'addedLunches' : 'addedSnacks';
+  if(!dayAdjustments[weekNum][toDay][addedKey]) dayAdjustments[weekNum][toDay][addedKey] = [];
+  if(!dayAdjustments[weekNum][toDay][addedKey].includes(id)) dayAdjustments[weekNum][toDay][addedKey].push(id);
+
   await saveDayAdjustments();
   renderTonight();
   renderOverview();
@@ -1236,6 +1238,8 @@ function renderTonight(){
 
   function mealCardHtml(item, badgeText, type){
     const canPush = type && d < 6;
+    const dayOptions = Array.from({length: 6-d}, (_,i) => d+1+i)
+      .map(dd => `<option value="${dd}">${FULL_DAY_NAMES[dd]}${dd===d+1 ? ' (tomorrow)' : ''}</option>`).join('');
     return `
       <div class="recipe-card" style="margin-bottom:10px;">
         <div class="top-row" onclick="toggleCard(this.closest('.recipe-card'))">
@@ -1244,7 +1248,13 @@ function renderTonight(){
             <div class="sub">${badgeText}${item.calories ? ` · ~${item.calories} kcal` : ''}${item.mins ? ` · ${formatMins(item.mins)}` : ''}</div>
           </div>
         </div>
-        ${canPush ? `<div class="plan-note" style="margin-top:2px; margin-bottom:0; cursor:pointer; color:var(--clay); display:inline-block;" onclick="pushMealToTomorrow(${weekNum}, ${d}, '${type}', '${item.id}')">→ Not today — push to tomorrow</div>` : ''}
+        ${canPush ? `
+        <div style="margin-top:8px; display:flex; align-items:center; gap:8px;" onclick="event.stopPropagation()">
+          <select style="font-family:'Inter',sans-serif; font-weight:600; font-size:12.5px; padding:7px 10px; border-radius:100px; border:none; background:var(--herb); color:white; cursor:pointer;" onchange="if(this.value){ pushMealToDay(${weekNum}, ${d}, this.value, '${type}', '${item.id}'); }">
+            <option value="">↦ Move to another day…</option>
+            ${dayOptions}
+          </select>
+        </div>` : ''}
         <div class="recipe-detail">
           ${item.ingredients && item.ingredients.length ? `<div class="block-label">Ingredients</div><div class="ingredients">${item.ingredients.join(' · ')}</div>` : ''}
           ${item.steps && item.steps.length ? `<div class="block-label">Method</div><div class="ingredients">${item.steps.map((s,i)=>`${i+1}. ${s}`).join('<br>')}</div>` : ''}
@@ -1843,6 +1853,7 @@ async function toggleLunch(id){
   renderShop();
   renderOverview();
   renderPlan();
+  renderTonight();
 }
 async function toggleSnack(id){
   const i = selectedSnacks.indexOf(id);
@@ -1852,6 +1863,7 @@ async function toggleSnack(id){
   renderShop();
   renderOverview();
   renderPlan();
+  renderTonight();
 }
 
 /* ============================================================
