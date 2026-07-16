@@ -334,7 +334,6 @@ main{flex:1;padding:6px 20px 20px;}
     <div class="view" id="view-plan"></div>
     <div class="view" id="view-recipes"></div>
     <div class="view" id="view-shop"></div>
-    <div class="view" id="view-log"></div>
   </main>
 
   <div class="bottom-nav">
@@ -344,7 +343,7 @@ main{flex:1;padding:6px 20px 20px;}
     </button>
     <button class="nav-btn" data-view="tonight" onclick="switchView('tonight')">
       <svg viewBox="0 0 24 24"><path d="M4 21V9l8-6 8 6v12"/><path d="M9 21v-7h6v7"/></svg>
-      <span>Tonight</span>
+      <span>Daily</span>
     </button>
     <button class="nav-btn" data-view="plan" onclick="switchView('plan')">
       <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4M16 3v4"/></svg>
@@ -357,10 +356,6 @@ main{flex:1;padding:6px 20px 20px;}
     <button class="nav-btn" data-view="shop" onclick="switchView('shop')">
       <svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6L5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg>
       <span>Next Shop</span>
-    </button>
-    <button class="nav-btn" data-view="log" onclick="switchView('log')">
-      <svg viewBox="0 0 24 24"><path d="M12 2l2.5 6.5L21 9l-5 4.5 1.5 7L12 17l-5.5 3.5L8 13.5 3 9l6.5-0.5z"/></svg>
-      <span>Ratings</span>
     </button>
   </div>
 
@@ -414,156 +409,174 @@ try{
    ============================================================ */
 const RECIPES = [
   {id:'D1', proteins:['fish'], calories:450, prepMins:10, cookMins:20, fish:true, dish:"Airfryer Salmon with Roasted Veg", tag:"Fish Day", method:"Airfryer + Oven",
-   ingredients:["3 salmon fillets","1 lemon","1 tbsp olive oil","1 courgette","1 red pepper","1 broccoli head","1 tsp garlic powder","Salt & pepper"],
-   steps:["Toss chopped veg in oil, salt, pepper and garlic powder, roast in oven 20 min at 200°C.","Airfry salmon skin-side down 8-10 min at 180°C with a squeeze of lemon.","Serve together."],
+   ingredients:["3 salmon fillets (approx 150g each, 450g total)","1 courgette (approx 200g), sliced into half-moons","1 red pepper, deseeded and sliced","1 small head broccoli (approx 200g), cut into florets","1 tbsp olive oil","1 tsp garlic powder","1 lemon","Salt and black pepper, to taste"],
+   steps:["Preheat the oven to 200°C (fan) and the airfryer to 180°C.","Toss the courgette, pepper and broccoli with the olive oil, garlic powder, salt and pepper.","Spread the veg on a tray in a single layer and roast 18-20 min, turning once, until tender and lightly charred.","Pat the salmon dry, season both sides, and airfry skin-side down for 8-10 min until it flakes easily.","Squeeze fresh lemon juice over the salmon and serve with the roasted veg."],
    prep:"Chop veg Sunday morning while shopping is being put away. Salmon needs no marinating — straight from fridge to airfryer."},
   {id:'D2', proteins:['chicken','chickpea'], calories:550, prepMins:15, cookMins:40, fish:false, dish:"Chicken & Chickpea Tray Bake", tag:"", method:"Oven",
-   ingredients:["4 chicken thighs (bone-in, skin-on)","1 tin chickpeas, drained","1 red onion","2 peppers","1 courgette","1 tbsp smoked paprika","1 tbsp olive oil","1 lemon"],
-   steps:["Toss chickpeas and chopped veg with oil, paprika and salt in a large tray.","Nestle chicken thighs on top, skin up.","Roast 35-40 min at 200°C until chicken is golden and cooked through."],
+   ingredients:["4 chicken thighs, bone-in skin-on (approx 700g total)","1 x 400g tin chickpeas, drained and rinsed","1 red onion, cut into wedges","2 peppers, sliced into strips","1 courgette (approx 200g), thickly sliced","1 tbsp smoked paprika","1 tbsp olive oil","1 lemon","Salt and black pepper, to taste"],
+   steps:["Preheat the oven to 200°C (fan).","Toss the chickpeas, onion, peppers and courgette with the oil, paprika and seasoning in a large tray.","Season the chicken thighs and nestle skin-side up on top of the vegetables.","Roast 35-40 min until the skin is golden and the chicken reaches 75°C internally.","Rest 5 min, squeeze over lemon juice, and serve straight from the tray."],
    prep:"Chop and assemble the whole tray Sunday, cover, keep in the fridge — just bake Monday evening."},
-  {id:'D3', proteins:['chicken'], calories:600, prepMins:15, cookMins:5, fish:false, dish:"Slow Cooker Chicken Curry", tag:"", method:"Slow Cooker",
-   ingredients:["4 chicken breasts","1 tin coconut milk","2 tbsp curry powder or paste","1 tin chopped tomatoes","1 onion","2 cloves garlic","Handful spinach","Rice to serve"],
-   steps:["Add chicken, onion, garlic, coconut milk, tomatoes and curry powder to the slow cooker.","Cook on low 6-7 hrs or high 3-4 hrs.","Stir through spinach for the last 10 min. Shred chicken slightly, serve over rice."],
-   prep:"Assemble Sunday and refrigerate the insert overnight, then switch on Tuesday morning."},
-  {id:'D4', proteins:['chicken','chickpea'], calories:450, prepMins:5, cookMins:10, fish:false, backup:true, dish:"Chicken & Chickpea Stir-fry", tag:"Backup / Leftovers", method:"Hob (backup only)",
-   ingredients:["2 chicken breasts, sliced","1 tin chickpeas","1 bag stir-fry veg","1 tbsp soy sauce","1 tsp ginger","1 clove garlic"],
-   steps:["Default is leftovers from Mon/Tue.","Backup if not enough: fry chicken until cooked, add veg and chickpeas, stir-fry 5 min, add soy, garlic and ginger, cook 2 more min."],
-   prep:"Keep backup ingredients as pantry/freezer staples, not a planned weekly buy."},
+  {id:'D3', proteins:['chicken'], calories:380, prepMins:10, cookMins:14, fish:false, dish:"Airfryer Lemon & Herb Chicken with Green Beans", tag:"", method:"Airfryer",
+   ingredients:["4 chicken breasts (approx 150g each, 600g total)","1 lemon, zested and juiced","2 cloves garlic, crushed","1 tsp dried herbs (thyme or herbes de Provence)","1 tbsp olive oil","300g green beans, trimmed","Salt and black pepper, to taste"],
+   steps:["Mix the oil, lemon zest, half the lemon juice, garlic and herbs; rub over the chicken and season.","Airfry at 190°C for 12-14 min, turning halfway, until cooked through (75°C internally).","For the last 6-8 min, add the green beans to the basket, tossed in a little oil and seasoning.","Rest the chicken 2-3 min, squeeze over remaining lemon juice, slice and serve with the beans."],
+   prep:"Chicken can be rubbed with the marinade Sunday and kept covered in the fridge — no long marinating needed, light and simple."},
+  {id:'D4', proteins:['chicken','chickpea'], calories:420, prepMins:5, cookMins:10, fish:false, dish:"Quick Chicken & Chickpea Stir-fry", tag:"", method:"Hob",
+   ingredients:["2 chicken breasts (approx 300g), sliced into strips","1 x 400g tin chickpeas, drained and rinsed","1 x 300g bag stir-fry vegetables","1 tbsp soy sauce","1 tsp fresh ginger, grated","1 clove garlic, crushed","1 tsp vegetable oil"],
+   steps:["Heat the oil in a wok or large pan over high heat and stir-fry the chicken 5-6 min until cooked through.","Add the chickpeas and stir-fry veg, cooking 4-5 min until just tender.","Stir in the soy sauce, ginger and garlic, cook 2 more min, and serve immediately."],
+   prep:"Chicken can be sliced Sunday and kept in the fridge — one of the quickest dinners in the rotation, light and simple."},
 
   {id:'D5', proteins:['fish'], calories:400, prepMins:10, cookMins:12, fish:true, dish:"Airfryer Garlic Butter Fish", tag:"Fish Day", method:"Airfryer",
-   ingredients:["3 white fish fillets (cod/haddock)","1 tbsp butter","2 cloves garlic, crushed","1 tsp parsley","300g green beans or broccoli","1 tbsp olive oil"],
-   steps:["Melt butter with garlic, brush over fish.","Airfry fish 10 min at 180°C.","Toss beans in oil, airfry alongside (or steam) 6-8 min. Sprinkle parsley to serve."],
+   ingredients:["3 white fish fillets, cod or haddock (approx 150g each, 450g total)","1 tbsp butter, melted","2 cloves garlic, crushed","1 tsp fresh parsley, chopped","300g green beans or broccoli","1 tbsp olive oil","Salt and black pepper, to taste"],
+   steps:["Mix the melted butter with the garlic and brush over both sides of the fish.","Season and airfry at 180°C for 10 min until it flakes easily.","Toss the beans or broccoli in oil and seasoning, airfry alongside (or steam) 6-8 min.","Scatter parsley over the fish and serve with the veg."],
    prep:"Fish can be brushed with garlic butter and kept covered in the fridge from the Sunday shop to Sunday evening cook."},
-  {id:'D6', proteins:['chickpea'], calories:450, prepMins:10, cookMins:5, fish:false, dish:"Slow Cooker Chickpea & Spinach Dahl", tag:"", method:"Slow Cooker",
-   ingredients:["2 tins chickpeas, drained","1 tin chopped tomatoes","1 onion","2 cloves garlic","1 tbsp curry powder","1 tsp cumin","400ml veg stock","Large handful spinach","Rice or naan"],
-   steps:["Add chickpeas, tomatoes, onion, garlic, spices and stock to the slow cooker.","Cook on low 6 hrs or high 3 hrs.","Stir through spinach for last 10 min, mash a few chickpeas for a thicker texture."],
-   prep:"Fully veg — assemble Sunday evening and cook Monday, or start Monday morning."},
+  {id:'D6', proteins:['chickpea'], calories:380, prepMins:10, cookMins:10, fish:false, dish:"Chickpea, Spinach & Feta Warm Salad", tag:"", method:"Hob",
+   ingredients:["2 x 400g tins chickpeas, drained and rinsed","1 clove garlic, crushed","1 tbsp olive oil","100g spinach, roughly chopped","100g feta, crumbled","Handful cherry tomatoes, halved","1 lemon, juiced","Salt and black pepper, to taste"],
+   steps:["Heat the oil in a pan and cook the garlic 30 sec until fragrant.","Add the chickpeas and warm through 5 min.","Stir in the spinach and cook 1-2 min until just wilted, then season.","Transfer to a dish, top with feta and cherry tomatoes, and finish with lemon juice."],
+   prep:"Fully veg and quick — chickpeas can be warmed ahead Sunday and kept in the fridge, ready to reheat and assemble fresh in under 10 min."},
   {id:'D7', proteins:['chicken'], calories:500, prepMins:15, cookMins:25, fish:false, dish:"Oven Chicken Fajita Tray Bake", tag:"", method:"Oven",
-   ingredients:["4 chicken breasts, sliced","2 peppers","1 red onion","1 tbsp fajita seasoning","1 tbsp olive oil","Wraps or rice","Lime"],
-   steps:["Toss sliced chicken, peppers and onion with oil and fajita seasoning on a tray.","Roast 20-25 min at 200°C, turning halfway.","Serve in wraps or over rice with a squeeze of lime."],
+   ingredients:["4 chicken breasts (approx 150g each, 600g total), sliced into strips","2 peppers, sliced","1 red onion, sliced","1 tbsp fajita seasoning","1 tbsp olive oil","6 small wraps or 200g rice, to serve","1 lime"],
+   steps:["Preheat the oven to 200°C (fan).","Toss the chicken, peppers and onion with the oil and fajita seasoning on a large tray.","Roast 20-25 min, turning halfway, until the chicken is cooked through and veg lightly charred.","Warm the wraps or cook the rice, then serve the chicken and veg with a squeeze of lime."],
    prep:"Slice chicken and veg Sunday, toss with seasoning, keep covered in the fridge — straight onto a tray Tuesday evening."},
-  {id:'D8', proteins:['chicken'], calories:420, prepMins:5, cookMins:10, fish:false, backup:true, dish:"Chicken & Veg Stir-fry", tag:"Backup / Leftovers", method:"Hob (backup only)",
-   ingredients:["2 chicken breasts, sliced","1 bag stir-fry veg","1 tbsp soy sauce","1 tsp honey","1 clove garlic"],
-   steps:["Default is leftovers from Mon/Tue.","Backup if not enough: fry chicken until cooked, add veg, stir-fry 5 min, add soy, honey and garlic, cook 2 more min."],
-   prep:""},
+  {id:'D8', proteins:['chicken'], calories:400, prepMins:5, cookMins:10, fish:false, dish:"Quick Chicken & Veg Stir-fry", tag:"", method:"Hob",
+   ingredients:["2 chicken breasts (approx 300g), sliced into strips","1 x 300g bag stir-fry vegetables","1 tbsp soy sauce","1 tsp honey","1 clove garlic, crushed","1 tsp vegetable oil"],
+   steps:["Heat the oil and stir-fry the chicken 5-6 min until cooked through.","Add the veg and cook 3-4 min until just tender.","Stir in the soy sauce, honey and garlic, cook 2 more min, and serve immediately."],
+   prep:"Chicken can be sliced Sunday and kept in the fridge — quick, light, no heavy sauce."},
 
   {id:'D9', proteins:['fish'], calories:500, prepMins:25, cookMins:20, fish:true, dish:"Fish Pie with Sweet Potato Mash", tag:"Fish Day", method:"Oven",
-   ingredients:["3 white fish fillets + a handful of prawns (optional)","2 large sweet potatoes","1 leek","200ml milk","1 tbsp flour","1 tbsp butter","Handful peas","30g cheese (optional)"],
-   steps:["Boil and mash sweet potatoes.","Poach fish and leek gently in milk, flake fish, stir in a butter-flour roux to thicken, add peas.","Pour into a dish, top with mash, scatter cheese, bake 20 min at 190°C until golden."],
+   ingredients:["3 white fish fillets (approx 450g total) plus a handful of prawns (optional)","2 large sweet potatoes (approx 600g), peeled and chopped","1 leek, sliced","200ml milk","1 tbsp butter","1 tbsp plain flour","Handful frozen peas","30g cheese, grated (optional)","Salt and black pepper, to taste"],
+   steps:["Boil the sweet potato 15-18 min until soft, drain and mash with a little butter and seasoning.","Poach the fish and leek gently in the milk 6-8 min until just cooked; remove fish and flake.","Melt the butter in the same pan, stir in flour, then gradually whisk in the poaching milk for a smooth sauce.","Stir the flaked fish, prawns and peas into the sauce, season, and pour into an ovenproof dish.","Top with mash, scatter cheese if using, and bake at 190°C for 20 min until golden."],
    prep:"This is the dish that uses up sweet potato — buy exactly 2, no more 'just in case'. Mash and fish mixture can both be made Sunday morning, assembled and baked Sunday evening."},
-  {id:'D10', proteins:['chickpea'], calories:450, prepMins:15, cookMins:5, fish:false, dish:"Slow Cooker Moroccan Chickpea & Veg Stew", tag:"", method:"Slow Cooker",
-   ingredients:["2 tins chickpeas","1 tin chopped tomatoes","1 courgette","1 carrot","1 onion","2 cloves garlic","1 tbsp ras el hanout (or cumin+cinnamon)","300ml veg stock","Couscous"],
-   steps:["Add all ingredients except couscous to the slow cooker.","Cook on low 6 hrs or high 3 hrs.","Serve over couscous."],
-   prep:"Fully veg and forgiving — chop everything Sunday, cook overnight in the fridge, start Monday morning."},
+  {id:'D10', proteins:['chickpea'], calories:400, prepMins:12, cookMins:25, fish:false, dish:"Roasted Chickpea & Veg Tray Bake with Feta", tag:"", method:"Oven",
+   ingredients:["2 x 400g tins chickpeas, drained and rinsed","1 courgette, sliced","1 red pepper, sliced","1 red onion, cut into wedges","1 tsp dried oregano","1 tbsp olive oil","100g feta, crumbled","Handful cherry tomatoes, halved"],
+   steps:["Preheat the oven to 200°C (fan).","Toss the chickpeas, courgette, pepper and onion with oil, oregano and salt on a tray.","Roast 25 min until the veg is tender and chickpeas a little crisp.","Scatter over cherry tomatoes and crumbled feta, and serve straight from the tray."],
+   prep:"Chop veg and drain chickpeas Sunday, keep in the fridge — straight onto a tray to roast fresh. Light, simple, no long cooking."},
   {id:'D11', proteins:['chicken'], calories:500, prepMins:15, cookMins:20, fish:false, dish:"Airfryer Chicken Thighs with Mediterranean Veg", tag:"", method:"Airfryer + Oven",
-   ingredients:["4 chicken thighs","1 courgette","1 red pepper","1 red onion","Handful cherry tomatoes","1 tsp oregano","1 tbsp olive oil","Feta to crumble (optional)"],
-   steps:["Airfry chicken thighs 18-20 min at 190°C, turning halfway.","Roast the chopped veg in the oven with oil and oregano for 20 min.","Crumble feta over veg to serve."],
+   ingredients:["4 chicken thighs, bone-in (approx 600g total)","1 courgette, sliced","1 red pepper, sliced","1 red onion, cut into wedges","Handful cherry tomatoes","1 tsp dried oregano","1 tbsp olive oil","50g feta to crumble (optional)"],
+   steps:["Season the chicken thighs and airfry at 190°C for 18-20 min, turning halfway, until cooked through (75°C internally).","Toss the courgette, pepper, onion and cherry tomatoes with oil and oregano on a tray.","Roast the veg at 200°C for 18-20 min until tender and lightly charred.","Crumble feta over the veg and serve alongside the chicken thighs."],
    prep:"Chop veg Sunday, keep in a container in the fridge; chicken needs no marinating."},
-  {id:'D12', proteins:['chicken','chickpea'], calories:480, prepMins:5, cookMins:15, fish:false, backup:true, dish:"15-min Chicken & Chickpea Curry", tag:"Backup / Leftovers", method:"Hob (backup only)",
-   ingredients:["2 chicken breasts, diced","1 tin chickpeas","1 jar curry sauce (or 2 tbsp curry powder + tin tomatoes)","Rice"],
-   steps:["Default is leftovers from Mon/Tue.","Backup if not enough: fry chicken until cooked, add chickpeas and curry sauce, simmer 8-10 min, serve over rice."],
-   prep:""},
+  {id:'D12', proteins:['chicken','chickpea'], calories:420, prepMins:5, cookMins:15, fish:false, dish:"15-min Chicken & Chickpea Sauté", tag:"", method:"Hob",
+   ingredients:["2 chicken breasts (approx 300g), diced","1 x 400g tin chickpeas, drained and rinsed","1 x 400g tin chopped tomatoes","1 clove garlic, crushed","1 tsp dried oregano","1 tsp olive oil","200g rice or crusty bread, to serve"],
+   steps:["Heat the oil and fry the diced chicken 5-6 min until cooked through.","Add the chickpeas, tomatoes, garlic and oregano, and stir to combine.","Simmer 8-10 min, stirring occasionally, until slightly thickened.","Season to taste and serve over rice or with crusty bread."],
+   prep:"Chicken can be diced Sunday and kept in the fridge — quick, simple, done in 15 minutes."},
 
   {id:'D13', proteins:['fish'], calories:350, prepMins:10, cookMins:8, fish:true, dish:"Airfryer Prawn & Courgette Skewers", tag:"Fish Day", method:"Airfryer",
-   ingredients:["300g raw prawns","1 courgette","1 lemon","1 tbsp olive oil","1 tsp paprika","Garlic","Couscous or rice to serve"],
-   steps:["Thread prawns and sliced courgette onto skewers (or just toss loose in the basket).","Toss in oil, paprika, garlic and lemon zest.","Airfry 7-8 min at 190°C, shaking halfway, until prawns are pink and cooked through."],
+   ingredients:["300g raw prawns, peeled","1 courgette, sliced into rounds","1 tbsp olive oil","1 tsp paprika","1 clove garlic, crushed","1 lemon","150g couscous or rice, to serve"],
+   steps:["Thread the prawns and courgette onto skewers (or toss loose in the basket).","Toss with oil, paprika, garlic and lemon zest.","Airfry at 190°C for 7-8 min, shaking halfway, until the prawns are pink and cooked through.","Cook the couscous or rice, squeeze over lemon juice, and serve together."],
    prep:"Prawns can be tossed in the marinade Sunday morning and kept covered in the fridge — quickest fish night in the rotation."},
-  {id:'D14', proteins:['chickpea'], calories:500, prepMins:15, cookMins:5, fish:false, dish:"Slow Cooker Chickpea & Butternut Squash Curry", tag:"", method:"Slow Cooker",
-   ingredients:["2 tins chickpeas","1 small butternut squash, cubed","1 tin coconut milk","1 onion","2 cloves garlic","1 tbsp curry powder","1 tsp turmeric","Rice to serve"],
-   steps:["Add all ingredients to the slow cooker.","Cook on low 6 hrs or high 3-4 hrs, until squash is soft.","Mash a little of the squash into the sauce to thicken, serve over rice."],
-   prep:"Chop squash and onion Sunday, keep in the fridge — good one for using up squash before it goes soft."},
+  {id:'D14', proteins:['chickpea'], calories:400, prepMins:15, cookMins:28, fish:false, dish:"Roasted Butternut Squash & Chickpea Tray Bake", tag:"", method:"Oven",
+   ingredients:["2 x 400g tins chickpeas, drained and rinsed","1 small butternut squash (approx 600g), peeled and cubed","1 tbsp olive oil","1 tsp ground cumin (light touch)","100g feta, crumbled","Handful rocket or spinach"],
+   steps:["Preheat the oven to 200°C (fan).","Toss the squash and chickpeas with oil, cumin and salt on a tray.","Roast 25-28 min until the squash is tender and caramelised at the edges.","Serve over rocket or spinach with feta crumbled on top."],
+   prep:"Cube squash Sunday and keep in the fridge — straight onto a tray to roast fresh. Light and simple, no curry sauce."},
   {id:'D15', proteins:['chicken'], calories:480, prepMins:15, cookMins:16, fish:false, dish:"Airfryer Chicken & Veg Skewers with Tzatziki", tag:"", method:"Airfryer",
-   ingredients:["4 chicken thighs, cubed","1 courgette","1 red pepper","1 red onion","1 tsp oregano","1 tbsp olive oil","Greek yoghurt, cucumber, garlic and dill for tzatziki","Pitta or rice"],
-   steps:["Thread chicken and veg onto skewers, toss with oil and oregano.","Airfry 14-16 min at 190°C, turning halfway.","Stir together yoghurt, grated cucumber, garlic and dill for the tzatziki. Serve alongside."],
+   ingredients:["4 chicken thighs (approx 600g), cubed","1 courgette, cut into chunks","1 red pepper, cut into chunks","1 red onion, cut into wedges","1 tsp dried oregano","1 tbsp olive oil","150g Greek yoghurt","1/4 cucumber, grated","1 clove garlic, crushed","1 tsp fresh dill","4 pittas or 200g rice, to serve"],
+   steps:["Thread the chicken and veg onto skewers, alternating pieces, and toss with oil and oregano.","Airfry at 190°C for 14-16 min, turning halfway, until the chicken is cooked through.","Squeeze excess liquid from the grated cucumber and mix with yoghurt, garlic and dill for the tzatziki.","Warm the pittas or cook the rice, and serve the skewers with tzatziki alongside."],
    prep:"Chicken and veg can be cubed, skewered and kept covered in the fridge from Sunday; tzatziki keeps 2-3 days."},
 
-  {id:'D16', proteins:['beef'], calories:520, prepMins:15, cookMins:5, fish:false, dish:"Slow Cooker Beef & Veg Stew", tag:"", method:"Slow Cooker",
-   ingredients:["500g diced stewing beef","2 carrots","1 onion","2 potatoes or parsnips","1 tbsp flour","500ml beef stock","1 tbsp tomato purée","Bay leaf"],
-   steps:["Toss beef in flour, add to the slow cooker with all chopped veg, stock, tomato purée and bay leaf.","Cook on low 7-8 hrs or high 4-5 hrs, until beef is fork-tender.","Remove bay leaf, serve as is — it's a complete meal in the bowl."],
-   prep:"Chop all veg Sunday and toss beef in flour, keep covered in the fridge — a good one to start before the school run on a chosen day."},
-  {id:'D17', proteins:['beef'], calories:580, prepMins:15, cookMins:5, fish:false, dish:"Slow Cooker Chilli Con Carne", tag:"", method:"Slow Cooker",
-   ingredients:["500g lean beef mince","1 onion","2 cloves garlic","1 tin kidney beans","1 tin chopped tomatoes","1 tbsp tomato purée","1 tsp cumin","1 tsp smoked paprika","Square of dark chocolate (optional)","Rice to serve"],
-   steps:["Brown the mince first if you have 5 minutes (optional but improves flavour), then add everything to the slow cooker.","Cook on low 6 hrs or high 3-4 hrs.","Stir in the chocolate at the end for depth, serve over rice."],
-   prep:"Kidney beans, not chickpeas, so this pairs well with a chickpea-based dinner earlier in the week without repeating the same pulse twice."},
+  {id:'D16', proteins:['beef'], calories:420, prepMins:10, cookMins:15, fish:false, dish:"Airfryer Steak Strips with Roasted Veg", tag:"", method:"Airfryer + Oven",
+   ingredients:["2 lean sirloin or rump steaks (approx 500g total), sliced into strips","1 courgette, sliced","1 red pepper, sliced","1 red onion, sliced","1 tbsp olive oil","1 tsp smoked paprika","Salt and black pepper, to taste"],
+   steps:["Preheat the oven to 200°C (fan) and airfryer to 200°C.","Toss the veg in half the oil and roast 15 min until tender.","Season the steak strips with paprika, salt and pepper in the remaining oil.","Airfry the steak 4-6 min, tossing halfway (adjust to taste), rest 2 min, then combine with the veg and serve."],
+   prep:"Slice steak and chop veg Sunday, keep covered in the fridge — one of the quickest nights in the rotation."},
+  {id:'D17', proteins:['beef'], calories:450, prepMins:12, cookMins:12, fish:false, dish:"Airfryer Lean Beef Burgers with Side Salad", tag:"", method:"Airfryer",
+   ingredients:["500g lean beef mince (5%)","1 egg","1 tsp dried oregano","Salt and black pepper, to taste","3 wholemeal buns (optional)","100g mixed salad leaves","1/2 cucumber, sliced","Handful cherry tomatoes, halved"],
+   steps:["Mix the mince, egg, oregano, salt and pepper until just combined.","Divide into 3 patties, about 1.5cm thick, with a slight dimple pressed into the centre of each.","Airfry at 190°C for 10-12 min, turning halfway, until cooked through (71°C internally).","Toss the salad leaves, cucumber and tomatoes, and serve the burgers alongside (bun optional)."],
+   prep:"Patties can be shaped and kept covered in the fridge from Sunday — quick, light cook on the night."},
   {id:'D18', proteins:['beef'], calories:550, prepMins:15, cookMins:12, fish:false, dish:"Airfryer Beef Meatballs with Veg", tag:"", method:"Airfryer",
-   ingredients:["500g lean beef mince","1 egg","2 tbsp breadcrumbs","1 tsp dried oregano","1 courgette","1 red pepper","Jar of tomato sauce or passata","Pasta or rice to serve"],
-   steps:["Mix mince, egg, breadcrumbs and oregano, roll into meatballs.","Airfry meatballs 10-12 min at 190°C, shaking halfway.","Warm through with chopped veg and tomato sauce, serve over pasta or rice."],
+   ingredients:["500g lean beef mince","1 egg","2 tbsp breadcrumbs","1 tsp dried oregano","1 courgette, diced","1 red pepper, diced","1 x 350g jar tomato sauce or passata","200g pasta or rice, to serve"],
+   steps:["Mix the mince, egg, breadcrumbs and oregano, and roll into about 12 meatballs.","Airfry at 190°C for 10-12 min, shaking halfway, until cooked through.","Warm the tomato sauce with the diced courgette and pepper 8-10 min until the veg is tender.","Cook the pasta or rice, add the meatballs to the sauce to warm through, and serve."],
    prep:"Meatballs can be rolled and kept covered in the fridge from Sunday — quick 12-minute cook on the night."},
 
   {id:'D19', proteins:['chickpea'], calories:520, prepMins:12, cookMins:20, fish:false, dish:"Airfryer Halloumi & Mediterranean Veg Traybake", tag:"", method:"Airfryer + Oven",
-   ingredients:["225g halloumi, sliced","1 courgette","1 red pepper","1 red onion","Handful cherry tomatoes","1 tsp oregano","1 tbsp olive oil","Couscous or flatbread"],
-   steps:["Toss chopped veg with oil and oregano, roast in the oven 20 min at 200°C.","Airfry halloumi slices 6-8 min at 190°C, turning halfway, until golden.","Serve halloumi over the roasted veg with couscous or flatbread."],
+   ingredients:["225g halloumi, sliced into 1cm slices","1 courgette, sliced","1 red pepper, sliced","1 red onion, cut into wedges","Handful cherry tomatoes","1 tsp dried oregano","1 tbsp olive oil","150g couscous or 3 flatbreads, to serve"],
+   steps:["Toss the courgette, pepper, onion and cherry tomatoes with oil and oregano on a tray.","Roast at 200°C for 20 min until tender and lightly charred.","Airfry the halloumi at 190°C for 6-8 min, turning halfway, until golden.","Serve the halloumi over the roasted veg with couscous or flatbread."],
    prep:"Veg can be chopped Sunday and kept in the fridge; halloumi is best sliced fresh on the night so it doesn't dry out."},
-  {id:'D20', proteins:['chickpea'], calories:430, prepMins:12, cookMins:5, fish:false, dish:"Slow Cooker Lentil & Vegetable Dahl", tag:"", method:"Slow Cooker",
-   ingredients:["200g red lentils","1 tin chopped tomatoes","1 carrot","1 onion","2 cloves garlic","1 tbsp curry powder","1 tsp turmeric","500ml veg stock","Handful spinach","Rice or naan"],
-   steps:["Add lentils, tomatoes, chopped veg, garlic, spices and stock to the slow cooker.","Cook on low 5-6 hrs or high 3 hrs, until lentils are soft.","Stir through spinach for the last 10 min, serve over rice or with naan."],
-   prep:"Lentils rather than chickpeas, so this pairs well earlier in a week that already has a chickpea dish elsewhere — different pulse, same easy method."},
+  {id:'D20', proteins:['chickpea'], calories:380, prepMins:10, cookMins:15, fish:false, dish:"Lentil, Spinach & Feta Salad", tag:"", method:"Hob",
+   ingredients:["200g dried red lentils","100g spinach, roughly chopped","100g feta, crumbled","1 lemon, juiced","1 tbsp olive oil","Handful cherry tomatoes, halved","Salt and black pepper, to taste"],
+   steps:["Rinse the lentils and cook in simmering water or stock 12-15 min until soft, then drain.","While still warm, stir through the spinach until just wilted.","Season with salt, pepper and the olive oil.","Top with feta, cherry tomatoes and a squeeze of lemon juice."],
+   prep:"Lentils can be cooked in a batch Sunday and kept in the fridge — ready to warm through and assemble fresh in minutes."},
   {id:'D21', proteins:['chickpea'], calories:420, prepMins:20, cookMins:28, fish:false, dish:"Baked Stuffed Peppers with Rice, Beans & Feta", tag:"", method:"Oven",
-   ingredients:["3-4 large peppers, halved","1 tin black beans or kidney beans","150g cooked rice","1 tin chopped tomatoes","1 tsp cumin","Feta to crumble","Handful cherry tomatoes"],
-   steps:["Mix cooked rice, beans, chopped tomatoes and cumin, spoon into the halved peppers.","Top with crumbled feta and a few cherry tomatoes.","Bake 25-30 min at 190°C until peppers are soft and tops are golden."],
+   ingredients:["3-4 large peppers, halved and deseeded","1 x 400g tin black beans or kidney beans, drained","150g cooked rice","1 x 400g tin chopped tomatoes","1 tsp ground cumin","100g feta, crumbled","Handful cherry tomatoes, halved"],
+   steps:["Preheat the oven to 190°C (fan).","Mix the cooked rice, beans, chopped tomatoes and cumin, seasoning to taste.","Spoon the mixture generously into the halved peppers.","Top with feta and cherry tomato halves, and bake 25-30 min until the peppers are soft and golden on top."],
    prep:"Rice can be cooked and the filling mixed Sunday, then just spoon into peppers and bake fresh on the night."},
+  {id:'D22', proteins:['chickpea'], calories:380, prepMins:10, cookMins:20, fish:false, dish:"Baked Egg & Veg Shakshuka", tag:"", method:"Hob + Oven",
+   ingredients:["4 eggs","1 x 400g tin chopped tomatoes","1 red pepper, diced","1 onion, diced","1 clove garlic, crushed","1 tsp paprika","50g feta, crumbled (optional)","3 slices crusty bread, to serve"],
+   steps:["Sauté the onion, pepper and garlic in a little oil 6-8 min until soft.","Add the tomatoes and paprika, season, and simmer 10 min until slightly thickened.","Make 4 wells in the sauce, crack in an egg to each, cover and cook 6-8 min until whites are set but yolks soft.","Crumble feta over the top and serve straight from the pan with crusty bread."],
+   prep:"Sauce can be made Sunday and kept in the fridge — just reheat and crack in eggs fresh on the night. Light, high protein, no meat."},
+  {id:'D23', proteins:['chickpea'], calories:350, prepMins:10, cookMins:15, fish:false, dish:"Airfryer Veggie Egg Muffins with Side Salad", tag:"", method:"Airfryer",
+   ingredients:["6 eggs","1 courgette, grated (excess water squeezed out)","1 red pepper, finely diced","50g feta, crumbled","100g mixed salad leaves","1 tbsp olive oil","Salt and black pepper, to taste"],
+   steps:["Whisk the eggs and season, then stir through the courgette, pepper and feta.","Pour into a greased muffin tin or small oven-safe dish.","Airfry or bake at 180°C for 12-15 min until just set in the centre.","Dress the salad leaves with olive oil and serve alongside the warm egg muffins."],
+   prep:"Veg can be grated and chopped Sunday and kept in the fridge — whisk and cook fresh on the night. Light, quick, high protein."},
 ];
 
 const LUNCHES = [
-  {id:'L1', dish:"Turkey & Cranberry Wrap", calories:380, mins:3, ingredients:["Wrap","Turkey slices","Cottage cheese","Cranberry sauce","Spinach"], note:"2 min assembly, no cooking."},
-  {id:'L2', dish:"Tuna Melt Wrap", calories:450, mins:5, ingredients:["Wrap","Tuna","Mayo","Sundried tomatoes","Spinach","Cheddar"], note:"Under the grill 2 min if you want it warm."},
-  {id:'L3', dish:"Egg Salad & Toast", calories:400, mins:6, ingredients:["Eggs, boiled","Mayo","Tomato","Lettuce","Toast"], note:"Boil eggs in a batch Sunday for the week."},
-  {id:'L4', dish:"Omelette", calories:350, mins:6, ingredients:["Eggs","Grated cheese","Ham","Chives"], note:"5 min — great with leftover roasted veg thrown in."},
-  {id:'L5', dish:"Leftover Dinner Portion", ingredients:["Whatever's left from Mon/Tue dinner"], note:"The default option — always check this first."},
-  {id:'L6', dish:"Chicken & Avocado Wrap", calories:420, mins:5, ingredients:["Wrap","Cooked chicken slices","Avocado","Lettuce","Squeeze of lime","Natural yoghurt"], note:"Good use for any leftover roast chicken from a dinner."},
-  {id:'L7', dish:"Greek-Style Salad Pot", calories:350, mins:8, ingredients:["Cucumber","Cherry tomatoes","Feta","Olives (optional)","Red onion","Olive oil","Wrap or pitta on the side"], note:"Assemble in a jar/pot Sunday — keeps well for 2-3 days."},
-  {id:'L8', dish:"Veg & Bean Soup + Toast", calories:320, mins:5, ingredients:["Mixed veg (carrot, celery, onion)","Tin of beans or lentils","Veg stock","Toast or crusty bread"], note:"Batch a big pot Sunday, portion into the week — freezes well too."},
-  {id:'L9', dish:"Loaded Baked Sweet Potato", calories:400, mins:6, ingredients:["Sweet potato","Tin of beans or cooked chicken","Cottage cheese or grated cheese","Spring onion"], note:"Another good use for sweet potato beyond the Sunday fish pie — microwave to reheat at lunch."},
-  {id:'L10', dish:"Wholewheat Pasta Salad Pot", calories:450, mins:5, ingredients:["Wholewheat pasta","Cherry tomatoes","Mozzarella balls","Pesto","Cucumber"], note:"Cook a big batch of pasta Sunday, dress just before eating so it doesn't go claggy."},
-  {id:'L11', dish:"Chickpea & Feta Salad Pot", calories:380, mins:6, ingredients:["Tin of chickpeas","Feta","Cucumber","Cherry tomatoes","Red onion","Olive oil","Lemon juice"], note:"No cooking at all — just assemble in a pot Sunday, keeps 3-4 days."},
-  {id:'L12', dish:"Chicken & Sweet Potato Soup", calories:350, mins:5, ingredients:["Cooked chicken (leftover works well)","Sweet potato","Onion","Carrot","Chicken stock"], note:"Batch on Sunday — another good outlet for sweet potato, and freezes in portions if you want backup lunches."},
+  {id:'L1', dish:"Turkey & Cranberry Wrap", calories:380, mins:3, ingredients:["1 large wholemeal wrap","3-4 slices turkey breast (approx 60g)","2 tbsp cottage cheese","1 tsp cranberry sauce","Handful spinach leaves"], steps:["Spread the cottage cheese over the wrap.","Layer the turkey and spinach on top, then drizzle over the cranberry sauce.","Fold in the sides, roll up tightly, and slice in half to serve."], note:"2 min assembly, no cooking."},
+  {id:'L2', dish:"Tuna Melt Wrap", calories:450, mins:5, ingredients:["1 large wrap","1 x 145g tin tuna, drained","1 tbsp mayonnaise","2-3 sundried tomatoes, chopped","Handful spinach","30g cheddar, grated"], steps:["Mix the tuna with the mayonnaise and chopped sundried tomatoes.","Spread over the wrap, top with spinach and grated cheddar.","Roll up and eat cold, or grill 2 min until the cheese melts for a warm version."], note:"Under the grill 2 min if you want it warm."},
+  {id:'L3', dish:"Egg Salad & Toast", calories:400, mins:6, ingredients:["2 eggs, hard-boiled and chopped","1 tbsp mayonnaise","1/2 tomato, diced","Handful lettuce, shredded","2 slices toast"], steps:["Mix the chopped eggs with mayonnaise, tomato and lettuce.","Season with a pinch of salt and pepper.","Pile onto fresh toast and serve immediately."], note:"Boil eggs in a batch Sunday for the week."},
+  {id:'L4', dish:"Omelette", calories:350, mins:6, ingredients:["3 eggs","20g cheese, grated","1-2 slices ham, chopped","1 tsp fresh chives, chopped"], steps:["Whisk the eggs with a pinch of salt and pepper.","Pour into a lightly oiled non-stick pan over medium heat.","Scatter over the cheese, ham and chives as the eggs begin to set.","Fold in half once mostly set (3-4 min) and cook 1 more minute."], note:"5 min — great with leftover roasted veg thrown in."},
+  {id:'L6', dish:"Chicken & Avocado Wrap", calories:420, mins:5, ingredients:["1 large wrap","80g cooked chicken, sliced","1/2 avocado, sliced","Handful lettuce","Squeeze of lime juice","1 tbsp natural yoghurt"], steps:["Spread the yoghurt over the wrap.","Layer the chicken, avocado and lettuce down the centre.","Squeeze over lime juice, fold in the sides, and roll up tightly."], note:"Good use for any freshly cooked chicken from a dinner."},
+  {id:'L7', dish:"Greek-Style Salad Pot", calories:350, mins:8, ingredients:["1/2 cucumber, diced","Handful cherry tomatoes, halved","50g feta, cubed","Handful olives (optional)","1/4 red onion, thinly sliced","1 tbsp olive oil","1 wrap or pitta, to serve"], steps:["Layer the cucumber, tomatoes, feta, olives and red onion in a lidded pot.","Keep the olive oil separate and drizzle over just before eating.","Serve with a wrap or pitta on the side."], note:"Assemble in a jar/pot Sunday — keeps well for 2-3 days."},
+  {id:'L8', dish:"Veg & Bean Soup + Toast", calories:320, mins:5, ingredients:["1 carrot, diced","1 celery stick, diced","1 onion, diced","1 x 400g tin beans or lentils, drained","500ml vegetable stock","2 slices toast or crusty bread"], steps:["Sauté the carrot, celery and onion in a little oil 5-6 min until softened.","Add the beans or lentils and stock, and simmer 15-20 min.","Blend partially or fully for a smoother texture if preferred.","Serve hot with toast or crusty bread."], note:"Batch a big pot Sunday, portion into the week — freezes well too."},
+  {id:'L9', dish:"Loaded Baked Sweet Potato", calories:400, mins:6, ingredients:["1 medium sweet potato","1/2 tin beans or 80g cooked chicken","2 tbsp cottage cheese or 20g grated cheese","1 spring onion, sliced"], steps:["Pierce the sweet potato and microwave 6-8 min until soft (or bake at 200°C for 45 min).","Cut open and fluff the flesh with a fork.","Top with beans or chicken, cottage cheese or cheese, and spring onion."], note:"Another good use for sweet potato beyond the Sunday fish pie — microwave to reheat at lunch."},
+  {id:'L10', dish:"Wholewheat Pasta Salad Pot", calories:450, mins:5, ingredients:["100g wholewheat pasta","Handful cherry tomatoes, halved","50g mozzarella balls","1 tbsp pesto","1/4 cucumber, diced"], steps:["Cook the pasta per packet instructions, drain and cool.","Toss with the cherry tomatoes, mozzarella and cucumber.","Stir through the pesto just before eating so it doesn't go claggy."], note:"Cook a big batch of pasta Sunday, dress just before eating so it doesn't go claggy."},
+  {id:'L11', dish:"Chickpea & Feta Salad Pot", calories:380, mins:6, ingredients:["1 x 400g tin chickpeas, drained and rinsed","50g feta, cubed","1/4 cucumber, diced","Handful cherry tomatoes, halved","1/4 red onion, finely diced","1 tbsp olive oil","1/2 lemon, juiced"], steps:["Combine the chickpeas, feta, cucumber, tomatoes and onion in a pot.","Drizzle with olive oil and lemon juice.","Keeps well in the fridge for 3-4 days — stir before eating."], note:"No cooking at all — just assemble in a pot Sunday, keeps 3-4 days."},
+  {id:'L12', dish:"Chicken & Sweet Potato Soup", calories:350, mins:5, ingredients:["150g cooked chicken, shredded","1 sweet potato, peeled and diced","1 onion, diced","1 carrot, diced","500ml chicken stock"], steps:["Sauté the onion and carrot in a little oil 5 min until softened.","Add the sweet potato and stock, simmer 15 min until tender.","Stir in the shredded chicken and warm through 2-3 min before serving."], note:"Batch on Sunday — another good outlet for sweet potato, and freezes in portions."},
+  {id:'L13', dish:"Protein Pot: Egg, Ham & Cottage Cheese", calories:380, mins:5, ingredients:["2 eggs, hard-boiled and halved","2-3 slices ham","3 tbsp cottage cheese","Handful cherry tomatoes","1/4 cucumber, sliced"], steps:["Arrange the eggs, ham, cottage cheese, tomatoes and cucumber in a lidded pot.","No cooking needed beyond boiling the eggs — assemble fresh each morning from batch-prepped components."], note:"No cooking at all — boil eggs in a batch Sunday, assemble fresh in a pot each morning."},
+  {id:'L14', dish:"Tuna & Bean Salad Pot", calories:380, mins:5, ingredients:["1 x 145g tin tuna, drained","1 x 400g tin cannellini or butter beans, drained","1/4 red onion, finely diced","1 tbsp olive oil","1/2 lemon, juiced","1 tbsp fresh parsley, chopped"], steps:["Combine the tuna, beans and red onion in a pot.","Dress with olive oil, lemon juice and parsley just before eating.","Keeps in the fridge for up to 3 days."], note:"High protein, no cooking — mix in a pot Sunday and keep in the fridge, dress fresh each day."},
+  {id:'L15', dish:"Chicken & Quinoa Pot", calories:420, mins:6, ingredients:["100g cooked chicken, diced","100g cooked quinoa","1/4 cucumber, diced","50g feta, crumbled","Handful cherry tomatoes, halved","1 tbsp olive oil"], steps:["Batch-cook the quinoa per packet instructions and cool.","Combine the chicken, quinoa, cucumber, feta and tomatoes in a pot.","Drizzle with olive oil just before eating."], note:"Batch-cook quinoa Sunday — a good higher-protein alternative to a wrap or sandwich."},
+  {id:'L16', dish:"Prawn & Avocado Salad", calories:380, mins:6, ingredients:["150g cooked prawns","1/2 avocado, sliced","Large handful mixed salad leaves","1/2 lemon, juiced","1 tbsp olive oil"], steps:["Arrange the salad leaves in a bowl or pot.","Top with the prawns and sliced avocado.","Dress with olive oil and lemon juice just before eating so the avocado doesn't brown."], note:"Quick, light, high protein — dress just before eating so the avocado doesn't brown."},
+  {id:'L17', dish:"Egg & Avocado Toast", calories:380, mins:8, ingredients:["2 eggs","1/2 avocado, mashed","2 slices wholegrain toast","Pinch of chilli flakes (optional)","1/2 lemon, juiced"], steps:["Poach or fry the eggs to your liking.","Mash the avocado with a squeeze of lemon juice and spread over the toast.","Top with the eggs and a pinch of chilli flakes if using."], note:"Poach or fry eggs fresh — quick, high protein, no batching needed."},
 ];
 
 const SNACKS = [
-  {id:'S1', dish:"Greek Yoghurt & Berries", calories:150, mins:2, ingredients:["Greek yoghurt","Mixed berries","Drizzle of honey"], note:"High protein, low sugar swap for a dessert-style snack.", kid:false},
-  {id:'S2', dish:"Hummus & Veg Sticks", calories:180, mins:5, ingredients:["Hummus","Carrot","Cucumber","Pepper"], note:"Good one for Jack — dip format makes veg more appealing.", kid:true},
-  {id:'S3', dish:"Apple & Peanut Butter", calories:200, mins:2, ingredients:["Apples","Peanut butter"], note:"Fibre + protein, keeps hunger down better than fruit alone.", kid:false},
-  {id:'S4', dish:"Homemade Trail Mix", calories:220, mins:3, ingredients:["Almonds","Cashews","Raisins","Dark chocolate chips (small handful)"], note:"Portion into small pots so it doesn't become a whole-bag habit. Jack can help scoop and mix.", kid:true},
-  {id:'S5', dish:"Rice Cakes & Cottage Cheese", calories:150, mins:3, ingredients:["Rice cakes","Cottage cheese","Cherry tomatoes"], note:"Lower fat than crackers and cheese, similar satisfaction.", kid:false},
-  {id:'S6', dish:"No-Bake Banana Oat Bites", calories:180, mins:15, ingredients:["Oats","Banana","Peanut butter","Honey"], note:"Mash and roll into balls, chill — no oven needed. Jack can do the rolling.", kid:true},
-  {id:'S7', dish:"Berry Banana Smoothie", calories:220, mins:5, ingredients:["Frozen mixed berries","Banana","Milk or yoghurt","Oats (optional, for staying power)"], note:"Your existing go-to — Jack can add ingredients to the blender and press the button (with hands well clear).", kid:true},
-  {id:'S8', dish:"Hidden-Veg Green Smoothie", calories:180, mins:5, ingredients:["Spinach (frozen or fresh)","Mango or pineapple chunks","Banana","Milk or coconut water"], note:"Tastes like fruit, sneaks in a veg portion — good one to introduce slowly.", kid:true},
-  {id:'S9', dish:"Chocolate Peanut Butter Banana Smoothie", calories:280, mins:5, ingredients:["Banana","Peanut butter","Cocoa powder","Milk","Handful of oats"], note:"Feels like a treat, actually protein + fibre forward. Great low-sugar dessert stand-in.", kid:true},
-  {id:'S10', dish:"Frozen Yoghurt Bark", calories:150, mins:10, ingredients:["Greek yoghurt","Mixed berries or banana slices","Drizzle of honey"], note:"Spread yoghurt on a tray, let Jack scatter fruit on top, freeze 2 hrs, snap into pieces. Feels like a craft, eats like a treat.", kid:true},
-  {id:'S11', dish:"Fruit Kebabs", calories:100, mins:10, ingredients:["Grapes","Strawberries","Melon or banana chunks","Blunt/kid-safe skewers"], note:"Jack can thread the fruit himself — good fine-motor activity that ends in a snack.", kid:true},
-  {id:'S12', dish:"Date & Oat Energy Balls", calories:200, mins:20, ingredients:["Dates","Oats","Peanut or almond butter","Cinnamon","Desiccated coconut (for rolling)"], note:"Blitz dates+oats+nut butter, roll into balls, coat in coconut — Jack can do all the rolling.", kid:true},
-  {id:'S13', dish:"Overnight Oats", calories:300, mins:5, ingredients:["Oats","Milk or yoghurt","Chia seeds (optional)","Berries or banana","Drizzle of honey"], note:"Layer in a jar the night before — Jack can add the fruit on top in the morning. Ready to grab, no cooking.", kid:true},
-  {id:'S14', dish:"Roasted Chickpeas", calories:180, mins:20, ingredients:["Tin of chickpeas","Olive oil","Paprika or cinnamon","Salt"], note:"Toss and airfry/roast 15 min until crunchy — Jack can help toss them in the bowl before they go in.", kid:true},
+  {id:'S1', dish:"Greek Yoghurt & Berries", calories:150, mins:2, ingredients:["150g Greek yoghurt","Handful mixed berries","1 tsp honey"], steps:["Spoon the yoghurt into a bowl.","Top with the berries and a drizzle of honey."], note:"High protein, low sugar swap for a dessert-style snack.", kid:false},
+  {id:'S2', dish:"Hummus & Veg Sticks", calories:180, mins:5, ingredients:["3 tbsp hummus","1 carrot, cut into sticks","1/2 cucumber, cut into sticks","1/2 pepper, cut into sticks"], steps:["Spoon the hummus into a small pot.","Arrange the veg sticks alongside for dipping."], note:"Good one for Jack — dip format makes veg more appealing.", kid:true},
+  {id:'S3', dish:"Apple & Peanut Butter", calories:200, mins:2, ingredients:["1 apple, sliced","1-2 tbsp peanut butter"], steps:["Slice the apple into wedges.","Serve with peanut butter for dipping."], note:"Fibre + protein, keeps hunger down better than fruit alone.", kid:false},
+  {id:'S4', dish:"Homemade Trail Mix", calories:220, mins:3, ingredients:["1 tbsp almonds","1 tbsp cashews","1 tbsp raisins","1 tsp dark chocolate chips"], steps:["Mix the nuts, raisins and chocolate chips together.","Portion into small pots so it's a controlled handful, not a whole bag."], note:"Jack can help scoop and mix.", kid:true},
+  {id:'S5', dish:"Rice Cakes & Cottage Cheese", calories:150, mins:3, ingredients:["2 rice cakes","3 tbsp cottage cheese","Handful cherry tomatoes"], steps:["Spread the cottage cheese over the rice cakes.","Top with halved cherry tomatoes."], note:"Lower fat than crackers and cheese, similar satisfaction.", kid:false},
+  {id:'S6', dish:"No-Bake Banana Oat Bites", calories:180, mins:15, ingredients:["1 ripe banana, mashed","50g oats","1 tbsp peanut butter","1 tsp honey"], steps:["Mash the banana and mix in the oats, peanut butter and honey.","Roll into 6-8 small balls.","Chill at least 20 min to firm up before eating."], note:"Jack can do the rolling.", kid:true},
+  {id:'S7', dish:"Berry Banana Smoothie", calories:220, mins:5, ingredients:["100g frozen mixed berries","1 banana","150ml milk or yoghurt","1 tbsp oats (optional)"], steps:["Add everything to a blender.","Blend until smooth, adding a splash more milk if too thick.","Pour and serve immediately."], note:"Jack can add ingredients to the blender and press the button (hands well clear).", kid:true},
+  {id:'S8', dish:"Hidden-Veg Green Smoothie", calories:180, mins:5, ingredients:["Large handful spinach","100g mango or pineapple chunks","1 banana","150ml milk or coconut water"], steps:["Add everything to a blender.","Blend until completely smooth, no visible spinach flecks.","Pour and serve immediately."], note:"Tastes like fruit, sneaks in a veg portion.", kid:true},
+  {id:'S9', dish:"Chocolate Peanut Butter Banana Smoothie", calories:280, mins:5, ingredients:["1 banana","1 tbsp peanut butter","1 tsp cocoa powder","150ml milk","1 tbsp oats"], steps:["Add everything to a blender.","Blend until smooth and pour to serve."], note:"Feels like a treat, actually protein + fibre forward.", kid:true},
+  {id:'S10', dish:"Frozen Yoghurt Bark", calories:150, mins:10, ingredients:["200g Greek yoghurt","Handful mixed berries or banana slices","1 tsp honey"], steps:["Spread the yoghurt in a thin layer on a parchment-lined tray.","Scatter fruit over the top and drizzle with honey.","Freeze at least 2 hrs, then snap into pieces to serve."], note:"Jack can scatter the fruit on top before freezing.", kid:true},
+  {id:'S11', dish:"Fruit Kebabs", calories:100, mins:10, ingredients:["Handful grapes","Handful strawberries","100g melon or banana, cubed"], steps:["Thread the fruit onto skewers, alternating pieces.","Serve immediately or chill until ready to eat."], note:"Jack can thread the fruit himself.", kid:true},
+  {id:'S12', dish:"Date & Oat Energy Balls", calories:200, mins:20, ingredients:["100g pitted dates","50g oats","1 tbsp peanut or almond butter","1/2 tsp cinnamon","2 tbsp desiccated coconut, for rolling"], steps:["Blitz the dates, oats, nut butter and cinnamon until a sticky dough forms.","Roll into 8-10 small balls.","Roll each in coconut to coat, then chill 15 min before eating."], note:"Jack can do all the rolling.", kid:true},
+  {id:'S13', dish:"Overnight Oats", calories:300, mins:5, ingredients:["50g oats","150ml milk or yoghurt","1 tsp chia seeds (optional)","Handful berries or sliced banana","1 tsp honey"], steps:["Combine the oats, milk and chia seeds in a jar and stir well.","Cover and refrigerate overnight.","Top with fruit and honey in the morning before eating."], note:"Jack can add the fruit on top in the morning.", kid:true},
+  {id:'S14', dish:"Roasted Chickpeas", calories:180, mins:20, ingredients:["1 x 400g tin chickpeas, drained and patted dry","1 tsp olive oil","1/2 tsp paprika or cinnamon","Pinch of salt"], steps:["Toss the dried chickpeas with oil, paprika or cinnamon, and salt.","Airfry at 190°C or roast at 200°C for 15-20 min, shaking halfway, until crunchy."], note:"Jack can help toss them in the bowl before they go in.", kid:true},
+  {id:'S15', dish:"Two Boiled Eggs", calories:150, mins:2, ingredients:["2 eggs","Pinch of salt"], steps:["Boil for 8-10 min for a firm yolk (6-7 min for softer).","Cool under cold running water, peel and season."], note:"Boil a batch on Sunday — simplest grab-and-go high-protein snack there is.", kid:false},
+  {id:'S16', dish:"Turkey & Cheese Roll-ups", calories:180, mins:3, ingredients:["3-4 slices turkey breast","3-4 slices cheese","1/2 cucumber, cut into sticks"], steps:["Lay a slice of cheese on each turkey slice.","Roll up tightly and serve with the cucumber sticks."], note:"Jack can help roll them.", kid:true},
+  {id:'S17', dish:"High-Protein Yoghurt & Seeds", calories:200, mins:2, ingredients:["150g Greek yoghurt","1 tbsp mixed seeds (pumpkin, sunflower)","1 tsp honey"], steps:["Spoon the yoghurt into a bowl.","Scatter over the seeds and drizzle with honey."], note:"More protein and healthy fat than the classic berry version.", kid:false},
+  {id:'S18', dish:"Steamed Edamame", calories:150, mins:5, ingredients:["150g frozen edamame pods","Pinch of sea salt"], steps:["Steam or microwave 4-5 min until hot through.","Toss with sea salt and serve warm."], note:"Jack can help pod them once cooled.", kid:true},
+  {id:'S19', dish:"Cottage Cheese & Pineapple", calories:170, mins:2, ingredients:["100g cottage cheese","80g pineapple chunks (fresh or tinned in juice)"], steps:["Spoon the cottage cheese into a bowl.","Top with the pineapple chunks."], note:"High protein, naturally sweet — no added sugar needed.", kid:false},
+  {id:'S20', dish:"Mini Egg Muffins", calories:150, mins:15, ingredients:["4 eggs","Handful spinach, chopped","Handful cherry tomatoes, halved","30g cheese, grated"], steps:["Preheat the oven to 180°C (fan) and grease a muffin tin.","Whisk the eggs and stir through the spinach, tomatoes and cheese.","Divide between the tin holes and bake 12 min until set.","Cool and store in the fridge for grab-and-go snacks."], note:"Jack can help crack eggs and stir in the veg.", kid:true},
 ];
-
 const WEEK_LABELS = ['Week A','Week B','Week C'];
 const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday'];
 const FULL_DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const SLOT_KEYS = ['sun','mon','tue','wed'];
+const WEEKEND_SLOT_KEYS = ['thu','fri','sat'];
+const ALL_SLOT_KEYS = [...SLOT_KEYS, ...WEEKEND_SLOT_KEYS];
 
 const DEFAULT_DINNER_SELECTIONS = {
-  0:{sun:'D1',mon:'D7',tue:'D16',wed:'D4'},   // Week A: fish, chicken, beef, backup
-  1:{sun:'D5',mon:'D17',tue:'D10',wed:'D8'},  // Week B: fish, beef, chickpea, backup
-  2:{sun:'D9',mon:'D15',tue:'D18',wed:'D12'}, // Week C: fish, chicken, beef, backup
+  0:{sun:'D1',mon:'D7',tue:'D16',wed:'D4', thu:'D19',fri:'D2', sat:'D13'},   // Week A
+  1:{sun:'D5',mon:'D17',tue:'D10',wed:'D8', thu:'D21',fri:'D11',sat:'D18'}, // Week B
+  2:{sun:'D9',mon:'D15',tue:'D18',wed:'D12',thu:'D6', fri:'D3', sat:'D19'}, // Week C
 };
-const DEFAULT_LUNCHES = ['L1','L2','L3','L4','L5'];
+const DEFAULT_LUNCHES = ['L1','L2','L3','L4','L6'];
 const DEFAULT_SNACKS = ['S1','S2','S3'];
 
 /* ============================================================
    STATE / STORAGE
    ============================================================ */
 let anchorDate = null;
-let ratingsLog = [];
 let shopChecked = {0:{},1:{},2:{}};
 let dinnerSelections = JSON.parse(JSON.stringify(DEFAULT_DINNER_SELECTIONS));
 let selectedLunches = [...DEFAULT_LUNCHES];
 let selectedSnacks = [...DEFAULT_SNACKS];
 let customRecipes = {dinners:[], lunches:[], snacks:[]};
+let hiddenRecipes = {dinners:[], lunches:[], snacks:[]};
 
-let currentRating = 0;
-let currentStatus = '';
 let currentShopWeekTab = null;
 let currentPlanWeekTab = null;
+let selectedDailyDay = null;
 let recipeTab = 'dinners';
 let addFormOpen = null; // 'dinners' | 'lunches' | 'snacks' | null
 let pendingImageData = null;
@@ -592,9 +605,6 @@ async function initStorage(){
     await safeSet('anchor-date', anchorDate);
   }
 
-  const r = await safeGet('ratings-log');
-  ratingsLog = r ? JSON.parse(r) : [];
-
   const s = await safeGet('shop-checked');
   shopChecked = s ? JSON.parse(s) : {0:{},1:{},2:{}};
 
@@ -609,9 +619,12 @@ async function initStorage(){
 
   const cr = await safeGet('custom-recipes');
   customRecipes = cr ? JSON.parse(cr) : {dinners:[], lunches:[], snacks:[]};
-}
 
-async function saveRatingsLog(){ await safeSet('ratings-log', JSON.stringify(ratingsLog)); }
+  const hr = await safeGet('hidden-recipes');
+  hiddenRecipes = hr ? JSON.parse(hr) : {dinners:[], lunches:[], snacks:[]};
+}
+async function saveHiddenRecipes(){ await safeSet('hidden-recipes', JSON.stringify(hiddenRecipes)); }
+
 async function saveShopChecked(){ await safeSet('shop-checked', JSON.stringify(shopChecked)); }
 async function saveDinnerSelections(){ await safeSet('dinner-selections', JSON.stringify(dinnerSelections)); }
 async function saveSelectedLunches(){ await safeSet('selected-lunches', JSON.stringify(selectedLunches)); }
@@ -659,23 +672,16 @@ function formatWeekRange(weekIdx){
     ? `${sunday.getDate()}–${wed.getDate()} ${endMonth}`
     : `${sunday.getDate()} ${startMonth} – ${wed.getDate()} ${endMonth}`;
 }
-function allDinners(){ return RECIPES.concat(customRecipes.dinners); }
-function allLunches(){ return LUNCHES.concat(customRecipes.lunches); }
-function allSnacks(){ return SNACKS.concat(customRecipes.snacks); }
+function allDinnersRaw(){ return RECIPES.concat(customRecipes.dinners); }
+function allLunchesRaw(){ return LUNCHES.concat(customRecipes.lunches); }
+function allSnacksRaw(){ return SNACKS.concat(customRecipes.snacks); }
+function allDinners(){ return RECIPES.concat(customRecipes.dinners).filter(r=>!hiddenRecipes.dinners.includes(r.id)); }
+function allLunches(){ return LUNCHES.concat(customRecipes.lunches).filter(l=>!hiddenRecipes.lunches.includes(l.id)); }
+function allSnacks(){ return SNACKS.concat(customRecipes.snacks).filter(s=>!hiddenRecipes.snacks.includes(s.id)); }
 function recipeById(id){ return allDinners().find(r=>r.id===id); }
 function lunchById(id){ return allLunches().find(l=>l.id===id); }
 function snackById(id){ return allSnacks().find(s=>s.id===id); }
 
-function avgRating(dishName){
-  const entries = ratingsLog.filter(e => e.dish === dishName);
-  if(entries.length === 0) return null;
-  const sum = entries.reduce((a,e)=>a+e.rating,0);
-  return Math.round((sum/entries.length)*10)/10;
-}
-function starsStr(n){
-  const full = Math.round(n);
-  return '★'.repeat(full) + '☆'.repeat(5-full);
-}
 function formatMins(m){
   if(!m && m !== 0) return '';
   const h = Math.floor(m/60), mm = m%60;
@@ -734,6 +740,20 @@ function buildShoppingList(weekIdx){
   return {dinners:dinnersOut, lunches:lunchesOut, snacks:snacksOut};
 }
 
+function buildWeekendShoppingList(weekIdx){
+  // Just the 3 weekend dinners — lunches/snacks for the whole week are already covered by the Sunday shop.
+  const sel = dinnerSelections[weekIdx];
+  const dinnersOut = [];
+  WEEKEND_SLOT_KEYS.forEach(slot=>{
+    const r = recipeById(sel[slot]);
+    if(!r) return;
+    r.ingredients.forEach(ing=>{
+      if(!dinnersOut.includes(ing)) dinnersOut.push(ing);
+    });
+  });
+  return {dinners:dinnersOut};
+}
+
 /* ============================================================
    ESTIMATED SHOP COST (rough Tesco Ireland pricing)
    ============================================================ */
@@ -784,6 +804,10 @@ function estimateWeekCost(weekIdx){
   const list = buildShoppingList(weekIdx);
   const all = [...list.dinners, ...list.lunches, ...list.snacks];
   return all.reduce((sum, item) => sum + estimateItemCost(item), 0);
+}
+function estimateWeekendCost(weekIdx){
+  const list = buildWeekendShoppingList(weekIdx);
+  return list.dinners.reduce((sum, item) => sum + estimateItemCost(item), 0);
 }
 
 /* ============================================================
@@ -874,26 +898,22 @@ function renderOverview(){
   const snackDist = distributeAcrossWeek(snackNames, 7);
   const weekStart = getWeekStartDate(displayWk);
 
-  const dayRows = FULL_DAY_NAMES.map((name, d) => {
+  const dayRowsArr = FULL_DAY_NAMES.map((name, d) => {
     const rowDate = new Date(weekStart);
     rowDate.setDate(weekStart.getDate() + d);
     const isToday = rowDate.getFullYear()===today.getFullYear() && rowDate.getMonth()===today.getMonth() && rowDate.getDate()===today.getDate();
 
-    let dinnerLine;
-    if(d <= 3){
-      const r = recipeById(sel[SLOT_KEYS[d]]);
-      dinnerLine = `<div class="meal-line"><b>Dinner</b>${r ? r.dish : '—'}</div>`;
-    } else {
-      dinnerLine = `<div class="meal-line unplanned"><b>Dinner</b>Unplanned — leftovers, freezer, or eating out</div>`;
-    }
+    const slotKey = d <= 3 ? SLOT_KEYS[d] : WEEKEND_SLOT_KEYS[d-4];
+    const r = recipeById(sel[slotKey]);
+    const dinnerLine = `<div class="meal-line"><b>Dinner</b>${r ? r.dish : '—'}</div>`;
     const lunchLine = lunchDist[d].length ? `<div class="meal-line"><b>Lunch</b>${lunchDist[d].join(' + ')}</div>` : '';
     const snackLine = snackDist[d].length ? `<div class="meal-line"><b>Snack</b>${snackDist[d].join(' + ')}</div>` : '';
     return `
-      <div class="day-outline ${isToday ? 'today':''}" onclick="this.classList.toggle('expanded')">
+      <div class="day-outline ${isToday ? 'today':''}" onclick="goToDailyDay(${d})">
         <div class="day-col"><div class="dname">${name}</div><div class="ddate">${formatSlotDate(displayWk,d)}</div></div>
         <div class="meals-col">${dinnerLine}${lunchLine}${snackLine}</div>
       </div>`;
-  }).join('');
+  });
 
   el.innerHTML = `
     <div class="ov-hero ov-anim">
@@ -904,18 +924,22 @@ function renderOverview(){
 
     <div class="ov-block ov-anim">
       <h3>The week coming up — ${WEEK_LABELS[displayWk]} · ${formatWeekRange(displayWk)}</h3>
-      ${dayRows}
+      <div class="plan-note" style="margin-bottom:8px;">Tap any day for the full details.</div>
+      <div class="block-label" style="margin-top:4px;">Week — Sun to Wed</div>
+      ${dayRowsArr.slice(0,4).join('')}
+      <div class="block-label" style="margin-top:12px;">Weekend — Thu to Sat</div>
+      ${dayRowsArr.slice(4,7).join('')}
     </div>
 
     ${weekInsightsHtml(displayWk)}
 
     <div class="ov-block ov-anim">
-      <h3>How the week works</h3>
-      <div class="ov-step"><div class="num">1</div><div class="txt"><b>Sunday morning:</b> shop using the Next Shop tab — built automatically from your Plan. Buy only what's on it.</div></div>
-      <div class="ov-step"><div class="num">2</div><div class="txt"><b>Sunday:</b> cook all 4 dinners using the Recipes tab.</div></div>
-      <div class="ov-step"><div class="num">3</div><div class="txt"><b>Sun–Tue</b> eaten fresh. <b>Wednesday</b> defaults to leftovers, with a backup recipe if there isn't enough.</div></div>
-      <div class="ov-step"><div class="num">4</div><div class="txt">Rate each dinner on <b>Tonight</b> — 10 seconds, builds a "known good" list over time.</div></div>
-      <div class="ov-step"><div class="num">5</div><div class="txt"><b>Thu–Sat</b> is unplanned on purpose — leftovers, freezer, or eating out.</div></div>
+      <h3>How it works</h3>
+      <div class="ov-step"><div class="num">1</div><div class="txt"><b>Sunday morning:</b> shop for the <b>Week</b> using Next Shop — built from your Plan.</div></div>
+      <div class="ov-step"><div class="num">2</div><div class="txt"><b>Sunday:</b> cook Sunday's dinner, prep Monday &amp; Tuesday's.</div></div>
+      <div class="ov-step"><div class="num">3</div><div class="txt"><b>Mon–Wed</b> all have a real dinner planned and prepped Sunday — no leftovers guesswork.</div></div>
+      <div class="ov-step"><div class="num">4</div><div class="txt"><b>Wednesday evening:</b> a quick top-up shop for the <b>Weekend</b>, then light prep for Thursday.</div></div>
+      <div class="ov-step"><div class="num">5</div><div class="txt"><b>Thu–Sat</b> — simple, light dinners, same as the rest of the week.</div></div>
     </div>
 
     <div class="ov-block ov-anim">
@@ -934,51 +958,13 @@ function renderOverview(){
 /* ============================================================
    RENDER: TONIGHT
    ============================================================ */
-function renderTonight(){
-  const el = document.getElementById('view-tonight');
-  const {weekIdx, dayIdx, today} = getContext();
-  const dateStr = today.toLocaleDateString('en-IE', {weekday:'long', day:'numeric', month:'long'});
-  const realDow = today.getDay(); // 0-6 Sun-Sat, independent of the anchor/rotation clamp
-
-  const anchor = new Date(anchorDate);
-  anchor.setHours(0,0,0,0);
-  const daysUntilStart = Math.round((anchor - today) / 86400000);
-  if(daysUntilStart > 0){
-    const anchorLabel = anchor.toLocaleDateString('en-IE', {weekday:'long', day:'numeric', month:'long'});
-    const whenLabel = daysUntilStart === 1 ? 'tomorrow' : `on ${anchorLabel}`;
-    el.innerHTML = `
-      <div class="section-head">
-        <h2>Tonight</h2>
-        <span class="tag">${dateStr}</span>
-      </div>
-      <div class="hero-wrap">
-        <div class="hero-card unplanned">
-          <div class="hero-day">Not started yet</div>
-          <div class="hero-dish">Kicks off ${whenLabel} — ${anchorLabel}</div>
-          <div class="hero-meta"><span class="pill">Week A begins then</span></div>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  const lunchNamesAll = weekLunchIds(weekIdx).map(id=>lunchById(id)).filter(Boolean).map(l=>l.dish);
-  const snackNamesAll = weekSnackIds(weekIdx).map(id=>snackById(id)).filter(Boolean).map(s=>`${s.dish}${s.kid ? ' ★' : ''}`);
-  const todaysLunch = distributeAcrossWeek(lunchNamesAll, 7)[realDow];
-  const todaysSnacks = distributeAcrossWeek(snackNamesAll, 7)[realDow];
-  const todayGlanceHtml = `
-    <div class="slot-card" style="margin-bottom:16px;">
-      <div class="slot-label">Today, in full</div>
-      <div class="ingredients" style="margin-bottom:6px;"><b>Lunch</b> — ${todaysLunch.length ? todaysLunch.join(' + ') : '—'} <span class="who-badge" style="margin-left:6px;">Shared</span></div>
-      <div class="ingredients"><b>Snack</b> — ${todaysSnacks.length ? todaysSnacks.join(' + ') : '—'} <span class="who-badge" style="margin-left:6px;">Helen &amp; Jack</span></div>
-    </div>`;
-
 function formatClock(mins){
   let h = Math.floor(mins/60), m = mins%60;
   const ampm = h>=12 ? 'pm':'am';
   let h12 = h%12; if(h12===0) h12=12;
   return `${h12}:${m.toString().padStart(2,'0')}${ampm}`;
 }
+
 function sundaySessionPlanHtml(weekIdx){
   const sel = dinnerSelections[weekIdx];
   const rSun = recipeById(sel.sun), rMon = recipeById(sel.mon), rTue = recipeById(sel.tue), rWed = recipeById(sel.wed);
@@ -987,16 +973,12 @@ function sundaySessionPlanHtml(weekIdx){
 
   let clock = START_CLOCK;
   const prepItems = [];
-  [ ['Monday', rMon], ['Tuesday', rTue] ].forEach(([label, r]) => {
+  [ ['Monday', rMon], ['Tuesday', rTue], ['Wednesday', rWed] ].forEach(([label, r]) => {
     if(!r) return;
     prepItems.push(`Gather for ${label}'s dinner (<b>${r.dish}</b>): ${r.ingredients.join(', ')}.`);
     if(r.prep) prepItems.push(r.prep);
     clock += (r.prepMins || 0);
   });
-  if(rWed){
-    prepItems.push(`Check you've got Wednesday's backup staples to hand (only needed if leftovers run short): ${rWed.ingredients.join(', ')}.`);
-    clock += (rWed.prepMins || 0);
-  }
 
   const cookStart = clock;
   const cookItems = [`Gather: ${rSun.ingredients.join(', ')}.`, ...rSun.steps];
@@ -1032,133 +1014,123 @@ function sundaySessionPlanHtml(weekIdx){
     </div>`;
 }
 
-  if(dayIdx >= 0 && dayIdx <= 3){
-    const slot = SLOT_KEYS[dayIdx];
-    const r = recipeById(dinnerSelections[weekIdx][slot]);
-    const avg = avgRating(r.dish);
-    const isBackup = !!r.backup;
-    const isSundayDish = (dayIdx === 0);
-    const tonightMins = isSundayDish ? (r.prepMins||0) + (r.cookMins||0) : (r.cookMins||0);
-    const timeLabel = isSundayDish
-      ? `~${formatMins(tonightMins)} start to finish`
-      : `~${formatMins(tonightMins)} tonight (prepped Sunday)`;
+function wednesdaySessionHtml(weekIdx){
+  const sel = dinnerSelections[weekIdx];
+  const rThu = recipeById(sel.thu);
+  return `
+    <div class="hero-card" style="margin-bottom:16px; transform:rotate(0.3deg);">
+      <div class="hero-day">Wednesday Refresh</div>
+      <div class="hero-dish" style="font-size:19px;">This evening: weekend shop &amp; prep</div>
+      <hr class="hero-divider">
+      <ol style="margin:6px 0 0; padding-left:20px;">
+        <li style="margin-bottom:8px; font-size:13.5px; line-height:1.55; color:var(--charcoal);">Quick top-up shop for the weekend — see <span class="plan-summary-link" onclick="switchView('shop')">Next Shop → Weekend</span>.</li>
+        <li style="margin-bottom:8px; font-size:13.5px; line-height:1.55; color:var(--charcoal);">Gather for Thursday's dinner (<b>${rThu ? rThu.dish : '—'}</b>): ${rThu ? rThu.ingredients.join(', ') : ''}.</li>
+        ${rThu && rThu.prep ? `<li style="margin-bottom:8px; font-size:13.5px; line-height:1.55; color:var(--charcoal);">${rThu.prep}</li>` : ''}
+      </ol>
+    </div>`;
+}
 
+function dishForDay(weekIdx, d){
+  const slotKey = d <= 3 ? SLOT_KEYS[d] : WEEKEND_SLOT_KEYS[d-4];
+  return recipeById(dinnerSelections[weekIdx][slotKey]);
+}
+
+function goToDailyDay(d){
+  selectedDailyDay = d;
+  switchView('tonight');
+  renderTonight();
+}
+function setDailyDay(d){ selectedDailyDay = d; renderTonight(); }
+
+function renderTonight(){
+  const el = document.getElementById('view-tonight');
+  const {weekIdx, today} = getContext();
+  const realDow = today.getDay(); // 0-6 Sun-Sat, independent of the anchor/rotation clamp
+  if(selectedDailyDay === null) selectedDailyDay = realDow;
+  const d = selectedDailyDay;
+  const isRealToday = d === realDow;
+
+  const dayDate = new Date(getWeekStartDate(weekIdx));
+  dayDate.setDate(dayDate.getDate() + d);
+  const dateStr = dayDate.toLocaleDateString('en-IE', {weekday:'long', day:'numeric', month:'long'});
+  const dayLabel = isRealToday ? 'Today' : FULL_DAY_NAMES[d];
+
+  const dayTabsHtml = `<div class="filter-row">${FULL_DAY_NAMES.map((name,i)=>`<div class="filter-chip ${d===i?'active':''}" onclick="setDailyDay(${i})">${name.slice(0,3)}${i===realDow?' •':''}</div>`).join('')}</div>`;
+
+  const anchor = new Date(anchorDate);
+  anchor.setHours(0,0,0,0);
+  const daysUntilStart = Math.round((anchor - today) / 86400000);
+  if(isRealToday && daysUntilStart > 0){
+    const anchorLabel = anchor.toLocaleDateString('en-IE', {weekday:'long', day:'numeric', month:'long'});
+    const whenLabel = daysUntilStart === 1 ? 'tomorrow' : `on ${anchorLabel}`;
     el.innerHTML = `
       <div class="section-head">
-        <h2>Tonight</h2>
-        <span class="tag">${dateStr}<br>${WEEK_LABELS[weekIdx]}</span>
-      </div>
-      ${todayGlanceHtml}
-      ${dayIdx===0 ? sundaySessionPlanHtml(weekIdx) : ''}
-      <div class="hero-wrap">
-        <div class="hero-card">
-          <div class="hero-day">${DAY_NAMES[dayIdx]} Dinner <span class="who-badge" style="margin-left:4px; vertical-align:middle;">Ian</span></div>
-          <div class="hero-dish">${r.dish}</div>
-          <div class="hero-meta">
-            <span class="pill method">${r.method}</span>
-            ${r.tag ? `<span class="pill">${r.tag}</span>` : ''}
-            ${!isBackup ? `<span class="pill">⏱ ${timeLabel}</span>` : ''}
-            ${r.calories ? `<span class="pill">~${r.calories} kcal</span>` : ''}
-            ${avg ? `<span class="pill">${starsStr(avg)} avg</span>` : ''}
-          </div>
-
-          ${!isBackup ? `
-          ${r.ingredients.length ? `<div class="block-label">Ingredients (serves 3)</div><div class="ingredients">${r.ingredients.join(' · ')}</div><hr class="hero-divider">` : ''}
-          ${r.steps.length ? `<div class="block-label">Method</div><div class="steps">${r.steps.map((s,i)=>`${i+1}. ${s}`).join('<br>')}</div>` : ''}
-          ${r.prep ? `<div class="block-label" style="margin-top:12px;">Prep-ahead (Sunday)</div><div class="prep-note">${r.prep}</div>` : ''}
-          ${linkHtml(r.link)}
-          ${imageHtml(r.image)}
-          ` : `
-          <div class="block-label">Default plan</div>
-          <div class="steps">Eat leftovers from Monday or Tuesday's dinner. Not enough? Here's this week's backup:</div>
-          <hr class="hero-divider">
-          <div class="block-label">Backup: ${r.dish}</div>
-          <div class="ingredients">${r.ingredients.join(' · ')}</div>
-          <div class="steps" style="margin-top:8px;">${r.steps.join(' ')}</div>
-          `}
-
-          <hr class="hero-divider">
-          <div class="block-label">Rate tonight's dinner</div>
-          <div class="rate-box">
-            <div class="stars-row" id="star-row"></div>
-            <div class="status-row" id="status-row">
-              ${['Keep','Tweak','Drop'].map(s=>`<div class="status-chip" data-status="${s}" onclick="setStatus('${s}')">${s}</div>`).join('')}
-            </div>
-            <textarea class="note-input" id="rate-note" rows="2" placeholder="Optional note — e.g. Jack ate all his veg, needed 5 more min"></textarea>
-            <button class="log-btn" id="log-btn" onclick="submitRating('${r.dish.replace(/'/g,"\\'")}')" disabled>Log this rating</button>
-            <div class="logged-msg" id="logged-msg">✓ Logged — thanks! Check the Ratings tab anytime.</div>
-          </div>
-        </div>
-      </div>
-    `;
-    renderStars();
-  } else {
-    const topRated = allDinners().filter(r=>!r.backup)
-      .map(r=>({...r, avg: avgRating(r.dish)}))
-      .filter(r=>r.avg !== null)
-      .sort((a,b)=>b.avg-a.avg)
-      .slice(0,3);
-
-    el.innerHTML = `
-      <div class="section-head">
-        <h2>Tonight</h2>
+        <h2>Daily</h2>
         <span class="tag">${dateStr}</span>
       </div>
-      ${todayGlanceHtml}
+      ${dayTabsHtml}
       <div class="hero-wrap">
         <div class="hero-card unplanned">
-          <div class="hero-day">${today.toLocaleDateString('en-IE',{weekday:'long'})} Dinner <span class="who-badge" style="margin-left:4px; vertical-align:middle;">Ian</span></div>
-          <div class="hero-dish">Unplanned — by design</div>
-          <div class="hero-meta"><span class="pill">Leftovers, freezer backup, or eating out</span></div>
-          <hr class="hero-divider">
-          <div class="block-label">Your top-rated dinners so far</div>
-          <div class="fav-list">
-            ${topRated.length ? topRated.map(r=>`<div class="fav-item"><span>${r.dish}</span><span class="stars">${starsStr(r.avg)}</span></div>`).join('')
-              : `<div class="fav-item"><span>Log a few ratings this week and your favourites will show up here.</span></div>`}
-          </div>
+          <div class="hero-day">Not started yet</div>
+          <div class="hero-dish">Kicks off ${whenLabel} — ${anchorLabel}</div>
+          <div class="hero-meta"><span class="pill">Week A begins then</span></div>
         </div>
       </div>
     `;
+    return;
   }
-}
 
-function renderStars(){
-  const row = document.getElementById('star-row');
-  if(!row) return;
-  row.innerHTML = '';
-  for(let i=1;i<=5;i++){
-    const btn = document.createElement('button');
-    btn.className = 'star-btn' + (i<=currentRating ? ' filled':'');
-    btn.textContent = '★';
-    btn.onclick = ()=>{ currentRating = i; updateLogBtn(); renderStars(); };
-    row.appendChild(btn);
+  const lunchNamesAll = weekLunchIds(weekIdx).map(id=>lunchById(id)).filter(Boolean).map(l=>l.dish);
+  const snackNamesAll = weekSnackIds(weekIdx).map(id=>snackById(id)).filter(Boolean).map(s=>`${s.dish}${s.kid ? ' ★' : ''}`);
+  const dayLunch = distributeAcrossWeek(lunchNamesAll, 7)[d];
+  const daySnacks = distributeAcrossWeek(snackNamesAll, 7)[d];
+  const dayGlanceHtml = `
+    <div class="slot-card" style="margin-bottom:16px;">
+      <div class="slot-label">${dayLabel}, in full</div>
+      <div class="ingredients" style="margin-bottom:6px;"><b>Lunch</b> — ${dayLunch.length ? dayLunch.join(' + ') : '—'} <span class="who-badge" style="margin-left:6px;">Shared</span></div>
+      <div class="ingredients"><b>Snack</b> — ${daySnacks.length ? daySnacks.join(' + ') : '—'} <span class="who-badge" style="margin-left:6px;">Helen &amp; Jack</span></div>
+    </div>`;
+
+  const r = dishForDay(weekIdx, d);
+
+  let timeLabel = '';
+  if(d===0 || d===5 || d===6){
+    const mins = (r.prepMins||0)+(r.cookMins||0);
+    timeLabel = `~${formatMins(mins)} start to finish`;
+  } else if(d===1 || d===2 || d===3){
+    timeLabel = `~${formatMins(r.cookMins||0)} tonight (prepped Sunday)`;
+  } else if(d===4){
+    timeLabel = `~${formatMins(r.cookMins||0)} tonight (prepped Wednesday evening)`;
   }
-}
-function setStatus(s){
-  currentStatus = s;
-  document.querySelectorAll('.status-chip').forEach(c=>{
-    c.classList.toggle('active', c.dataset.status === s);
-  });
-  updateLogBtn();
-}
-function updateLogBtn(){
-  const btn = document.getElementById('log-btn');
-  if(!btn) return;
-  btn.disabled = !(currentRating > 0);
-}
-async function submitRating(dish){
-  const {today} = getContext();
-  const note = document.getElementById('rate-note').value.trim();
-  ratingsLog.unshift({
-    id: Date.now(), date: today.toISOString(), dish,
-    rating: currentRating, status: currentStatus || '—', notes: note
-  });
-  await saveRatingsLog();
-  currentRating = 0; currentStatus = '';
-  document.getElementById('logged-msg').style.display = 'block';
-  document.getElementById('log-btn').disabled = true;
-  document.getElementById('log-btn').textContent = 'Logged ✓';
-  setTimeout(()=>{ renderTonight(); renderLog(); }, 900);
+
+  el.innerHTML = `
+    <div class="section-head">
+      <h2>Daily</h2>
+      <span class="tag">${dateStr}<br>${WEEK_LABELS[weekIdx]}</span>
+    </div>
+    ${dayTabsHtml}
+    ${dayGlanceHtml}
+    ${d===0 ? sundaySessionPlanHtml(weekIdx) : ''}
+    ${d===3 ? wednesdaySessionHtml(weekIdx) : ''}
+    <div class="hero-wrap">
+      <div class="hero-card">
+        <div class="hero-day">${dayLabel} Dinner <span class="who-badge" style="margin-left:4px; vertical-align:middle;">Ian</span></div>
+        <div class="hero-dish">${r.dish}</div>
+        <div class="hero-meta">
+          <span class="pill method">${r.method}</span>
+          ${r.tag ? `<span class="pill">${r.tag}</span>` : ''}
+          ${timeLabel ? `<span class="pill">⏱ ${timeLabel}</span>` : ''}
+          ${r.calories ? `<span class="pill">~${r.calories} kcal</span>` : ''}
+        </div>
+
+        ${r.ingredients.length ? `<div class="block-label">Ingredients (serves 3)</div><div class="ingredients">${r.ingredients.join(' · ')}</div><hr class="hero-divider">` : ''}
+        ${r.steps.length ? `<div class="block-label">Method</div><div class="steps">${r.steps.map((s,i)=>`${i+1}. ${s}`).join('<br>')}</div>` : ''}
+        ${r.prep ? `<div class="block-label" style="margin-top:12px;">Prep-ahead</div><div class="prep-note">${r.prep}</div>` : ''}
+        ${linkHtml(r.link)}
+        ${imageHtml(r.image)}
+      </div>
+    </div>
+  `;
 }
 
 /* ============================================================
@@ -1201,8 +1173,8 @@ function renderPlan(){
   const sel = dinnerSelections[wk];
 
   const fishOptions = allDinners().filter(r=>r.fish);
-  const mainOptions = allDinners().filter(r=>!r.fish && !r.backup);
-  const backupOptions = allDinners().filter(r=>r.backup);
+  const mainOptions = allDinners().filter(r=>!r.fish);
+  const anyOptions = allDinners(); // weekend slots aren't restricted to fish-only or non-fish
 
   function optionsHtml(list, selectedId){
     return list.map(r=>`<option value="${r.id}" ${r.id===selectedId?'selected':''}>${r.dish}</option>`).join('');
@@ -1219,6 +1191,7 @@ function renderPlan(){
     ${proteinMixNote(wk)}
     <div class="filter-chip" style="display:inline-block; margin-bottom:16px;" onclick="mixItUp(${wk})">🔀 Mix it up</div>
 
+    <div class="block-label" style="font-size:12px; margin-bottom:8px;">Week — Sun to Wed</div>
     <div class="slot-card">
       <div class="slot-label">Sunday ${formatSlotDate(wk,0)} · Fish Day</div>
       <select class="slot-select" onchange="setSlot(${wk},'sun',this.value)">${optionsHtml(fishOptions, sel.sun)}</select>
@@ -1235,9 +1208,24 @@ function renderPlan(){
       <div class="plan-note">Prepped Sunday — just ~${formatMins((recipeById(sel.tue)||{}).cookMins)} to cook fresh Tuesday night.</div>
     </div>
     <div class="slot-card">
-      <div class="slot-label">Wednesday ${formatSlotDate(wk,3)} · Leftovers, backup below</div>
-      <select class="slot-select" onchange="setSlot(${wk},'wed',this.value)">${optionsHtml(backupOptions, sel.wed)}</select>
-      <div class="plan-note">Default is always leftovers from Mon/Tue — this is just which backup recipe to shop for, in case there isn't enough.</div>
+      <div class="slot-label">Wednesday ${formatSlotDate(wk,3)}</div>
+      <select class="slot-select" onchange="setSlot(${wk},'wed',this.value)">${optionsHtml(mainOptions, sel.wed)}</select>
+      <div class="plan-note">A real planned dinner, same as any other night — usually one of the quicker options.</div>
+    </div>
+
+    <div class="block-label" style="font-size:12px; margin:18px 0 8px;">Weekend — Thu to Sat</div>
+    <div class="plan-note" style="margin-bottom:10px;">Refreshed Wednesday evening with a quick top-up shop — see <span class="plan-summary-link" onclick="switchView('shop')">Next Shop → Weekend</span>.</div>
+    <div class="slot-card">
+      <div class="slot-label">Thursday ${formatSlotDate(wk,4)}</div>
+      <select class="slot-select" onchange="setSlot(${wk},'thu',this.value)">${optionsHtml(anyOptions, sel.thu)}</select>
+    </div>
+    <div class="slot-card">
+      <div class="slot-label">Friday ${formatSlotDate(wk,5)}</div>
+      <select class="slot-select" onchange="setSlot(${wk},'fri',this.value)">${optionsHtml(anyOptions, sel.fri)}</select>
+    </div>
+    <div class="slot-card">
+      <div class="slot-label">Saturday ${formatSlotDate(wk,6)}</div>
+      <select class="slot-select" onchange="setSlot(${wk},'sat',this.value)">${optionsHtml(anyOptions, sel.sat)}</select>
     </div>
 
     <div class="section-head"><h2>Lunches &amp; snacks in rotation</h2></div>
@@ -1411,17 +1399,25 @@ async function submitCustomRecipe(category){
   renderRecipeList();
   renderPlan();
 }
+function getFallbackDishId(slot, excludeId){
+  const pool = slot==='sun' ? allDinners().filter(r=>r.fish) : allDinners();
+  const found = pool.find(r=>r.id!==excludeId);
+  return found ? found.id : excludeId; // last resort: nothing else available
+}
+
 async function removeCustom(category, id){
   customRecipes[category] = customRecipes[category].filter(r=>r.id!==id);
   // also unselect if it was toggled on
   if(category==='lunches') selectedLunches = selectedLunches.filter(x=>x!==id);
   if(category==='snacks') selectedSnacks = selectedSnacks.filter(x=>x!==id);
   if(category==='dinners'){
-    // if this dish was assigned to any slot, fall back to that slot's default
+    // if this dish was assigned to any slot (week or weekend), fall back to something valid
     Object.keys(dinnerSelections).forEach(wk=>{
-      SLOT_KEYS.forEach(slot=>{
+      ALL_SLOT_KEYS.forEach(slot=>{
         if(dinnerSelections[wk][slot] === id){
-          dinnerSelections[wk][slot] = DEFAULT_DINNER_SELECTIONS[wk][slot];
+          let fallback = DEFAULT_DINNER_SELECTIONS[wk][slot];
+          if(fallback === id) fallback = getFallbackDishId(slot, id);
+          dinnerSelections[wk][slot] = fallback;
         }
       });
     });
@@ -1437,10 +1433,45 @@ async function removeCustom(category, id){
   renderOverview();
 }
 
+async function hideRecipe(category, id){
+  if(!hiddenRecipes[category].includes(id)) hiddenRecipes[category].push(id);
+  if(category==='lunches') selectedLunches = selectedLunches.filter(x=>x!==id);
+  if(category==='snacks') selectedSnacks = selectedSnacks.filter(x=>x!==id);
+  if(category==='dinners'){
+    Object.keys(dinnerSelections).forEach(wk=>{
+      ALL_SLOT_KEYS.forEach(slot=>{
+        if(dinnerSelections[wk][slot] === id){
+          let fallback = DEFAULT_DINNER_SELECTIONS[wk][slot];
+          if(fallback === id || hiddenRecipes.dinners.includes(fallback)) fallback = getFallbackDishId(slot, id);
+          dinnerSelections[wk][slot] = fallback;
+        }
+      });
+    });
+    await saveDinnerSelections();
+  }
+  await saveHiddenRecipes();
+  if(category==='lunches') await saveSelectedLunches();
+  if(category==='snacks') await saveSelectedSnacks();
+  renderRecipeList();
+  renderShop();
+  renderPlan();
+  renderTonight();
+  renderOverview();
+}
+async function restoreRecipe(category, id){
+  hiddenRecipes[category] = hiddenRecipes[category].filter(x=>x!==id);
+  await saveHiddenRecipes();
+  renderRecipeList();
+}
+function hiddenBuiltIns(category, baseList){
+  return baseList.filter(r=>hiddenRecipes[category].includes(r.id));
+}
+
 function renderRecipeList(){
   const list = document.getElementById('recipe-list');
 
   if(recipeTab === 'lunches'){
+    const hidden = hiddenBuiltIns('lunches', allLunchesRaw());
     list.innerHTML = addRecipeBtnHtml('lunches') +
       `<div class="plan-note" style="margin:10px 0 12px;">Switch on whichever ones you want — everything "on" feeds every week's shopping list. The home page will flag it if that list starts getting long.</div>` +
       allLunches().map(l=>{
@@ -1457,18 +1488,24 @@ function renderRecipeList(){
           </div>
           <div class="recipe-detail" onclick="event.stopPropagation()">
             ${l.ingredients.length ? `<div class="block-label">Ingredients</div><div class="ingredients">${l.ingredients.join(' · ')}</div>` : ''}
-            <div class="block-label">Note</div>
-            <div class="ingredients">${l.note}</div>
+            ${l.steps && l.steps.length ? `<div class="block-label">Method</div><div class="ingredients">${l.steps.map((s,i)=>`${i+1}. ${s}`).join('<br>')}</div>` : ''}
+            ${l.note ? `<div class="block-label">Note</div><div class="ingredients">${l.note}</div>` : ''}
             ${linkHtml(l.link)}
             ${imageHtml(l.image)}
-            ${custom ? `<div class="reset-link" style="color:var(--clay);" onclick="removeCustom('lunches','${l.id}')">Remove this lunch</div>` : ''}
+            <div class="reset-link" style="color:var(--clay);" onclick="${custom ? `removeCustom('lunches','${l.id}')` : `hideRecipe('lunches','${l.id}')`}">Remove this lunch</div>
           </div>
         </div>
-      `;}).join('');
+      `;}).join('') +
+      (hidden.length ? `<div class="block-label" style="margin-top:18px;">Removed</div>` + hidden.map(l=>`
+        <div class="recipe-card" style="opacity:0.6;">
+          <div class="top-row"><div><h3>${l.dish}</h3><div class="sub">Hidden from the app</div></div></div>
+          <div class="reset-link" onclick="restoreRecipe('lunches','${l.id}')">Restore</div>
+        </div>`).join('') : '');
     return;
   }
 
   if(recipeTab === 'snacks'){
+    const hidden = hiddenBuiltIns('snacks', allSnacksRaw());
     list.innerHTML = addRecipeBtnHtml('snacks') +
       `<div class="plan-note" style="margin:10px 0 12px;">These live with Helen &amp; Jack's breakfast/snack domain — switch on whichever ones you want. Everything "on" gets bought every week; the home page will flag it if that starts adding up. <span class="who-badge">★ Made with Jack</span> ones are good hands-on activities for the two of them.</div>` +
       allSnacks().map(s=>{
@@ -1485,31 +1522,35 @@ function renderRecipeList(){
           </div>
           <div class="recipe-detail" onclick="event.stopPropagation()">
             ${s.ingredients.length ? `<div class="block-label">Ingredients</div><div class="ingredients">${s.ingredients.join(' · ')}</div>` : ''}
-            <div class="block-label">Note</div>
-            <div class="ingredients">${s.note}</div>
+            ${s.steps && s.steps.length ? `<div class="block-label">Method</div><div class="ingredients">${s.steps.map((st,i)=>`${i+1}. ${st}`).join('<br>')}</div>` : ''}
+            ${s.note ? `<div class="block-label">Note</div><div class="ingredients">${s.note}</div>` : ''}
             ${linkHtml(s.link)}
             ${imageHtml(s.image)}
-            ${custom ? `<div class="reset-link" style="color:var(--clay);" onclick="removeCustom('snacks','${s.id}')">Remove this snack</div>` : ''}
+            <div class="reset-link" style="color:var(--clay);" onclick="${custom ? `removeCustom('snacks','${s.id}')` : `hideRecipe('snacks','${s.id}')`}">Remove this snack</div>
           </div>
         </div>
-      `;}).join('');
+      `;}).join('') +
+      (hidden.length ? `<div class="block-label" style="margin-top:18px;">Removed</div>` + hidden.map(s=>`
+        <div class="recipe-card" style="opacity:0.6;">
+          <div class="top-row"><div><h3>${s.dish}</h3><div class="sub">Hidden from the app</div></div></div>
+          <div class="reset-link" onclick="restoreRecipe('snacks','${s.id}')">Restore</div>
+        </div>`).join('') : '');
     return;
   }
 
-  // dinners (view + rate history; editing which day cooks it happens on the Next Week's Plan tab)
+  // dinners (browse + assign to a day; editing which day cooks it happens on the Next Week's Plan tab)
+  const hiddenDinners = hiddenBuiltIns('dinners', allDinnersRaw());
   list.innerHTML = addRecipeBtnHtml('dinners') +
-    `<div class="plan-note" style="margin:10px 0 12px;">Browse all options, or use "Add to Plan" on any dish to slot it straight into a week — no need to go to the Next Week's Plan tab. Calories are rough estimates per serving, not exact counts.</div>` +
-    allDinners().filter(r=>!r.backup).map(r=>{
-      const avg = avgRating(r.dish);
+    `<div class="plan-note" style="margin:10px 0 12px;">Browse all options, or use "Add to Plan" on any dish to slot it straight into a day — no need to go to the Next Week's Plan tab. Calories are rough estimates per serving, not exact counts.</div>` +
+    allDinners().map(r=>{
       const custom = r.id.startsWith('C');
       return `
       <div class="recipe-card">
         <div class="top-row" onclick="toggleCard(this.closest('.recipe-card'))">
           <div>
             <h3>${r.dish}</h3>
-            <div class="sub">${r.fish ? 'Fish Day option' : 'Weeknight option'} · ${r.method}${r.calories ? ` · ~${r.calories} kcal` : ''}${(r.prepMins||r.cookMins) ? ` · Prep ${formatMins(r.prepMins)} + Cook ${formatMins(r.cookMins)}` : ''}${custom ? ' · Added by you' : ''}</div>
+            <div class="sub">${r.fish ? 'Fish Day option' : 'Any day option'} · ${r.method}${r.calories ? ` · ~${r.calories} kcal` : ''}${(r.prepMins||r.cookMins) ? ` · Prep ${formatMins(r.prepMins)} + Cook ${formatMins(r.cookMins)}` : ''}${custom ? ' · Added by you' : ''}</div>
           </div>
-          <div class="rating-badge">${avg ? starsStr(avg) : '—'}</div>
         </div>
 
         <div class="include-row" style="margin-top:10px;" onclick="event.stopPropagation()">
@@ -1526,10 +1567,15 @@ function renderRecipeList(){
           ${r.prep ? `<div class="block-label">Prep-ahead</div><div class="ingredients">${r.prep}</div>` : ''}
           ${linkHtml(r.link)}
           ${imageHtml(r.image)}
-          ${custom ? `<div class="reset-link" style="color:var(--clay);" onclick="removeCustom('dinners','${r.id}')">Remove this dinner</div>` : ''}
+          <div class="reset-link" style="color:var(--clay);" onclick="${custom ? `removeCustom('dinners','${r.id}')` : `hideRecipe('dinners','${r.id}')`}">Remove this dinner</div>
         </div>
       </div>
-    `;}).join('');
+    `;}).join('') +
+    (hiddenDinners.length ? `<div class="block-label" style="margin-top:18px;">Removed</div>` + hiddenDinners.map(r=>`
+      <div class="recipe-card" style="opacity:0.6;">
+        <div class="top-row"><div><h3>${r.dish}</h3><div class="sub">Hidden from the app</div></div></div>
+        <div class="reset-link" onclick="restoreRecipe('dinners','${r.id}')">Restore</div>
+      </div>`).join('') : '');
 }
 function slotOptionsForDish(r){
   const opts = [];
@@ -1584,23 +1630,35 @@ async function toggleSnack(id){
 /* ============================================================
    RENDER: SHOP
    ============================================================ */
+let shopSection = 'week'; // 'week' | 'weekend'
+function setShopSection(s){ shopSection = s; renderShop(); }
+
 function renderShop(){
   const el = document.getElementById('view-shop');
   const {weekIdx} = getContext();
   if(currentShopWeekTab === null) currentShopWeekTab = getDefaultPlanningWeekIdx();
+
+  const isWeekend = shopSection === 'weekend';
+  const cost = isWeekend ? estimateWeekendCost(currentShopWeekTab) : estimateWeekCost(currentShopWeekTab);
 
   el.innerHTML = `
     <div class="section-head">
       <h2>Next Shop</h2>
       <span class="tag">auto-built from your Plan</span>
     </div>
+    <div class="toggle-row">
+      <div class="toggle-btn ${!isWeekend?'active':''}" onclick="setShopSection('week')">Week (Sun–Wed)</div>
+      <div class="toggle-btn ${isWeekend?'active':''}" onclick="setShopSection('weekend')">Weekend (Thu–Sat)</div>
+    </div>
     <div class="filter-row">
       ${[0,1,2].map(i=>`<div class="filter-chip ${currentShopWeekTab===i?'active':''}" onclick="setShopWeek(${i})">${WEEK_LABELS[i]} · ${formatWeekRange(i)}${i===weekIdx ? ' (this week)':''}</div>`).join('')}
     </div>
 
+    ${isWeekend ? `<div class="plan-note" style="margin-bottom:10px;">This is the Wednesday-evening top-up — lunches and snacks for the whole week are already covered by the main shop.</div>` : ''}
+
     <div class="slot-card" style="background:var(--paper-2); border:1px solid var(--mustard-dim); margin-bottom:16px;">
-      <div class="slot-label">💶 Estimated shop cost — ${WEEK_LABELS[currentShopWeekTab]}</div>
-      <div style="font-family:'Fraunces',serif; font-weight:600; font-size:22px; color:var(--ink);">~€${estimateWeekCost(currentShopWeekTab).toFixed(2)}</div>
+      <div class="slot-label">💶 Estimated ${isWeekend ? 'weekend top-up' : 'shop'} cost — ${WEEK_LABELS[currentShopWeekTab]}</div>
+      <div style="font-family:'Fraunces',serif; font-weight:600; font-size:22px; color:var(--ink);">~€${cost.toFixed(2)}</div>
       <div class="plan-note" style="margin-top:6px;">Rough estimate based on typical Tesco Ireland prices — actual cost varies by brand, offers, and what you already have in.</div>
     </div>
 
@@ -1612,14 +1670,15 @@ function renderShop(){
 function setShopWeek(i){ currentShopWeekTab = i; renderShop(); }
 function renderShopItems(){
   const el = document.getElementById('shop-items');
-  const list = buildShoppingList(currentShopWeekTab);
-  const checked = shopChecked[currentShopWeekTab] || {};
+  const isWeekend = shopSection === 'weekend';
+  const list = isWeekend ? buildWeekendShoppingList(currentShopWeekTab) : buildShoppingList(currentShopWeekTab);
+  const bucket = (shopChecked[currentShopWeekTab] && shopChecked[currentShopWeekTab][shopSection]) || {};
 
   function section(title, items){
     if(items.length === 0) return `<div class="shop-section-title">${title}</div><div class="plan-note" style="margin-bottom:6px;">Nothing selected — add some on the Recipes tab.</div>`;
     return `<div class="shop-section-title">${title}</div>` + items.map(item=>{
       const key = title+':'+item;
-      const isChecked = !!checked[key];
+      const isChecked = !!bucket[key];
       return `
         <div class="shop-item ${isChecked?'checked':''}" onclick="toggleShopItem('${key.replace(/'/g,"\\'")}')">
           <div class="checkbox ${isChecked?'checked':''}">${isChecked?'✓':''}</div>
@@ -1629,16 +1688,21 @@ function renderShopItems(){
     }).join('');
   }
 
-  el.innerHTML = section('Dinners', list.dinners) + section('Lunches', list.lunches) + section('Snacks', list.snacks);
+  el.innerHTML = isWeekend
+    ? section('Dinners', list.dinners)
+    : section('Dinners', list.dinners) + section('Lunches', list.lunches) + section('Snacks', list.snacks);
 }
 async function toggleShopItem(key){
   if(!shopChecked[currentShopWeekTab]) shopChecked[currentShopWeekTab] = {};
-  shopChecked[currentShopWeekTab][key] = !shopChecked[currentShopWeekTab][key];
+  if(!shopChecked[currentShopWeekTab][shopSection]) shopChecked[currentShopWeekTab][shopSection] = {};
+  const bucket = shopChecked[currentShopWeekTab][shopSection];
+  bucket[key] = !bucket[key];
   await saveShopChecked();
   renderShopItems();
 }
 async function resetShop(){
-  shopChecked[currentShopWeekTab] = {};
+  if(!shopChecked[currentShopWeekTab]) shopChecked[currentShopWeekTab] = {};
+  shopChecked[currentShopWeekTab][shopSection] = {};
   await saveShopChecked();
   renderShopItems();
 }
