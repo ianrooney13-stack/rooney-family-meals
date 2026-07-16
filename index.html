@@ -437,10 +437,10 @@ const RECIPES = [
    ingredients:["4 chicken breasts (approx 150g each, 600g total), sliced into strips","2 peppers, sliced","1 red onion, sliced","1 tbsp fajita seasoning","1 tbsp olive oil","6 small wraps or 200g rice, to serve","1 lime"],
    steps:["Preheat the oven to 200°C (fan).","Toss the chicken, peppers and onion with the oil and fajita seasoning on a large tray.","Roast 20-25 min, turning halfway, until the chicken is cooked through and veg lightly charred.","Warm the wraps or cook the rice, then serve the chicken and veg with a squeeze of lime."],
    prep:"Slice chicken and veg Sunday, toss with seasoning, keep covered in the fridge — straight onto a tray Tuesday evening."},
-  {id:'D8', proteins:['chicken'], calories:400, prepMins:5, cookMins:10, fish:false, dish:"Quick Chicken & Veg Stir-fry", tag:"", method:"Hob",
-   ingredients:["2 chicken breasts (approx 300g), sliced into strips","1 x 300g bag stir-fry vegetables","1 tbsp soy sauce","1 tsp honey","1 clove garlic, crushed","1 tsp vegetable oil"],
-   steps:["Heat the oil and stir-fry the chicken 5-6 min until cooked through.","Add the veg and cook 3-4 min until just tender.","Stir in the soy sauce, honey and garlic, cook 2 more min, and serve immediately."],
-   prep:"Chicken can be sliced Sunday and kept in the fridge — quick, light, no heavy sauce."},
+  {id:'D8', proteins:['turkey'], calories:380, prepMins:5, cookMins:10, fish:false, dish:"Quick Turkey & Veg Stir-fry", tag:"", method:"Hob",
+   ingredients:["2 turkey breast steaks (approx 300g), sliced into strips","1 x 300g bag stir-fry vegetables","1 tbsp soy sauce","1 tsp honey","1 clove garlic, crushed","1 tsp vegetable oil"],
+   steps:["Heat the oil and stir-fry the turkey 5-6 min until cooked through.","Add the veg and cook 3-4 min until just tender.","Stir in the soy sauce, honey and garlic, cook 2 more min, and serve immediately."],
+   prep:"Turkey can be sliced Sunday and kept in the fridge — quick, light, a leaner alternative to chicken."},
 
   {id:'D9', proteins:['fish'], calories:480, prepMins:25, cookMins:20, fish:true, dish:"Fish Pie with Sweet Potato Mash", tag:"Fish Day", method:"Oven",
    ingredients:["3 white fish fillets (approx 450g total)","2 large sweet potatoes (approx 600g), peeled and chopped","1 leek, sliced","200ml milk","1 tbsp butter","1 tbsp plain flour","Handful frozen peas","30g cheese, grated (optional)","Salt and black pepper, to taste"],
@@ -454,10 +454,10 @@ const RECIPES = [
    ingredients:["4 chicken thighs, boneless and skinless (approx 500g total)","1 courgette, sliced","1 red pepper, sliced","1 red onion, cut into wedges","Handful cherry tomatoes","1 tsp dried oregano","1 tbsp olive oil","50g feta to crumble (optional)"],
    steps:["Season the chicken thighs and airfry at 190°C for 14-16 min, turning halfway, until cooked through (75°C internally).","Toss the courgette, pepper, onion and cherry tomatoes with oil and oregano on a tray.","Roast the veg at 200°C for 18-20 min until tender and lightly charred.","Crumble feta over the veg and serve alongside the chicken thighs."],
    prep:"Chop veg Sunday, keep in a container in the fridge; chicken needs no marinating."},
-  {id:'D12', proteins:['chicken','chickpea'], calories:420, prepMins:5, cookMins:15, fish:false, dish:"15-min Chicken & Chickpea Sauté", tag:"", method:"Hob",
-   ingredients:["2 chicken breasts (approx 300g), diced","1 x 400g tin chickpeas, drained and rinsed","1 x 400g tin chopped tomatoes","1 clove garlic, crushed","1 tsp dried oregano","1 tsp olive oil","200g rice or crusty bread, to serve"],
-   steps:["Heat the oil and fry the diced chicken 5-6 min until cooked through.","Add the chickpeas, tomatoes, garlic and oregano, and stir to combine.","Simmer 8-10 min, stirring occasionally, until slightly thickened.","Season to taste and serve over rice or with crusty bread."],
-   prep:"Chicken can be diced Sunday and kept in the fridge — quick, simple, done in 15 minutes."},
+  {id:'D12', proteins:['turkey','chickpea'], calories:400, prepMins:5, cookMins:15, fish:false, dish:"15-min Turkey & Chickpea Sauté", tag:"", method:"Hob",
+   ingredients:["2 turkey breast steaks (approx 300g), diced","1 x 400g tin chickpeas, drained and rinsed","1 x 400g tin chopped tomatoes","1 clove garlic, crushed","1 tsp dried oregano","1 tsp olive oil","200g rice or crusty bread, to serve"],
+   steps:["Heat the oil and fry the diced turkey 5-6 min until cooked through.","Add the chickpeas, tomatoes, garlic and oregano, and stir to combine.","Simmer 8-10 min, stirring occasionally, until slightly thickened.","Season to taste and serve over rice or with crusty bread."],
+   prep:"Turkey can be diced Sunday and kept in the fridge — quick, simple, a leaner alternative to chicken, done in 15 minutes."},
 
   {id:'D14', proteins:['chickpea'], calories:400, prepMins:15, cookMins:28, fish:false, dish:"Roasted Butternut Squash & Chickpea Tray Bake", tag:"", method:"Oven",
    ingredients:["2 x 400g tins chickpeas, drained and rinsed","1 small butternut squash (approx 600g), peeled and cubed","1 tbsp olive oil","1 tsp ground cumin (light touch)","100g feta, crumbled","Handful rocket or spinach"],
@@ -497,6 +497,44 @@ const RECIPES = [
    ingredients:["6 eggs","1 courgette, grated (excess water squeezed out)","1 red pepper, finely diced","50g feta, crumbled","100g mixed salad leaves","1 tbsp olive oil","Salt and black pepper, to taste"],
    steps:["Whisk the eggs and season, then stir through the courgette, pepper and feta.","Pour into a greased muffin tin or small oven-safe dish.","Airfry or bake at 180°C for 12-15 min until just set in the centre.","Dress the salad leaves with olive oil and serve alongside the warm egg muffins."],
    prep:"Veg can be grated and chopped Sunday and kept in the fridge — whisk and cook fresh on the night. Light, quick, high protein."},
+
+  {id:'D24', proteins:['fish'], calories:380, prepMins:10, cookMins:12, fish:true, dish:"Airfryer Cod with Cherry Tomatoes & Olives", tag:"Fish Day", method:"Airfryer",
+   ingredients:["3 cod fillets (approx 150g each, 450g total)","Handful cherry tomatoes, halved","Handful olives, pitted","1 tbsp olive oil","1 clove garlic, crushed","1 tsp dried oregano","1 lemon"],
+   steps:["Season the cod and place in the airfryer basket.","Scatter the cherry tomatoes, olives, garlic and oregano around the fish, and drizzle with oil.","Airfry at 180°C for 10-12 min until the fish flakes easily and the tomatoes have softened.","Squeeze over lemon juice and serve."],
+   prep:"Cod can be seasoned Sunday and kept covered in the fridge — everything cooks together in one basket."},
+  {id:'D25', proteins:['fish'], calories:420, prepMins:10, cookMins:15, fish:true, dish:"Teriyaki-Style Baked Salmon with Broccoli", tag:"Fish Day", method:"Oven",
+   ingredients:["3 salmon fillets (approx 150g each, 450g total)","1 tbsp soy sauce","1 tsp honey","1 tsp fresh ginger, grated","1 clove garlic, crushed","1 head broccoli, cut into florets","1 tsp sesame seeds (optional)"],
+   steps:["Mix the soy sauce, honey, ginger and garlic, and brush over the salmon.","Place the salmon on a lined tray and bake at 200°C for 12-15 min until just cooked through.","Steam or roast the broccoli alongside for 8-10 min until tender.","Scatter sesame seeds over the salmon and serve with the broccoli."],
+   prep:"Salmon can be marinated Sunday and kept covered in the fridge — a different way to serve salmon from the airfryer version earlier in the rotation."},
+  {id:'D26', proteins:['fish'], calories:380, prepMins:10, cookMins:8, fish:true, dish:"Airfryer Tuna Steaks with Green Salad", tag:"Fish Day", method:"Airfryer",
+   ingredients:["3 tuna steaks (approx 150g each, 450g total)","1 tbsp olive oil","1 clove garlic, crushed","1 lemon","100g mixed salad leaves","1/2 cucumber, sliced","Handful cherry tomatoes, halved"],
+   steps:["Rub the tuna steaks with oil, garlic and a squeeze of lemon.","Airfry at 200°C for 3-4 min per side for a just-seared centre (longer if you prefer it cooked through).","Toss the salad leaves, cucumber and cherry tomatoes together.","Slice the tuna and serve over the salad with the remaining lemon."],
+   prep:"Tuna can be rubbed with the marinade Sunday and kept covered in the fridge — one of the quickest fish nights in the rotation."},
+  {id:'D27', proteins:['turkey'], calories:400, prepMins:12, cookMins:12, fish:false, dish:"Airfryer Turkey Burgers with Side Salad", tag:"", method:"Airfryer",
+   ingredients:["500g lean turkey mince","1 egg","1 tsp dried sage or thyme","Salt and black pepper, to taste","3 wholemeal buns (optional)","100g mixed salad leaves","1/2 cucumber, sliced","Handful cherry tomatoes, halved"],
+   steps:["Mix the turkey mince, egg, sage or thyme, salt and pepper until just combined.","Divide into 3 patties, about 1.5cm thick.","Airfry at 190°C for 10-12 min, turning halfway, until cooked through (74°C internally).","Toss the salad leaves, cucumber and tomatoes, and serve the burgers alongside (bun optional)."],
+   prep:"Patties can be shaped and kept covered in the fridge from Sunday — quick and light, leaner than the beef version."},
+  {id:'D28', proteins:['beef'], calories:480, prepMins:15, cookMins:25, fish:false, dish:"Spaghetti Bolognese (Hidden Veg)", tag:"", method:"Hob",
+   ingredients:["500g lean beef mince (5%)","1 onion, finely diced","1 carrot, finely diced","1 celery stick, finely diced","2 cloves garlic, crushed","1 x 400g tin chopped tomatoes","1 tbsp tomato purée","1 tsp dried oregano","200g wholewheat spaghetti","Salt and black pepper, to taste"],
+   steps:["Sauté the onion, carrot, celery and garlic in a little oil for 6-8 min until softened.","Add the mince and brown for 5-6 min, breaking it up as it cooks.","Stir in the chopped tomatoes, tomato purée and oregano, and simmer 15-20 min until thickened.","Cook the spaghetti according to packet instructions.","Season the sauce to taste and serve over the spaghetti."],
+   prep:"Sauce can be made in a big batch Sunday and kept in the fridge — the finely diced veg keeps it light while sneaking in extra veg. Reheat and toss with fresh pasta on the night."},
+
+  {id:'D29', proteins:['fish'], calories:380, prepMins:10, cookMins:18, fish:true, dish:"Baked Cod alla Puttanesca", tag:"Fish Day", method:"Oven",
+   ingredients:["3 cod fillets (approx 150g each, 450g total)","1 x 400g tin chopped tomatoes","Handful olives, pitted and halved","1 tbsp capers","2 cloves garlic, crushed","1 tsp dried oregano","1 tbsp olive oil","Handful fresh parsley, chopped"],
+   steps:["Preheat the oven to 190°C (fan).","Simmer the tomatoes, olives, capers, garlic and oregano in a pan for 8-10 min to make the sauce.","Pour the sauce into an ovenproof dish and nestle the cod fillets on top.","Bake for 12-15 min until the fish flakes easily.","Scatter with parsley and serve."],
+   prep:"Sauce can be made Sunday and kept in the fridge — just reheat, add the fish and bake fresh on the night."},
+  {id:'D30', proteins:['chicken'], calories:420, prepMins:15, cookMins:30, fish:false, dish:"Chicken Cacciatore", tag:"", method:"Hob",
+   ingredients:["4 chicken thighs, boneless and skinless (approx 500g total)","1 onion, sliced","1 red pepper, sliced","2 cloves garlic, crushed","1 x 400g tin chopped tomatoes","1 tsp dried oregano","1 tbsp olive oil","Handful olives (optional)"],
+   steps:["Brown the chicken thighs in a splash of oil for 4-5 min, then set aside.","Sauté the onion, pepper and garlic in the same pan for 5-6 min until soft.","Add the tomatoes and oregano, return the chicken to the pan, and simmer covered for 20-25 min until the chicken is cooked through.","Stir through olives if using, and serve."],
+   prep:"Chicken and veg can be prepped Sunday and kept in the fridge — this simmers gently on the night, minimal hands-on time."},
+  {id:'D31', proteins:['turkey'], calories:450, prepMins:15, cookMins:15, fish:false, dish:"Turkey Meatballs in Tomato Sauce with Spaghetti", tag:"", method:"Airfryer + Hob",
+   ingredients:["500g lean turkey mince","1 egg","2 tbsp breadcrumbs","1 tsp dried basil","1 x 400g tin chopped tomatoes","1 clove garlic, crushed","200g wholewheat spaghetti"],
+   steps:["Mix the turkey mince, egg, breadcrumbs and basil, and roll into about 12 meatballs.","Airfry at 190°C for 10 min, shaking halfway, until cooked through.","Meanwhile, simmer the tomatoes and garlic in a pan for 8-10 min.","Cook the spaghetti, add the meatballs to the sauce to warm through, and serve over the pasta."],
+   prep:"Meatballs can be rolled and kept covered in the fridge from Sunday — a lighter alternative to the beef version."},
+  {id:'D32', proteins:['chickpea'], calories:380, prepMins:12, cookMins:20, fish:false, dish:"Tuscan White Bean & Kale Stew", tag:"", method:"Hob",
+   ingredients:["2 x 400g tins cannellini beans, drained and rinsed","1 onion, diced","1 carrot, diced","2 cloves garlic, crushed","1 x 400g tin chopped tomatoes","100g kale or spinach, chopped","1 tbsp olive oil","Crusty bread, to serve"],
+   steps:["Sauté the onion, carrot and garlic in the oil for 6-8 min until softened.","Add the beans and chopped tomatoes, and simmer 10 min.","Stir through the kale or spinach and cook 3-4 min until wilted.","Season to taste and serve with crusty bread."],
+   prep:"Fully veg and forgiving — can be made ahead Sunday and just reheated fresh on the night."},
 ];
 
 const LUNCHES = [
@@ -547,9 +585,9 @@ const WEEKEND_SLOT_KEYS = ['thu','fri','sat'];
 const ALL_SLOT_KEYS = [...SLOT_KEYS, ...WEEKEND_SLOT_KEYS];
 
 const DEFAULT_DINNER_SELECTIONS = {
-  0:{sun:'D1',mon:'D7',tue:'D16',wed:'D4', thu:'D14',fri:'D2', sat:'D22'},   // Week A
-  1:{sun:'D5',mon:'D17',tue:'D10',wed:'D8', thu:'D21',fri:'D11',sat:'D18'}, // Week B
-  2:{sun:'D9',mon:'D15',tue:'D18',wed:'D12',thu:'D6', fri:'D3', sat:'D23'}, // Week C
+  0:{sun:'D1',mon:'D7',tue:'D16',wed:'D27',thu:'D14',fri:'D24',sat:'D22'}, // Week A: fish, chicken, beef, turkey, chickpea, fish, egg
+  1:{sun:'D5',mon:'D17',tue:'D10',wed:'D8', thu:'D21',fri:'D11',sat:'D25'}, // Week B: fish, beef, chickpea, turkey, chickpea, chicken, fish
+  2:{sun:'D9',mon:'D15',tue:'D18',wed:'D12',thu:'D6', fri:'D26',sat:'D23'}, // Week C: fish, chicken, beef, turkey, chickpea, fish, egg
 };
 const DEFAULT_LUNCHES = ['L1','L2','L3','L4','L6'];
 const DEFAULT_SNACKS = ['S1','S2','S3'];
@@ -856,10 +894,8 @@ function getDisplayWeekIdx(){
 }
 
 function getDefaultPlanningWeekIdx(){
-  // Sunday: this week's shop/plan is still the live, actionable one.
-  // Monday onward: this week is already shopped and cooking — default to planning next week instead.
-  const {weekIdx, dayIdx} = getContext();
-  return dayIdx === 0 ? weekIdx : (weekIdx + 1) % 3;
+  // Always default to whichever period is currently active — no jumping ahead to next week.
+  return getContext().weekIdx;
 }
 
 function weekInsightsHtml(wk){
@@ -1195,7 +1231,7 @@ function weekProteinSet(wk){
   const set = new Set([...(monR && monR.proteins ? monR.proteins : []), ...(tueR && tueR.proteins ? tueR.proteins : [])]);
   return set;
 }
-const PROTEIN_LABELS = {chicken:'Chicken', beef:'Beef', chickpea:'Chickpea/veg', fish:'Fish'};
+const PROTEIN_LABELS = {chicken:'Chicken', turkey:'Turkey', beef:'Beef', chickpea:'Chickpea/veg', fish:'Fish'};
 
 function sundaySessionHtml(wk){
   const s = sundaySession(wk);
@@ -1739,12 +1775,22 @@ let shopSection = 'week'; // 'week' | 'weekend'
 let planSection = 'week'; // 'week' | 'weekend'
 function setShopSection(s){ shopSection = s; renderShop(); }
 
+function periodExpired(wk, sectionIsWeekend){
+  const {weekIdx, today} = getContext();
+  if(wk !== weekIdx) return false; // only the currently active week can be "expired" mid-cycle
+  const weekStart = getWeekStartDate(wk);
+  const endDate = new Date(weekStart);
+  endDate.setDate(endDate.getDate() + (sectionIsWeekend ? 6 : 3));
+  return endDate < today;
+}
+
 function renderShop(){
   const el = document.getElementById('view-shop');
   const {weekIdx} = getContext();
   if(currentShopWeekTab === null) currentShopWeekTab = getDefaultPlanningWeekIdx();
 
   const isWeekend = shopSection === 'weekend';
+  const expired = periodExpired(currentShopWeekTab, isWeekend);
   const cost = isWeekend ? estimateWeekendCost(currentShopWeekTab) : estimateWeekCost(currentShopWeekTab);
 
   el.innerHTML = `
@@ -1760,18 +1806,25 @@ function renderShop(){
       ${[0,1,2].map(i=>`<div class="filter-chip ${currentShopWeekTab===i?'active':''}" onclick="setShopWeek(${i})">${formatWeekRange(i)}${i===weekIdx ? ' (this week)':''}</div>`).join('')}
     </div>
 
-    ${isWeekend ? `<div class="plan-note" style="margin-bottom:10px;">This is the Wednesday-evening top-up — lunches and snacks for the whole week are already covered by the main shop.</div>` : ''}
+    ${expired ? `
+      <div class="empty-state">
+        <div class="big">This ${isWeekend ? 'weekend' : 'week'}'s shop is done</div>
+        ${isWeekend ? 'Everything for this period has already been bought.' : `That's already been shopped for — check <span class="plan-summary-link" onclick="setShopSection('weekend')">Weekend</span> for what's left this week.`}
+      </div>
+    ` : `
+      ${isWeekend ? `<div class="plan-note" style="margin-bottom:10px;">This is the Wednesday-evening top-up — lunches and snacks for the whole week are already covered by the main shop.</div>` : ''}
 
-    <div class="slot-card" style="background:var(--paper-2); border:1px solid var(--mustard-dim); margin-bottom:16px;">
-      <div class="slot-label">💶 Estimated ${isWeekend ? 'weekend top-up' : 'shop'} cost — ${formatWeekRange(currentShopWeekTab)}</div>
-      <div style="font-family:'Fraunces',serif; font-weight:600; font-size:22px; color:var(--ink);">~€${cost.toFixed(2)}</div>
-      <div class="plan-note" style="margin-top:6px;">Rough estimate based on typical Tesco Ireland prices — actual cost varies by brand, offers, and what you already have in.</div>
-    </div>
+      <div class="slot-card" style="background:var(--paper-2); border:1px solid var(--mustard-dim); margin-bottom:16px;">
+        <div class="slot-label">💶 Estimated ${isWeekend ? 'weekend top-up' : 'shop'} cost — ${formatWeekRange(currentShopWeekTab)}</div>
+        <div style="font-family:'Fraunces',serif; font-weight:600; font-size:22px; color:var(--ink);">~€${cost.toFixed(2)}</div>
+        <div class="plan-note" style="margin-top:6px;">Rough estimate based on typical Tesco Ireland prices — actual cost varies by brand, offers, and what you already have in.</div>
+      </div>
 
-    <div id="shop-items"></div>
-    <div class="reset-link" onclick="resetShop()">Reset ticks for ${formatWeekRange(currentShopWeekTab)}</div>
+      <div id="shop-items"></div>
+      <div class="reset-link" onclick="resetShop()">Reset ticks for ${formatWeekRange(currentShopWeekTab)}</div>
+    `}
   `;
-  renderShopItems();
+  if(!expired) renderShopItems();
 }
 function setShopWeek(i){ currentShopWeekTab = i; renderShop(); }
 function renderShopItems(){
