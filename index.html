@@ -615,6 +615,7 @@ let selectedLunches = [...DEFAULT_LUNCHES];
 let selectedSnacks = [...DEFAULT_SNACKS];
 let customRecipes = {dinners:[], lunches:[], snacks:[]};
 let hiddenRecipes = {dinners:[], lunches:[], snacks:[]};
+let dayAdjustments = {}; // dayAdjustments[weekNum][dayIdx] = {removedLunches:[], addedLunches:[], removedSnacks:[], addedSnacks:[]} — keyed by the absolute week number (not the A/B/C rotation slot) so swaps auto-clear once that real week has passed.
 
 let currentShopWeekTab = null;
 let currentPlanWeekTab = null;
@@ -665,6 +666,19 @@ async function initStorage(){
   const sn = await safeGet('selected-snacks');
   selectedSnacks = sn ? JSON.parse(sn) : [...DEFAULT_SNACKS];
 
+  const da = await safeGet('day-adjustments');
+  dayAdjustments = da ? JSON.parse(da) : {};
+  // Auto-clear: only ever keep the current real week's swaps — once a week has passed,
+  // its pushed lunches/snacks shouldn't resurface next time that A/B/C slot comes round.
+  {
+    const currentWeekNum = getContext().weekNum;
+    const pruned = dayAdjustments[currentWeekNum] ? {[currentWeekNum]: dayAdjustments[currentWeekNum]} : {};
+    if(JSON.stringify(pruned) !== JSON.stringify(dayAdjustments)){
+      dayAdjustments = pruned;
+      await saveDayAdjustments();
+    }
+  }
+
   // Migration safety net: recipes get removed/renamed over time. If saved data (from an
   // older version of the app) references an ID that no longer exists, repair it here
   // rather than letting the app crash on a dangling reference.
@@ -695,6 +709,7 @@ async function saveShopChecked(){ await safeSet('shop-checked', JSON.stringify(s
 async function saveDinnerSelections(){ await safeSet('dinner-selections', JSON.stringify(dinnerSelections)); }
 async function saveSelectedLunches(){ await safeSet('selected-lunches', JSON.stringify(selectedLunches)); }
 async function saveSelectedSnacks(){ await safeSet('selected-snacks', JSON.stringify(selectedSnacks)); }
+async function saveDayAdjustments(){ await safeSet('day-adjustments', JSON.stringify(dayAdjustments)); }
 async function saveCustomRecipes(){ await safeSet('custom-recipes', JSON.stringify(customRecipes)); }
 
 /* ============================================================
@@ -783,6 +798,30 @@ const LUNCHES_PER_WEEK = 5; // flag threshold, not a hard cap — roughly one pe
 function weekLunchIds(weekIdx){ return selectedLunches; } // every switched-on lunch feeds every week's list
 function weekSnackIds(weekIdx){ return selectedSnacks; }  // every switched-on snack feeds every week's list
 
+function buildLunchesIngredients(weekIdx){
+  const out = [];
+  weekLunchIds(weekIdx).forEach(id=>{
+    const l = lunchById(id);
+    if(!l) return;
+    l.ingredients.forEach(ing=>{
+      if(/whatever/i.test(ing)) return;
+      if(!out.includes(ing)) out.push(ing);
+    });
+  });
+  return out;
+}
+function buildSnacksIngredients(weekIdx){
+  const out = [];
+  weekSnackIds(weekIdx).forEach(id=>{
+    const s = snackById(id);
+    if(!s) return;
+    s.ingredients.forEach(ing=>{
+      if(!out.includes(ing)) out.push(ing);
+    });
+  });
+  return out;
+}
+
 function buildShoppingList(weekIdx){
   const sel = dinnerSelections[weekIdx];
   const dinnersOut = [];
@@ -793,28 +832,12 @@ function buildShoppingList(weekIdx){
       if(!dinnersOut.includes(ing)) dinnersOut.push(ing);
     });
   });
-  const lunchesOut = [];
-  weekLunchIds(weekIdx).forEach(id=>{
-    const l = lunchById(id);
-    if(!l) return;
-    l.ingredients.forEach(ing=>{
-      if(/whatever/i.test(ing)) return;
-      if(!lunchesOut.includes(ing)) lunchesOut.push(ing);
-    });
-  });
-  const snacksOut = [];
-  weekSnackIds(weekIdx).forEach(id=>{
-    const s = snackById(id);
-    if(!s) return;
-    s.ingredients.forEach(ing=>{
-      if(!snacksOut.includes(ing)) snacksOut.push(ing);
-    });
-  });
-  return {dinners:dinnersOut, lunches:lunchesOut, snacks:snacksOut};
+  return {dinners:dinnersOut, lunches:buildLunchesIngredients(weekIdx), snacks:buildSnacksIngredients(weekIdx)};
 }
 
 function buildWeekendShoppingList(weekIdx){
-  // Just the 3 weekend dinners — lunches/snacks for the whole week are already covered by the Sunday shop.
+  // Weekend dinners, plus the same "switched on" lunches & snacks used in the main shop —
+  // so anything turned on after Sunday (or meant just for the weekend) still shows up here.
   const sel = dinnerSelections[weekIdx];
   const dinnersOut = [];
   WEEKEND_SLOT_KEYS.forEach(slot=>{
@@ -824,7 +847,7 @@ function buildWeekendShoppingList(weekIdx){
       if(!dinnersOut.includes(ing)) dinnersOut.push(ing);
     });
   });
-  return {dinners:dinnersOut};
+  return {dinners:dinnersOut, lunches:buildLunchesIngredients(weekIdx), snacks:buildSnacksIngredients(weekIdx)};
 }
 
 /* ============================================================
@@ -898,6 +921,54 @@ function distributeAcrossWeek(names, days){
   return result;
 }
 
+// Returns the actual list of lunch/snack objects for a given day, after applying any
+// manual "push to tomorrow" swaps on top of the base round-robin distribution.
+function getDayMealItems(weekNum, d, type){
+  const ids = type === 'lunches' ? weekLunchIds(weekNum) : weekSnackIds(weekNum);
+  const objs = ids.map(id => type === 'lunches' ? lunchById(id) : snackById(id)).filter(Boolean);
+  const base = distributeAcrossWeek(objs, 7)[d] || [];
+  const dayAdj = (dayAdjustments[weekNum] && dayAdjustments[weekNum][d]) || {};
+  const removedKey = type === 'lunches' ? 'removedLunches' : 'removedSnacks';
+  const addedKey = type === 'lunches' ? 'addedLunches' : 'addedSnacks';
+  const removed = dayAdj[removedKey] || [];
+  const added = dayAdj[addedKey] || [];
+  const result = base.filter(item => !removed.includes(item.id));
+  added.forEach(id=>{
+    const obj = type === 'lunches' ? lunchById(id) : snackById(id);
+    if(obj && !result.find(r=>r.id===obj.id)) result.push(obj);
+  });
+  return result;
+}
+function dayHasAdjustments(weekNum, d){
+  const dayAdj = dayAdjustments[weekNum] && dayAdjustments[weekNum][d];
+  if(!dayAdj) return false;
+  return ['removedLunches','addedLunches','removedSnacks','addedSnacks'].some(k => dayAdj[k] && dayAdj[k].length);
+}
+async function pushMealToTomorrow(weekNum, d, type, id){
+  if(!dayAdjustments[weekNum]) dayAdjustments[weekNum] = {};
+  if(!dayAdjustments[weekNum][d]) dayAdjustments[weekNum][d] = {};
+  const removedKey = type === 'lunches' ? 'removedLunches' : 'removedSnacks';
+  if(!dayAdjustments[weekNum][d][removedKey]) dayAdjustments[weekNum][d][removedKey] = [];
+  if(!dayAdjustments[weekNum][d][removedKey].includes(id)) dayAdjustments[weekNum][d][removedKey].push(id);
+
+  const nextDay = d + 1;
+  if(nextDay <= 6){
+    if(!dayAdjustments[weekNum][nextDay]) dayAdjustments[weekNum][nextDay] = {};
+    const addedKey = type === 'lunches' ? 'addedLunches' : 'addedSnacks';
+    if(!dayAdjustments[weekNum][nextDay][addedKey]) dayAdjustments[weekNum][nextDay][addedKey] = [];
+    if(!dayAdjustments[weekNum][nextDay][addedKey].includes(id)) dayAdjustments[weekNum][nextDay][addedKey].push(id);
+  }
+  await saveDayAdjustments();
+  renderTonight();
+  renderOverview();
+}
+async function clearDayAdjustments(weekNum, d){
+  if(dayAdjustments[weekNum]) delete dayAdjustments[weekNum][d];
+  await saveDayAdjustments();
+  renderTonight();
+  renderOverview();
+}
+
 function getDisplayWeekIdx(){
   // getContext().weekIdx already only changes over when a new Sunday genuinely arrives
   // (it's driven by elapsed 7-day blocks from the fixed anchor), so there's no need for
@@ -960,13 +1031,11 @@ function weekInsightsHtml(wk){
 function renderOverview(){
   const el = document.getElementById('view-overview');
   const displayWk = getDisplayWeekIdx();
-  const {today} = getContext();
+  const {today, weekNum} = getContext();
   const sel = dinnerSelections[displayWk];
 
-  const lunchNames = weekLunchIds(displayWk).map(id=>lunchById(id)).filter(Boolean).map(l=>l.dish);
-  const snackNames = weekSnackIds(displayWk).map(id=>snackById(id)).filter(Boolean).map(s=>`${s.dish}${s.kid ? ' ★' : ''}`);
-  const lunchDist = distributeAcrossWeek(lunchNames, 7);
-  const snackDist = distributeAcrossWeek(snackNames, 7);
+  const lunchDist = FULL_DAY_NAMES.map((_,d)=> getDayMealItems(weekNum, d, 'lunches').map(l=>l.dish));
+  const snackDist = FULL_DAY_NAMES.map((_,d)=> getDayMealItems(weekNum, d, 'snacks').map(s=>`${s.dish}${s.kid ? ' ★' : ''}`));
   const weekStart = getWeekStartDate(displayWk);
 
   const dayRowsArr = FULL_DAY_NAMES.map((name, d) => {
@@ -1126,7 +1195,7 @@ function setDailyDay(d){ selectedDailyDay = d; renderTonight(); }
 
 function renderTonight(){
   const el = document.getElementById('view-tonight');
-  const {weekIdx, today} = getContext();
+  const {weekIdx, today, weekNum} = getContext();
   const realDow = today.getDay(); // 0-6 Sun-Sat, independent of the anchor/rotation clamp
   if(selectedDailyDay === null || selectedDailyDay < realDow) selectedDailyDay = realDow;
   const d = selectedDailyDay;
@@ -1162,12 +1231,11 @@ function renderTonight(){
     return;
   }
 
-  const lunchObjsAll = weekLunchIds(weekIdx).map(lunchById).filter(Boolean);
-  const snackObjsAll = weekSnackIds(weekIdx).map(snackById).filter(Boolean);
-  const dayLunches = distributeAcrossWeek(lunchObjsAll, 7)[d];
-  const daySnacks = distributeAcrossWeek(snackObjsAll, 7)[d];
+  const dayLunches = getDayMealItems(weekNum, d, 'lunches');
+  const daySnacks = getDayMealItems(weekNum, d, 'snacks');
 
-  function mealCardHtml(item, badgeText){
+  function mealCardHtml(item, badgeText, type){
+    const canPush = type && d < 6;
     return `
       <div class="recipe-card" style="margin-bottom:10px;">
         <div class="top-row" onclick="toggleCard(this.closest('.recipe-card'))">
@@ -1176,6 +1244,7 @@ function renderTonight(){
             <div class="sub">${badgeText}${item.calories ? ` · ~${item.calories} kcal` : ''}${item.mins ? ` · ${formatMins(item.mins)}` : ''}</div>
           </div>
         </div>
+        ${canPush ? `<div class="plan-note" style="margin-top:2px; margin-bottom:0; cursor:pointer; color:var(--clay); display:inline-block;" onclick="pushMealToTomorrow(${weekNum}, ${d}, '${type}', '${item.id}')">→ Not today — push to tomorrow</div>` : ''}
         <div class="recipe-detail">
           ${item.ingredients && item.ingredients.length ? `<div class="block-label">Ingredients</div><div class="ingredients">${item.ingredients.join(' · ')}</div>` : ''}
           ${item.steps && item.steps.length ? `<div class="block-label">Method</div><div class="ingredients">${item.steps.map((s,i)=>`${i+1}. ${s}`).join('<br>')}</div>` : ''}
@@ -1184,11 +1253,15 @@ function renderTonight(){
       </div>`;
   }
 
+  const hasAdj = dayHasAdjustments(weekNum, d);
   const dayGlanceHtml = `
-    <div class="block-label" style="margin:16px 0 8px;">${dayLabel}'s Lunch <span class="who-badge" style="margin-left:4px;">Shared</span></div>
-    ${dayLunches.length ? dayLunches.map(l=>mealCardHtml(l, 'Lunch')).join('') : `<div class="plan-note">No lunch switched on — check the Recipes tab.</div>`}
+    <div class="block-label" style="margin:16px 0 8px; display:flex; justify-content:space-between; align-items:baseline;">
+      <span>${dayLabel}'s Lunch <span class="who-badge" style="margin-left:4px;">Shared</span></span>
+      ${hasAdj ? `<span class="plan-summary-link" style="font-weight:normal; text-transform:none;" onclick="clearDayAdjustments(${weekNum}, ${d})">↺ reset today's swaps</span>` : ''}
+    </div>
+    ${dayLunches.length ? dayLunches.map(l=>mealCardHtml(l, 'Lunch', 'lunches')).join('') : `<div class="plan-note">No lunch switched on — check the Recipes tab.</div>`}
     <div class="block-label" style="margin:12px 0 8px;">${dayLabel}'s Snack <span class="who-badge" style="margin-left:4px;">Helen &amp; Jack</span></div>
-    ${daySnacks.length ? daySnacks.map(s=>mealCardHtml(s, 'Snack')).join('') : `<div class="plan-note">No snack switched on — check the Recipes tab.</div>`}`;
+    ${daySnacks.length ? daySnacks.map(s=>mealCardHtml(s, 'Snack', 'snacks')).join('') : `<div class="plan-note">No snack switched on — check the Recipes tab.</div>`}`;
 
   const r = dishForDay(weekIdx, d);
   const isSkipped = r.id === 'SKIP';
@@ -1825,7 +1898,7 @@ function renderShop(){
         ${isWeekend ? 'Everything for this period has already been bought.' : `That's already been shopped for — check <span class="plan-summary-link" onclick="setShopSection('weekend')">Weekend</span> for what's left this week.`}
       </div>
     ` : `
-      ${isWeekend ? `<div class="plan-note" style="margin-bottom:10px;">This is the Wednesday-evening top-up — lunches and snacks for the whole week are already covered by the main shop.</div>` : ''}
+      ${isWeekend ? `<div class="plan-note" style="margin-bottom:10px;">This is the Wednesday-evening top-up. Lunches &amp; snacks are the same switched-on set as the main shop — if you already bought them Sunday, just tick off the weekend dinners below; anything you've switched on since Sunday will show up here too.</div>` : ''}
 
       <div class="slot-card" style="background:var(--paper-2); border:1px solid var(--mustard-dim); margin-bottom:16px;">
         <div class="slot-label">💶 Estimated ${isWeekend ? 'weekend top-up' : 'shop'} cost — ${formatWeekRange(currentShopWeekTab)}</div>
@@ -1860,9 +1933,7 @@ function renderShopItems(){
     }).join('');
   }
 
-  el.innerHTML = isWeekend
-    ? section('Dinners', list.dinners)
-    : section('Dinners', list.dinners) + section('Lunches', list.lunches) + section('Snacks', list.snacks);
+  el.innerHTML = section('Dinners', list.dinners) + section('Lunches', list.lunches) + section('Snacks', list.snacks);
 }
 async function toggleShopItem(key){
   if(!shopChecked[currentShopWeekTab]) shopChecked[currentShopWeekTab] = {};
