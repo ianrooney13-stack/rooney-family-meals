@@ -187,6 +187,13 @@ main{flex:1;padding:6px 20px 20px;}
   background-repeat:no-repeat; background-position:right 12px center;
 }
 .plan-note{ font-size:12.5px; color:var(--muted); margin-top:6px; }
+.slot-swap-select{
+  width:100%; padding:7px 12px; border-radius:9px; border:1.5px dashed var(--line);
+  font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.03em; background:transparent; color:var(--muted);
+  font-weight:600; appearance:none; -webkit-appearance:none; margin-top:8px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%236b6459' stroke-width='2'><path d='M2 5l5 5 5-5'/></svg>");
+  background-repeat:no-repeat; background-position:right 12px center;
+}
 .plan-summary-link{
   font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--herb-2); text-decoration:underline; cursor:pointer;
 }
@@ -343,7 +350,7 @@ main{flex:1;padding:6px 20px 20px;}
     </button>
     <button class="nav-btn" data-view="tonight" onclick="switchView('tonight')">
       <svg viewBox="0 0 24 24"><path d="M4 21V9l8-6 8 6v12"/><path d="M9 21v-7h6v7"/></svg>
-      <span>Daily</span>
+      <span>Today</span>
     </button>
     <button class="nav-btn" data-view="plan" onclick="switchView('plan')">
       <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4M16 3v4"/></svg>
@@ -1218,7 +1225,7 @@ function renderTonight(){
     const whenLabel = daysUntilStart === 1 ? 'tomorrow' : `on ${anchorLabel}`;
     el.innerHTML = `
       <div class="section-head">
-        <h2>Daily</h2>
+        <h2>Today</h2>
         <span class="tag">${dateStr}</span>
       </div>
       ${dayTabsHtml}
@@ -1290,7 +1297,7 @@ function renderTonight(){
 
   el.innerHTML = `
     <div class="section-head">
-      <h2>Daily</h2>
+      <h2>Today</h2>
       <span class="tag">${dateStr}<br>${formatWeekRange(weekIdx)}</span>
     </div>
     ${dayTabsHtml}
@@ -1364,7 +1371,14 @@ function renderPlan(){
 
   function optionsHtml(list, selectedId){
     const skipOpt = `<option value="SKIP" ${selectedId==='SKIP'?'selected':''}>— Skip: eating out / no dinner needed —</option>`;
-    return skipOpt + list.map(r=>`<option value="${r.id}" ${r.id===selectedId?'selected':''}>${r.dish}</option>`).join('');
+    let items = list;
+    // If a swap put a dish here that isn't normally offered for this slot (e.g. a non-fish
+    // dish swapped onto Sunday), still show it selected rather than silently falling back.
+    if(selectedId && selectedId !== 'SKIP' && !list.some(r=>r.id===selectedId)){
+      const swappedIn = recipeById(selectedId);
+      if(swappedIn) items = [swappedIn, ...list];
+    }
+    return skipOpt + items.map(r=>`<option value="${r.id}" ${r.id===selectedId?'selected':''}>${r.dish}</option>`).join('');
   }
 
   const isCurrentWeek = wk === weekIdx;
@@ -1377,52 +1391,46 @@ function renderPlan(){
   }
   const pastNote = (label) => `<div class="plan-note" style="margin-bottom:10px;">${label} has already passed this week.</div>`;
 
-  const weekSlots = [
-    {i:0, html:`<div class="slot-card">
-      <div class="slot-label">Sunday ${formatSlotDate(wk,0)} · Fish Day</div>
-      <select class="slot-select" onchange="setSlot(${wk},'sun',this.value)">${optionsHtml(fishOptions, sel.sun)}</select>
-      <div class="plan-note">Cooked and eaten today — ~${formatMins((recipeById(sel.sun)||{}).prepMins)} prep + ~${formatMins((recipeById(sel.sun)||{}).cookMins)} cook.</div>
-    </div>`},
-    {i:1, html:`<div class="slot-card">
-      <div class="slot-label">Monday ${formatSlotDate(wk,1)}</div>
-      <select class="slot-select" onchange="setSlot(${wk},'mon',this.value)">${optionsHtml(mainOptions, sel.mon)}</select>
-      <div class="plan-note">Prepped Sunday — just ~${formatMins((recipeById(sel.mon)||{}).cookMins)} to cook fresh Monday night.</div>
-    </div>`},
-    {i:2, html:`<div class="slot-card">
-      <div class="slot-label">Tuesday ${formatSlotDate(wk,2)}</div>
-      <select class="slot-select" onchange="setSlot(${wk},'tue',this.value)">${optionsHtml(mainOptions, sel.tue)}</select>
-      <div class="plan-note">Prepped Sunday — just ~${formatMins((recipeById(sel.tue)||{}).cookMins)} to cook fresh Tuesday night.</div>
-    </div>`},
-    {i:3, html:`<div class="slot-card">
-      <div class="slot-label">Wednesday ${formatSlotDate(wk,3)}</div>
-      <select class="slot-select" onchange="setSlot(${wk},'wed',this.value)">${optionsHtml(mainOptions, sel.wed)}</select>
-      <div class="plan-note">A real planned dinner, same as any other night — usually one of the quicker options.</div>
-    </div>`},
+  const weekSlotDefs = [
+    {i:0, slot:'sun', label:`Sunday ${formatSlotDate(wk,0)} · Fish Day`,
+      note:`Cooked and eaten today — ~${formatMins((recipeById(sel.sun)||{}).prepMins)} prep + ~${formatMins((recipeById(sel.sun)||{}).cookMins)} cook.`, options:fishOptions},
+    {i:1, slot:'mon', label:`Monday ${formatSlotDate(wk,1)}`,
+      note:`Prepped Sunday — just ~${formatMins((recipeById(sel.mon)||{}).cookMins)} to cook fresh Monday night.`, options:mainOptions},
+    {i:2, slot:'tue', label:`Tuesday ${formatSlotDate(wk,2)}`,
+      note:`Prepped Sunday — just ~${formatMins((recipeById(sel.tue)||{}).cookMins)} to cook fresh Tuesday night.`, options:mainOptions},
+    {i:3, slot:'wed', label:`Wednesday ${formatSlotDate(wk,3)}`,
+      note:`A real planned dinner, same as any other night — usually one of the quicker options.`, options:mainOptions},
   ];
-  const weekHtml = weekSlots.filter(s => !isDayPast(s.i)).map(s => s.html).join('')
-    || pastNote('This week');
+  const weekendSlotDefs = [
+    {i:4, slot:'thu', label:`Thursday ${formatSlotDate(wk,4)}`, note:'', options:anyOptions},
+    {i:5, slot:'fri', label:`Friday ${formatSlotDate(wk,5)}`, note:'', options:anyOptions},
+    {i:6, slot:'sat', label:`Saturday ${formatSlotDate(wk,6)}`, note:'', options:anyOptions},
+  ];
 
-  const weekendSlots = [
-    {i:4, html:`<div class="slot-card">
-      <div class="slot-label">Thursday ${formatSlotDate(wk,4)}</div>
-      <select class="slot-select" onchange="setSlot(${wk},'thu',this.value)">${optionsHtml(anyOptions, sel.thu)}</select>
-    </div>`},
-    {i:5, html:`<div class="slot-card">
-      <div class="slot-label">Friday ${formatSlotDate(wk,5)}</div>
-      <select class="slot-select" onchange="setSlot(${wk},'fri',this.value)">${optionsHtml(anyOptions, sel.fri)}</select>
-    </div>`},
-    {i:6, html:`<div class="slot-card">
-      <div class="slot-label">Saturday ${formatSlotDate(wk,6)}</div>
-      <select class="slot-select" onchange="setSlot(${wk},'sat',this.value)">${optionsHtml(anyOptions, sel.sat)}</select>
-    </div>`},
-  ];
+  function slotCardHtml(def, visibleSiblings){
+    const swapOptions = visibleSiblings.filter(s=>s.slot !== def.slot)
+      .map(s=>`<option value="${s.slot}">${s.label.split(' ')[0]}</option>`).join('');
+    return `<div class="slot-card">
+      <div class="slot-label">${def.label}</div>
+      <select class="slot-select" onchange="setSlot(${wk},'${def.slot}',this.value)">${optionsHtml(def.options, sel[def.slot])}</select>
+      ${def.note ? `<div class="plan-note">${def.note}</div>` : ''}
+      ${swapOptions ? `<select class="slot-swap-select" onchange="if(this.value){swapSlots(${wk},'${def.slot}',this.value); this.value='';}">
+        <option value="">🔁 Swap with…</option>${swapOptions}
+      </select>` : ''}
+    </div>`;
+  }
+
+  const weekVisible = weekSlotDefs.filter(s => !isDayPast(s.i));
+  const weekHtml = weekVisible.map(s => slotCardHtml(s, weekVisible)).join('') || pastNote('This week');
+
+  const weekendVisible = weekendSlotDefs.filter(s => !isDayPast(s.i));
   const weekendHtml = `<div class="plan-note" style="margin-bottom:10px;">Refreshed Wednesday evening with a quick top-up shop — see <span class="plan-summary-link" onclick="switchView('shop')">Next Shop → Weekend</span>.</div>`
-    + (weekendSlots.filter(s => !isDayPast(s.i)).map(s => s.html).join('') || pastNote('The weekend'));
+    + (weekendVisible.map(s => slotCardHtml(s, weekendVisible)).join('') || pastNote('The weekend'));
 
   el.innerHTML = `
     <div class="section-head"><h2>Next Week's Plan</h2><span class="tag">choose &amp; the Shop list updates</span></div>
     <div class="filter-row">
-      ${[0,1,2].map(i=>`<div class="filter-chip ${wk===i?'active':''}" onclick="setPlanWeek(${i})">${formatWeekRange(i)}${i===weekIdx?' (current)':''}</div>`).join('')}
+      ${[weekIdx, (weekIdx+1)%3].map(i=>`<div class="filter-chip ${wk===i?'active':''}" onclick="setPlanWeek(${i})">${formatWeekRange(i)}${i===weekIdx?' (current)':''}</div>`).join('')}
     </div>
 
     ${sundaySessionHtml(wk)}
@@ -1487,6 +1495,17 @@ async function mixItUp(weekIdx){
 async function setPlanWeek(i){ currentPlanWeekTab = i; renderPlan(); }
 async function setSlot(weekIdx, slot, dishId){
   dinnerSelections[weekIdx][slot] = dishId;
+  await saveDinnerSelections();
+  renderShop();
+  renderPlan();
+  renderTonight();
+  renderOverview();
+}
+async function swapSlots(weekIdx, slotA, slotB){
+  const sel = dinnerSelections[weekIdx];
+  const temp = sel[slotA];
+  sel[slotA] = sel[slotB];
+  sel[slotB] = temp;
   await saveDinnerSelections();
   renderShop();
   renderPlan();
@@ -1901,7 +1920,7 @@ function renderShop(){
       <div class="toggle-btn ${isWeekend?'active':''}" onclick="setShopSection('weekend')">Weekend (Thu–Sat)</div>
     </div>
     <div class="filter-row">
-      ${[0,1,2].map(i=>`<div class="filter-chip ${currentShopWeekTab===i?'active':''}" onclick="setShopWeek(${i})">${formatWeekRange(i)}${i===weekIdx ? ' (this week)':''}</div>`).join('')}
+      ${[weekIdx, (weekIdx+1)%3].map(i=>`<div class="filter-chip ${currentShopWeekTab===i?'active':''}" onclick="setShopWeek(${i})">${formatWeekRange(i)}${i===weekIdx ? ' (this week)':''}</div>`).join('')}
     </div>
 
     ${expired ? `
